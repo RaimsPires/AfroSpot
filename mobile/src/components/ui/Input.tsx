@@ -4,14 +4,33 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    TextStyle,
+    View,
+    ViewStyle,
 } from 'react-native';
 
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import AppIcon from './AppIcon';
 
-import { InputProps } from '@/types/ui';
-import CustomIcon from './AppIcon';
 
+interface InputProps extends React.ComponentPropsWithoutRef<typeof TextInput> {
+    label?: string;
+    helperText?: string;
+    error?: string;
+    containerStyle?: ViewStyle;
+    inputWrapperStyle?: ViewStyle;
+    inputStyle?: TextStyle;
+    labelStyle?: TextStyle;
+    helperStyle?: TextStyle;
+    leftIcon?: { library: any; name: string; size?: number; color?: string };
+    rightIcon?: { library: any; name: string; size?: number; color?: string };
+    leftElement?: React.ReactNode;
+    rightElement?: React.ReactNode;
+    secureToggleEnabled?: boolean;
+    secureShowIconName?: string;
+    secureHideIconName?: string;
+    secureIconLibrary?: any;
+}
 
 export const Input = forwardRef<TextInput, InputProps>(function Input({
     label,
@@ -33,8 +52,9 @@ export const Input = forwardRef<TextInput, InputProps>(function Input({
     secureIconLibrary = 'Feather',
     editable = true,
     ...props
-}: InputProps, ref) {
-    const { theme } = useTheme();
+}, ref) {
+    // Accessing our dynamic colors and spacing
+    const { colors, spacing } = useTheme();
     const [isSecureVisible, setIsSecureVisible] = useState(false);
 
     const shouldShowSecureToggle = useMemo(
@@ -45,39 +65,54 @@ export const Input = forwardRef<TextInput, InputProps>(function Input({
     const resolvedSecureTextEntry = shouldShowSecureToggle ? !isSecureVisible : secureTextEntry;
 
     return (
-        <View style={[styles.container, containerStyle]}>
-            {label ? <Text style={[styles.label, { color: theme.text }, labelStyle]}>{label}</Text> : null}
+        <View style={[styles.container, { gap: spacing(1) }, containerStyle]}>
+            {/* Label */}
+            {label ? (
+                <Text style={[styles.label, { color: colors.text }, labelStyle]}>
+                    {label}
+                </Text>
+            ) : null}
 
+            {/* Input Wrapper */}
             <View
                 style={[
                     styles.wrapper,
                     {
-                        backgroundColor: theme.card,
-                        borderColor: error ? theme.destructive : theme.border,
+                        backgroundColor: colors.surface,
+                        borderColor: error ? colors.error : colors.border,
+                        paddingHorizontal: spacing(1.5),
+                        height: spacing(6), // Standardized height
                     },
                     inputWrapperStyle,
                 ]}
             >
+                {/* Left Side Content */}
                 {leftElement ??
                     (leftIcon ? (
-                        <CustomIcon
+                        <AppIcon
                             library={leftIcon.library}
                             name={leftIcon.name}
                             size={leftIcon.size ?? 18}
-                            color={leftIcon.color ?? theme.textMuted}
+                            color={leftIcon.color ?? colors.textSecondary}
                             style={styles.leftIcon}
                         />
                     ) : null)}
 
+                {/* Main TextInput */}
                 <TextInput
                     ref={ref}
                     {...props}
                     editable={editable}
                     secureTextEntry={resolvedSecureTextEntry}
-                    placeholderTextColor={theme.textMuted}
-                    style={[styles.input, { color: theme.text }, inputStyle]}
+                    placeholderTextColor={colors.textSecondary}
+                    style={[
+                        styles.input, 
+                        { color: colors.text, paddingVertical: spacing(1) }, 
+                        inputStyle
+                    ]}
                 />
 
+                {/* Right Side Content (Secure Toggle or Icons) */}
                 {shouldShowSecureToggle ? (
                     <Pressable
                         onPress={() => setIsSecureVisible((prev) => !prev)}
@@ -85,30 +120,35 @@ export const Input = forwardRef<TextInput, InputProps>(function Input({
                         disabled={!editable}
                         style={styles.iconAction}
                     >
-                        <CustomIcon
+                        <AppIcon
                             library={secureIconLibrary}
                             name={isSecureVisible ? secureHideIconName : secureShowIconName}
                             size={18}
-                            color={theme.textMuted}
+                            color={colors.textSecondary}
                         />
                     </Pressable>
                 ) : rightElement ?? rightIcon ? (
                     rightElement ?? (
-                        <CustomIcon
+                        <AppIcon
                             library={rightIcon?.library}
                             name={rightIcon?.name ?? 'circle'}
                             size={rightIcon?.size ?? 18}
-                            color={rightIcon?.color ?? theme.textMuted}
+                            color={rightIcon?.color ?? colors.textSecondary}
                             style={styles.rightIcon}
                         />
                     )
                 ) : null}
             </View>
 
+            {/* Error or Helper Text */}
             {error ? (
-                <Text style={[styles.helper, { color: theme.destructive }, helperStyle]}>{error}</Text>
+                <Text style={[styles.helper, { color: colors.error }, helperStyle]}>
+                    {error}
+                </Text>
             ) : helperText ? (
-                <Text style={[styles.helper, { color: theme.textMuted }, helperStyle]}>{helperText}</Text>
+                <Text style={[styles.helper, { color: colors.textSecondary }, helperStyle]}>
+                    {helperText}
+                </Text>
             ) : null}
         </View>
     );
@@ -117,37 +157,33 @@ export const Input = forwardRef<TextInput, InputProps>(function Input({
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        gap: 8,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
     },
     wrapper: {
-        minHeight: 48,
         borderRadius: 12,
         borderWidth: 1,
-        paddingHorizontal: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
     },
     input: {
         flex: 1,
         fontSize: 15,
-        paddingVertical: 10,
     },
     leftIcon: {
-        marginRight: 2,
+        marginRight: 4,
     },
     rightIcon: {
-        marginLeft: 2,
+        marginLeft: 4,
     },
     iconAction: {
-        padding: 2,
+        padding: 4,
     },
     helper: {
         fontSize: 12,
+        marginTop: 2,
     },
 });
 
