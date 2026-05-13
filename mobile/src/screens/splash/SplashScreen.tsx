@@ -1,3 +1,4 @@
+import { useTheme } from '@/contexts/ThemeContext';
 import {
     Image,
     Platform,
@@ -11,15 +12,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { logo } from '../../assets';
 
 const SplashScreen = () => {
+    const {colors} = useTheme()
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+            <StatusBar
+                barStyle="light-content"
+                translucent backgroundColor="transparent" />
 
             {/* Background Gradient */}
             <LinearGradient
-                // Custom colors extracted from the screenshot
-                colors={['#D68439', '#633D1A', '#130D0A']}
+                start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }}
+                // locations={[0,0.5,0.6]}
+                colors={[colors.primary, colors.secondary, colors.text]}
                 style={styles.background}
+
             />
 
             <SafeAreaView style={styles.contentContainer}>
