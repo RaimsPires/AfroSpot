@@ -18,7 +18,7 @@ export const OrderFulfillmentScreen = () => {
                 <Text style={[styles.title, { color: colors.text }]}>Orders & Fulfillment</Text>
             </View>
 
-            <View style={styles.tabs}>
+            <View style={[styles.tabs, { borderBottomColor: colors.border }]}>
                 {['Pending', 'Shipped'].map(t => (
                     <TouchableOpacity key={t} onPress={() => setTab(t as any)} style={[styles.tabBtn, tab === t && { borderBottomWidth: 2, borderBottomColor: colors.primary }]}>
                         <Text style={{ color: tab === t ? colors.primary : colors.textSecondary, fontWeight: '700' }}>{t}</Text>
@@ -34,6 +34,7 @@ export const OrderFulfillmentScreen = () => {
                             <Text style={{ color: colors.textSecondary, fontSize: 12 }}>{order.date}</Text>
                         </View>
                         <View style={styles.divider} />
+                        <Text style={[styles.dividerLine, { backgroundColor: colors.border }]} />
                         <Text style={[styles.buyerText, { color: colors.text }]}>Buyer: {order.buyer}</Text>
                         <Text style={[styles.itemText, { color: colors.textSecondary }]}>{order.qty}x {order.item}</Text>
                         <Text style={[styles.totalText, { color: colors.primary }]}>{order.total}</Text>
@@ -58,12 +59,13 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     header: { padding: 20 },
     title: { fontSize: 24, fontWeight: '900' },
-    tabs: { flexDirection: 'row', borderBottomWidth: 1, borderColor: '#EEE' },
+    tabs: { flexDirection: 'row', borderBottomWidth: 1, borderColor: 'transparent' },
     tabBtn: { flex: 1, paddingVertical: 15, alignItems: 'center' },
     orderCard: { padding: 16, borderRadius: 16, borderWidth: 1, marginBottom: 16 },
     rowBetween: { flexDirection: 'row', justifyContent: 'space-between' },
     orderId: { fontWeight: '800', fontSize: 14 },
-    divider: { height: 1, backgroundColor: '#EEE', marginVertical: 12 },
+    divider: { height: 1, marginVertical: 12 },
+    dividerLine: { height: 1, marginVertical: 12 },
     buyerText: { fontWeight: '700', fontSize: 15, marginBottom: 4 },
     itemText: { fontSize: 14, marginBottom: 8 },
     totalText: { fontWeight: '900', fontSize: 16, marginBottom: 16 },

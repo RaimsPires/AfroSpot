@@ -48,8 +48,8 @@ export const CreateFeedScreen = ({ navigation }: any) => {
                     {videoUri ? (
                         <View style={styles.previewContainer}>
                             <Image source={{ uri: videoUri }} style={styles.videoPreview} />
-                            <TouchableOpacity style={styles.removeBtn} onPress={() => setVideoUri(null)}>
-                                <AppIcon library="Feather" name="trash-2" size={16} color="#FFF" />
+                            <TouchableOpacity style={[styles.removeBtn, { backgroundColor: colors.destructive + 'E5' }]} onPress={() => setVideoUri(null)}>
+                                <AppIcon library="Feather" name="trash-2" size={16} color={colors.textInverse} />
                             </TouchableOpacity>
                         </View>
                     ) : (
@@ -98,8 +98,8 @@ export const CreateFeedScreen = ({ navigation }: any) => {
 
             <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
                 <TouchableOpacity style={[styles.publishBtn, { backgroundColor: colors.primary }]} onPress={handlePublish}>
-                    <AppIcon library="Feather" name="send" size={18} color="#FFF" />
-                    <Text style={styles.publishBtnText}>Publish Feed</Text>
+                    <AppIcon library="Feather" name="send" size={18} color={colors.textInverse} />
+                    <Text style={[styles.publishBtnText, { color: colors.textInverse }]}>Publish Feed</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 
     previewContainer: { height: 300, width: '60%', alignSelf: 'center', borderRadius: 16, overflow: 'hidden', position: 'relative' },
     videoPreview: { width: '100%', height: '100%' },
-    removeBtn: { position: 'absolute', top: 12, right: 12, backgroundColor: 'rgba(239, 68, 68, 0.9)', width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+    removeBtn: { position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
 
     textArea: { height: 100, borderWidth: 1, borderRadius: 12, padding: 16, fontSize: 15 },
     input: { height: 50, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 15 },
@@ -131,5 +131,5 @@ const styles = StyleSheet.create({
 
     footer: { padding: 20, paddingBottom: 34, borderTopWidth: 1 },
     publishBtn: { flexDirection: 'row', height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 10 },
-    publishBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    publishBtnText: { fontSize: 16, fontWeight: '800' },
 });

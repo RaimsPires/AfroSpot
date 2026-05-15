@@ -90,7 +90,7 @@ export const SignUpScreen = () => {
                             disabled={isDisabled}
                             onPress={() => navigation.navigate('UserOnboarding')}
                         >
-                            <Text style={[styles.mainBtnText, { color: isDisabled ? colors.textSecondary : '#FFF' }]}>Create Account</Text>
+                            <Text style={[styles.mainBtnText, { color: isDisabled ? colors.textSecondary : colors.textInverse }]}>Create Account</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.switchMode} onPress={() => navigation.navigate('Auth')}>

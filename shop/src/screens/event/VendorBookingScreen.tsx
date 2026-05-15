@@ -45,11 +45,11 @@ export const VendorBookingScreen = () => {
                                     <Text style={[styles.standPrice, { color: colors.primary }]}>${stand.price}</Text>
                                 </View>
                                 {isSelected && <AppIcon library="Feather" name="check-circle" size={24} color={colors.primary} />}
-                                {isSoldOut && <View style={styles.soldOutBadge}><Text style={styles.soldOutText}>SOLD OUT</Text></View>}
+                                {isSoldOut && <View style={[styles.soldOutBadge, { backgroundColor: colors.destructive }]}><Text style={[styles.soldOutText, { color: colors.textInverse }]}>SOLD OUT</Text></View>}
                             </View>
                             <Text style={[styles.standDesc, { color: colors.textSecondary }]}>{stand.desc}</Text>
                             <View style={styles.availableRow}>
-                                <Text style={[styles.availableText, { color: stand.available < 5 ? '#EF4444' : colors.textSecondary }]}>
+                                <Text style={[styles.availableText, { color: stand.available < 5 ? colors.destructive : colors.textSecondary }]}>
                                     {isSoldOut ? 'No spots left' : `${stand.available} spots left`}
                                 </Text>
                             </View>
@@ -63,7 +63,7 @@ export const VendorBookingScreen = () => {
                     style={[styles.mainBtn, { backgroundColor: selectedStand ? colors.primary : colors.border }]}
                     disabled={!selectedStand}
                 >
-                    <Text style={styles.mainBtnText}>Reserve Stand</Text>
+                    <Text style={[styles.mainBtnText, { color: colors.textInverse }]}>Reserve Stand</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -81,10 +81,10 @@ const styles = StyleSheet.create({
     standName: { fontSize: 16, fontWeight: '800', marginBottom: 4 },
     standPrice: { fontSize: 18, fontWeight: '900' },
     standDesc: { fontSize: 13, lineHeight: 20, marginBottom: 12 },
-    soldOutBadge: { backgroundColor: '#EF4444', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-    soldOutText: { color: '#FFF', fontSize: 10, fontWeight: '900' },
+    soldOutBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+    soldOutText: { fontSize: 10, fontWeight: '900' },
     availableText: { fontSize: 12, fontWeight: '700' },
     footer: { padding: 20, borderTopWidth: 1, paddingBottom: 34 },
     mainBtn: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-    mainBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    mainBtnText: { fontSize: 16, fontWeight: '800' },
 });

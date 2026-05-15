@@ -19,7 +19,7 @@ export const TicketScannerScreen = () => {
     const showFallback = !hasPermission || !device;
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.overlay }]}>
             {!showFallback && (
                 <Camera
                     style={styles.camera}
@@ -31,12 +31,12 @@ export const TicketScannerScreen = () => {
             {/* 1. Camera View Finder */}
             <View style={styles.cameraOverlay}>
                 <View style={styles.scanFrame}>
-                    <View style={[styles.corner, styles.tl]} />
-                    <View style={[styles.corner, styles.tr]} />
-                    <View style={[styles.corner, styles.bl]} />
-                    <View style={[styles.corner, styles.br]} />
+                    <View style={[styles.corner, styles.tl, { borderColor: colors.success }]} />
+                    <View style={[styles.corner, styles.tr, { borderColor: colors.success }]} />
+                    <View style={[styles.corner, styles.bl, { borderColor: colors.success }]} />
+                    <View style={[styles.corner, styles.br, { borderColor: colors.success }]} />
                 </View>
-                <Text style={styles.instructions}>
+                <Text style={[styles.instructions, { color: colors.textInverse }]}>
                     {hasPermission
                         ? 'Align QR Code inside the frame'
                         : 'Camera permission is required to scan tickets'}
@@ -47,7 +47,7 @@ export const TicketScannerScreen = () => {
                         style={[styles.permissionBtn, { backgroundColor: colors.primary }]}
                         onPress={requestPermission}
                     >
-                        <Text style={styles.permissionBtnText}>Allow Camera Access</Text>
+                        <Text style={[styles.permissionBtnText, { color: colors.textInverse }]}>Allow Camera Access</Text>
                     </TouchableOpacity>
                 )}
 
@@ -59,18 +59,18 @@ export const TicketScannerScreen = () => {
             {/* 2. Controls */}
             <SafeAreaView style={styles.overlay}>
                 <View style={styles.topRow}>
-                    <TouchableOpacity style={styles.closeBtn}><AppIcon library="Feather" name="x" size={24} color="#FFF" /></TouchableOpacity>
-                    <Text style={styles.scanTitle}>Gate 1: Check-in</Text>
-                    <TouchableOpacity style={styles.closeBtn}><AppIcon library="Feather" name="zap" size={24} color="#FFF" /></TouchableOpacity>
+                    <TouchableOpacity style={styles.closeBtn}><AppIcon library="Feather" name="x" size={24} color={colors.textInverse} /></TouchableOpacity>
+                    <Text style={[styles.scanTitle, { color: colors.textInverse }]}>Gate 1: Check-in</Text>
+                    <TouchableOpacity style={styles.closeBtn}><AppIcon library="Feather" name="zap" size={24} color={colors.textInverse} /></TouchableOpacity>
                 </View>
 
                 <View style={styles.bottomRow}>
                     <View style={[styles.statsBox, styles.statsBoxOverlay]}>
-                        <Text style={styles.statsNum}>142 / 500</Text>
-                        <Text style={styles.statsLabel}>Check-ins</Text>
+                        <Text style={[styles.statsNum, { color: colors.textInverse }]}>142 / 500</Text>
+                        <Text style={[styles.statsLabel, { color: colors.textInverse }]}>Check-ins</Text>
                     </View>
                     <TouchableOpacity style={styles.manualBtn}>
-                        <Text style={styles.manualText}>Enter Code Manually</Text>
+                        <Text style={[styles.manualText, { color: colors.textInverse }]}>Enter Code Manually</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -79,7 +79,7 @@ export const TicketScannerScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#000' },
+    container: { flex: 1 },
     camera: {
         position: 'absolute',
         top: 0,
@@ -89,12 +89,12 @@ const styles = StyleSheet.create({
     },
     cameraOverlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     scanFrame: { width: 250, height: 250, position: 'relative' },
-    corner: { position: 'absolute', width: 40, height: 40, borderColor: '#10B981', borderWidth: 5 },
+    corner: { position: 'absolute', width: 40, height: 40, borderWidth: 5 },
     tl: { top: 0, left: 0, borderTopWidth: 5, borderLeftWidth: 5 },
     tr: { top: 0, right: 0, borderTopWidth: 5, borderRightWidth: 5 },
     bl: { bottom: 0, left: 0, borderBottomWidth: 5, borderLeftWidth: 5 },
     br: { bottom: 0, right: 0, borderBottomWidth: 5, borderRightWidth: 5 },
-    instructions: { color: '#FFF', marginTop: 40, fontSize: 16, fontWeight: '600' },
+    instructions: { marginTop: 40, fontSize: 16, fontWeight: '600' },
     permissionBtn: {
         marginTop: 20,
         paddingHorizontal: 18,
@@ -102,24 +102,22 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     permissionBtnText: {
-        color: '#FFF',
         fontWeight: '700',
     },
     deviceFallbackText: {
         marginTop: 12,
-        color: '#FFF',
         fontSize: 14,
         opacity: 0.8,
     },
     overlay: { position: 'absolute', top: 0, width: '100%', height: '100%', justifyContent: 'space-between' },
     topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-    scanTitle: { color: '#FFF', fontSize: 18, fontWeight: '800' },
+    scanTitle: { fontSize: 18, fontWeight: '800' },
     closeBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
     bottomRow: { padding: 30, alignItems: 'center', gap: 20 },
     statsBox: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
     statsBoxOverlay: { backgroundColor: 'rgba(0,0,0,0.6)' },
-    statsNum: { color: '#FFF', fontSize: 20, fontWeight: '900' },
-    statsLabel: { color: '#FFF', fontSize: 12, opacity: 0.7 },
+    statsNum: { fontSize: 20, fontWeight: '900' },
+    statsLabel: { fontSize: 12, opacity: 0.7 },
     manualBtn: { padding: 15 },
-    manualText: { color: '#FFF', fontWeight: '700', textDecorationLine: 'underline' }
+    manualText: { fontWeight: '700', textDecorationLine: 'underline' }
 });

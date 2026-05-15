@@ -98,10 +98,10 @@ const ManageProfileScreen = () => {
                                 <View key={index} style={styles.photoWrapper}>
                                     <Image source={{ uri: photo }} style={styles.photoThumbnail} />
                                     <TouchableOpacity
-                                        style={styles.deletePhotoBtn}
+                                        style={[styles.deletePhotoBtn, { backgroundColor: colors.destructive, borderColor: colors.surfaceElevated }]}
                                         onPress={() => removePhoto(index)}
                                     >
-                                        <AppIcon library="Feather" name="x" size={14} color="#FFF" />
+                                        <AppIcon library="Feather" name="x" size={14} color={colors.textInverse} />
                                     </TouchableOpacity>
                                 </View>
                             ))}
@@ -191,7 +191,7 @@ const ManageProfileScreen = () => {
                                     >
                                         <Text style={[
                                             styles.categoryPillText,
-                                            { color: isActive ? '#FFF' : colors.text }
+                                            { color: isActive ? colors.textInverse : colors.text }
                                         ]}>
                                             {cat}
                                         </Text>
@@ -216,8 +216,8 @@ const ManageProfileScreen = () => {
                                         <Switch
                                             value={item.isOpen}
                                             onValueChange={() => toggleDayOpen(index)}
-                                            trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                            thumbColor={item.isOpen ? colors.primary : '#FFF'}
+                                            trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                            thumbColor={item.isOpen ? colors.primary : colors.surfaceElevated}
                                             style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
                                         />
                                         <Text style={[styles.dayText, { color: colors.text }]}>{item.day}</Text>
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     addPhotoText: { fontSize: 12, fontWeight: '600', marginTop: 8 },
     photoWrapper: { position: 'relative', width: 100, height: 100 },
     photoThumbnail: { width: '100%', height: '100%', borderRadius: 12 },
-    deletePhotoBtn: { position: 'absolute', top: -6, right: -6, backgroundColor: '#EF4444', width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#FFF' },
+    deletePhotoBtn: { position: 'absolute', top: -6, right: -6, width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
 
     // Inputs
     inputGroup: { marginBottom: 20 },

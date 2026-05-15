@@ -113,7 +113,7 @@ const CreatePromoScreen = () => {
                                 style={[styles.toggleBtn, discountType === 'percentage' && [styles.toggleActive, { backgroundColor: colors.primary }]]}
                                 onPress={() => setDiscountType('percentage')}
                             >
-                                <Text style={[styles.toggleText, { color: discountType === 'percentage' ? '#FFF' : colors.textSecondary }]}>
+                                <Text style={[styles.toggleText, { color: discountType === 'percentage' ? colors.textInverse : colors.textSecondary }]}>
                                     Percentage (%)
                                 </Text>
                             </TouchableOpacity>
@@ -121,7 +121,7 @@ const CreatePromoScreen = () => {
                                 style={[styles.toggleBtn, discountType === 'fixed' && [styles.toggleActive, { backgroundColor: colors.primary }]]}
                                 onPress={() => setDiscountType('fixed')}
                             >
-                                <Text style={[styles.toggleText, { color: discountType === 'fixed' ? '#FFF' : colors.textSecondary }]}>
+                                <Text style={[styles.toggleText, { color: discountType === 'fixed' ? colors.textInverse : colors.textSecondary }]}>
                                     Fixed Amount ($)
                                 </Text>
                             </TouchableOpacity>
@@ -203,8 +203,8 @@ const CreatePromoScreen = () => {
             {/* 6. Bottom Sticky Publish Button */}
             <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
                 <TouchableOpacity style={[styles.publishBtn, { backgroundColor: colors.primary }]}>
-                    <AppIcon library="Feather" name="check" size={20} color="#FFF" />
-                    <Text style={styles.publishBtnText}>Publish Promotion</Text>
+                    <AppIcon library="Feather" name="check" size={20} color={colors.textInverse} />
+                    <Text style={[styles.publishBtnText, { color: colors.textInverse }]}>Publish Promotion</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     // Preview Card
     previewCard: { flexDirection: 'row', borderRadius: 16, overflow: 'hidden', padding: 20, marginBottom: 32, position: 'relative' },
     previewLeft: { flex: 0.65, justifyContent: 'center', borderRightWidth: 2, borderRightColor: 'rgba(255,255,255,0.2)', paddingRight: 16, borderStyle: 'dashed' },
-    badgeLabel: { backgroundColor: '#FFF', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginBottom: 8 },
+    badgeLabel: { backgroundColor: 'rgba(255,255,255,0.9)', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginBottom: 8 },
     badgeText: { color: '#000', fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
     previewTitle: { color: '#FFF', fontSize: 18, fontWeight: '900', marginBottom: 4 },
     previewSub: { color: 'rgba(255,255,255,0.8)', fontSize: 11, fontWeight: '500' },
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     // Footer
     footer: { position: 'absolute', bottom: 0, width: '100%', padding: 20, paddingBottom: 34, borderTopWidth: 1 },
     publishBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 54, borderRadius: 16, gap: 10 },
-    publishBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    publishBtnText: { fontSize: 16, fontWeight: '800' },
 });
 
 export default CreatePromoScreen;

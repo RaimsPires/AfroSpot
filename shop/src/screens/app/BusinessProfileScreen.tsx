@@ -35,7 +35,7 @@ export const BusinessProfileScreen = () => {
                         <Text style={[styles.businessName, { color: colors.text }]}>Kushite Cutz & Styles</Text>
                         <Text style={[styles.businessEmail, { color: colors.textSecondary }]}>admin@kushitecutz.com</Text>
                         <View style={styles.ratingRow}>
-                            <AppIcon library="FontAwesome" name="star" size={14} color="#F59E0B" />
+                            <AppIcon library="FontAwesome" name="star" size={14} color={colors.warning} />
                             <Text style={[styles.ratingText, { color: colors.text }]}>4.8 (128 Reviews)</Text>
                         </View>
                     </View>
@@ -87,8 +87,8 @@ export const BusinessProfileScreen = () => {
                                 <Switch
                                     value={isDark}
                                     onValueChange={toggleTheme}
-                                    trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                    thumbColor={isDark ? colors.primary : '#FFF'}
+                                    trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                    thumbColor={isDark ? colors.primary : colors.surfaceElevated}
                                 />
                             }
                         />
@@ -99,7 +99,7 @@ export const BusinessProfileScreen = () => {
                 <View style={styles.section}>
                     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                         <MenuItem icon="help-circle" label="Merchant Support" colors={colors} />
-                        <MenuItem icon="log-out" label="Log Out" colorOverride="#EF4444" colors={colors} isLast />
+                        <MenuItem icon="log-out" label="Log Out" colorOverride={colors.destructive} colors={colors} isLast />
                     </View>
                 </View>
 

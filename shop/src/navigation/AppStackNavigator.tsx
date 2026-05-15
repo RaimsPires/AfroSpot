@@ -25,14 +25,16 @@ import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
 import React from 'react';
 
 import { BusinessNotificationsScreen } from '@screens/app/BusinessNotificationsScreen';
+import { ClientsListScreen } from '@screens/app/ClientsListScreen';
 import { ManageStaffScreen } from '@screens/app/ManageStaffScreen';
 import { MerchantSupportScreen } from '@screens/app/MerchantSupportScreen';
 import { PayoutsEarningsScreen } from '@screens/app/PayoutsEarningsScreen';
 import ReportScreen from '@screens/app/ReportScreen';
-import SettingsScreen from '@screens/app/SettingsScreen';
 import { StoreAnalyticsScreen } from '@screens/app/StoreAnalyticsScreen';
 import { TaxInvoiceScreen } from '@screens/app/TaxInvoiceScreen';
 import BusinessTabNavigator from './BusinessTabNavigator';
+import ProfileStack from './stack/ProfileStack';
+import StoreStack from './stack/StoreStack';
 import type { AppStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -41,13 +43,14 @@ const AppStackNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainTabs">
             <Stack.Screen name="MainTabs" component={BusinessTabNavigator} />
+            <Stack.Screen name="ProfileStack" component={ProfileStack} />
 
             <Stack.Screen name="BusinessNotifications" component={BusinessNotificationsScreen} />
             <Stack.Screen name="ManageStaff" component={ManageStaffScreen} />
             <Stack.Screen name="MerchantSupport" component={MerchantSupportScreen} />
             <Stack.Screen name="PayoutsEarnings" component={PayoutsEarningsScreen} />
             <Stack.Screen name="Report" component={ReportScreen} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="StoreStack" component={StoreStack} />
             <Stack.Screen name="StoreAnalytics" component={StoreAnalyticsScreen} />
             <Stack.Screen name="TaxInvoice" component={TaxInvoiceScreen} />
 
@@ -79,6 +82,8 @@ const AppStackNavigator = () => {
             <Stack.Screen name="ManageProfile" component={ManageProfileScreen} />
             <Stack.Screen name="ManageReviews" component={ManageReviewsScreen} />
             <Stack.Screen name="ManageServices" component={ManageServicesScreen} />
+
+            <Stack.Screen name="ClientsList" component={ClientsListScreen} />
         </Stack.Navigator>
     );
 };

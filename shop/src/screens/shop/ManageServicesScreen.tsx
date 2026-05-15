@@ -42,7 +42,7 @@ const INITIAL_SERVICES = [
     },
 ];
 
-const ManageServicesScreen = () => {
+const ManageServicesScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
     const [services, setServices] = useState(INITIAL_SERVICES);
@@ -119,7 +119,7 @@ const ManageServicesScreen = () => {
 
             {/* Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Manage Services</Text>
@@ -138,7 +138,7 @@ const ManageServicesScreen = () => {
                         <Text style={[styles.emptyTitle, { color: colors.text }]}>No Services Yet</Text>
                         <Text style={[styles.emptyDesc, { color: colors.textSecondary }]}>Add the services you offer to allow customers to book appointments.</Text>
                         <TouchableOpacity style={[styles.emptyBtn, { backgroundColor: colors.primary }]} onPress={openAddModal}>
-                            <Text style={styles.emptyBtnText}>Add First Service</Text>
+                            <Text style={[styles.emptyBtnText, { color: colors.textInverse }]}>Add First Service</Text>
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -165,8 +165,8 @@ const ManageServicesScreen = () => {
                                         <Text style={[styles.actionText, { color: colors.textSecondary }]}>Edit</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.actionBtn} onPress={() => handleDelete(service.id)}>
-                                        <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
-                                        <Text style={[styles.actionText, { color: '#EF4444' }]}>Delete</Text>
+                                        <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
+                                        <Text style={[styles.actionText, { color: colors.destructive }]}>Delete</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -179,7 +179,7 @@ const ManageServicesScreen = () => {
             <Modal visible={modalVisible} transparent animationType="slide">
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                    style={styles.modalOverlay}
+                    style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
                 >
                     <View style={[styles.modalContent, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
 
@@ -255,7 +255,7 @@ const ManageServicesScreen = () => {
                                 style={[styles.saveActionBtn, { backgroundColor: colors.primary }]}
                                 onPress={handleSave}
                             >
-                                <Text style={styles.saveActionBtnText}>Save Service</Text>
+                                <Text style={[styles.saveActionBtnText, { color: colors.textInverse }]}>Save Service</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -300,10 +300,10 @@ const styles = StyleSheet.create({
     emptyTitle: { fontSize: 20, fontWeight: '800', marginBottom: 8 },
     emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 22, marginBottom: 24 },
     emptyBtn: { paddingHorizontal: 24, paddingVertical: 14, borderRadius: 24 },
-    emptyBtnText: { color: '#FFF', fontSize: 15, fontWeight: '800' },
+    emptyBtnText: { fontSize: 15, fontWeight: '800' },
 
     // Modal
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    modalOverlay: { flex: 1, justifyContent: 'flex-end' },
     modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, paddingBottom: 10 },
     modalTitle: { fontSize: 20, fontWeight: '800' },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     cancelBtn: { flex: 1, height: 52, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
     cancelBtnText: { fontSize: 15, fontWeight: '700' },
     saveActionBtn: { flex: 1.5, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-    saveActionBtnText: { color: '#FFF', fontSize: 15, fontWeight: '700' },
+    saveActionBtnText: { fontSize: 15, fontWeight: '700' },
 });
 
 export default ManageServicesScreen;

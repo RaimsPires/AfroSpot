@@ -105,8 +105,8 @@ export const ManageStaffScreen = () => {
                             <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.border }]} onPress={() => openEditModal(member)}>
                                 <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: '#FEE2E2' }]} onPress={() => handleDelete(member.id)}>
-                                <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
+                            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: colors.destructiveSurface }]} onPress={() => handleDelete(member.id)}>
+                                <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -115,7 +115,7 @@ export const ManageStaffScreen = () => {
 
             {/* Add/Edit Modal */}
             <Modal visible={modalVisible} transparent animationType="slide">
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
                     <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
                         <View style={styles.modalHeader}>
                             <Text style={[styles.modalTitle, { color: colors.text }]}>{editingId ? 'Edit Staff' : 'Add Staff'}</Text>
@@ -158,9 +158,9 @@ const styles = StyleSheet.create({
     actionsCol: { flexDirection: 'row', gap: 8 },
     actionBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    modalOverlay: { flex: 1, justifyContent: 'flex-end' },
     modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40 },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1 },
     modalTitle: { fontSize: 18, fontWeight: '800' },
     modalBody: { padding: 20 },
     label: { fontSize: 11, fontWeight: '800', marginBottom: 8, marginTop: 16 },

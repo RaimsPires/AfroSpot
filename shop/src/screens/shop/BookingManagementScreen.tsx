@@ -142,8 +142,8 @@ const ManageBookingsScreen = () => {
                                 Pending Requests
                             </Text>
                             {pendingCount > 0 && (
-                                <View style={styles.badge}>
-                                    <Text style={styles.badgeText}>{pendingCount}</Text>
+                                <View style={[styles.badge, { backgroundColor: colors.destructive }]}>
+                                    <Text style={[styles.badgeText, { color: colors.textInverse }]}>{pendingCount}</Text>
                                 </View>
                             )}
                         </TouchableOpacity>
@@ -180,10 +180,10 @@ const ManageBookingsScreen = () => {
                                             }
                                         ]}
                                     >
-                                        <Text style={[styles.dateDay, { color: isActive ? '#FFF' : colors.textSecondary }]}>{d.day}</Text>
-                                        <Text style={[styles.dateNum, { color: isActive ? '#FFF' : colors.text }]}>{d.date}</Text>
+                                        <Text style={[styles.dateDay, { color: isActive ? colors.textInverse : colors.textSecondary }]}>{d.day}</Text>
+                                        <Text style={[styles.dateNum, { color: isActive ? colors.textInverse : colors.text }]}>{d.date}</Text>
                                         {/* Tiny dot indicator for days with bookings */}
-                                        <View style={[styles.bookingIndicator, { backgroundColor: isActive ? '#FFF' : colors.primary, opacity: d.date === '24' || d.date === '25' ? 1 : 0 }]} />
+                                        <View style={[styles.bookingIndicator, { backgroundColor: isActive ? colors.textInverse : colors.primary, opacity: d.date === '24' || d.date === '25' ? 1 : 0 }]} />
                                     </TouchableOpacity>
                                 );
                             })}
@@ -236,16 +236,16 @@ const ManageBookingsScreen = () => {
                             {booking.status === 'Pending' ? (
                                 <View style={styles.actionsRow}>
                                     <TouchableOpacity
-                                        style={[styles.rejectBtn, { borderColor: '#EF4444' }]}
+                                        style={[styles.rejectBtn, { borderColor: colors.destructive }]}
                                         onPress={() => handleReject(booking.id)}
                                     >
-                                        <Text style={[styles.rejectText, { color: '#EF4444' }]}>Decline</Text>
+                                        <Text style={[styles.rejectText, { color: colors.destructive }]}>Decline</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.acceptBtn, { backgroundColor: '#10B981' }]}
+                                        style={[styles.acceptBtn, { backgroundColor: colors.success }]}
                                         onPress={() => handleAccept(booking.id)}
                                     >
-                                        <Text style={styles.acceptText}>Accept Booking</Text>
+                                        <Text style={[styles.acceptText, { color: colors.textInverse }]}>Accept Booking</Text>
                                     </TouchableOpacity>
                                 </View>
                             ) : (
@@ -255,7 +255,7 @@ const ManageBookingsScreen = () => {
                                         <Text style={[styles.actionOutlineText, { color: colors.text }]}>Message</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={[styles.actionSolidBtn, { backgroundColor: colors.primary }]}>
-                                        <Text style={styles.actionSolidText}>Mark Completed</Text>
+                                        <Text style={[styles.actionSolidText, { color: colors.textInverse }]}>Mark Completed</Text>
                                     </TouchableOpacity>
                                 </View>
                             )}
@@ -287,8 +287,8 @@ const styles = StyleSheet.create({
     tabBtn: { flex: 1, flexDirection: 'row', paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 20 },
     activeTabBtn: { elevation: 2, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
     tabText: { fontSize: 13, fontWeight: '700' },
-    badge: { backgroundColor: '#EF4444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 6 },
-    badgeText: { color: '#FFF', fontSize: 10, fontWeight: '800' },
+    badge: { borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 6 },
+    badgeText: { fontSize: 10, fontWeight: '800' },
 
     // Calendar Strip (Calendar View)
     calendarContainer: { paddingBottom: 8 },
@@ -325,12 +325,12 @@ const styles = StyleSheet.create({
     rejectBtn: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
     rejectText: { fontSize: 14, fontWeight: '700' },
     acceptBtn: { flex: 1, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-    acceptText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
+    acceptText: { fontSize: 14, fontWeight: '700' },
 
     actionOutlineBtn: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
     actionOutlineText: { fontSize: 14, fontWeight: '700' },
     actionSolidBtn: { flex: 1.5, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-    actionSolidText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
+    actionSolidText: { fontSize: 14, fontWeight: '700' },
 
     // Empty State
     emptyState: { alignItems: 'center', justifyContent: 'center', marginTop: 40 },

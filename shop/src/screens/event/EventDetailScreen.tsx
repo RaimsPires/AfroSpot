@@ -31,8 +31,8 @@ export const EventDetailScreen = () => {
                         style={styles.heroImage}
                     />
                     <SafeAreaView style={styles.headerButtons}>
-                        <TouchableOpacity style={styles.circleBtn}><AppIcon library="Feather" name="chevron-left" size={24} color="#FFF" /></TouchableOpacity>
-                        <TouchableOpacity style={styles.circleBtn}><AppIcon library="Feather" name="share-2" size={20} color="#FFF" /></TouchableOpacity>
+                        <TouchableOpacity style={styles.circleBtn}><AppIcon library="Feather" name="chevron-left" size={24} color={colors.textInverse} /></TouchableOpacity>
+                        <TouchableOpacity style={styles.circleBtn}><AppIcon library="Feather" name="share-2" size={20} color={colors.textInverse} /></TouchableOpacity>
                     </SafeAreaView>
                 </View>
 
@@ -73,8 +73,8 @@ export const EventDetailScreen = () => {
 
                     {/* 2. Vendor Opportunity Banner (For Shop Owners) */}
                     <TouchableOpacity style={[styles.vendorBanner, { backgroundColor: colors.surface, borderColor: colors.primary }]}>
-                        <View style={styles.vendorIconBg}>
-                            <AppIcon library="Feather" name="shopping-bag" size={20} color="#FFF" />
+                        <View style={[styles.vendorIconBg, { backgroundColor: colors.warning }]}>
+                            <AppIcon library="Feather" name="shopping-bag" size={20} color={colors.textInverse} />
                         </View>
                         <View style={{ flex: 1 }}>
                             <Text style={[styles.vendorTitle, { color: colors.text }]}>Own a Shop or Restaurant?</Text>
@@ -92,7 +92,7 @@ export const EventDetailScreen = () => {
                     <Text style={[styles.priceValue, { color: colors.text }]}>$15.00</Text>
                 </View>
                 <TouchableOpacity style={[styles.bookBtn, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.bookBtnText}>Book Ticket</Text>
+                    <Text style={[styles.bookBtnText, { color: colors.textInverse }]}>Book Ticket</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     description: { fontSize: 15, lineHeight: 24, marginBottom: 24 },
 
     vendorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, borderWidth: 1, borderStyle: 'dashed', gap: 12, marginBottom: 100 },
-    vendorIconBg: { width: 40, height: 40, borderRadius: 10, backgroundColor: '#F97316', alignItems: 'center', justifyContent: 'center' },
+    vendorIconBg: { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
     vendorTitle: { fontSize: 15, fontWeight: '800', marginBottom: 2 },
     vendorSub: { fontSize: 12 },
 

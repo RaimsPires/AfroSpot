@@ -26,11 +26,11 @@ export const TicketSelectionScreen = () => {
                             <Text style={[styles.tierPrice, { color: colors.primary }]}>$15.00</Text>
                         </View>
                         <View style={styles.stepper}>
-                            <TouchableOpacity onPress={() => qty > 0 && setQty(qty - 1)} style={styles.stepBtn}>
+                            <TouchableOpacity onPress={() => qty > 0 && setQty(qty - 1)} style={[styles.stepBtn, { borderColor: colors.border }]}>
                                 <AppIcon library="Feather" name="minus" size={18} color={colors.text} />
                             </TouchableOpacity>
                             <Text style={[styles.qtyText, { color: colors.text }]}>{qty}</Text>
-                            <TouchableOpacity onPress={() => setQty(qty + 1)} style={styles.stepBtn}>
+                            <TouchableOpacity onPress={() => setQty(qty + 1)} style={[styles.stepBtn, { borderColor: colors.border }]}>
                                 <AppIcon library="Feather" name="plus" size={18} color={colors.text} />
                             </TouchableOpacity>
                         </View>
@@ -49,7 +49,7 @@ export const TicketSelectionScreen = () => {
                     <Text style={[styles.totalPrice, { color: colors.text }]}>${(qty * 15).toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity style={[styles.payBtn, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.payText}>Continue to Payment</Text>
+                    <Text style={[styles.payText, { color: colors.textInverse }]}>Continue to Payment</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     tierName: { fontSize: 16, fontWeight: '800', marginBottom: 4 },
     tierPrice: { fontSize: 20, fontWeight: '900' },
     stepper: { flexDirection: 'row', alignItems: 'center', gap: 15 },
-    stepBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, borderColor: '#DDD', alignItems: 'center', justifyContent: 'center' },
+    stepBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
     qtyText: { fontSize: 18, fontWeight: '800' },
     infoBox: { flexDirection: 'row', gap: 10, marginTop: 20 },
     infoText: { fontSize: 13, flex: 1 },
@@ -74,5 +74,5 @@ const styles = StyleSheet.create({
     totalLabel: { fontSize: 14, fontWeight: '600' },
     totalPrice: { fontSize: 22, fontWeight: '900', marginBottom: 15 },
     payBtn: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-    payText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    payText: { fontSize: 16, fontWeight: '800' },
 });

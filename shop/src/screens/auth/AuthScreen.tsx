@@ -1,3 +1,4 @@
+import { Button } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList, RootStackParamList } from '@navigation/types';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
@@ -19,10 +20,9 @@ export const AuthScreen = () => {
 
     const handleLogin = () => {
         const parent = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-        parent?.navigate('AppFlow');
+        parent?.replace('AppFlow');
     };
 
-    const isLoginDisabled = !loginEmail.trim() || !loginPassword.trim();
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -58,17 +58,15 @@ export const AuthScreen = () => {
                             <Text style={[styles.forgotText, { color: colors.primary }]}>Forgot password?</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.mainBtn, { backgroundColor: isLoginDisabled ? colors.surface : colors.primary }]}
-                            disabled={isLoginDisabled}
+                        <Button
                             onPress={handleLogin}
-                        >
-                            <Text style={styles.mainBtnText}>Sign In</Text>
-                        </TouchableOpacity>
+                            title='Sign In'
+                        />
+
 
                         <TouchableOpacity style={styles.switchMode} onPress={() => navigation.navigate('SignUp')}>
-                            <Text style={styles.switchModeText}>
-                                Do not have an account? <Text style={styles.switchModeLink}>Sign Up</Text>
+                            <Text style={[styles.switchModeText, { color: colors.textSecondary }]}>
+                                Do not have an account? <Text style={[styles.switchModeLink, { color: colors.primary }]}>Sign Up</Text>
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -91,8 +89,8 @@ const styles = StyleSheet.create({
     forgotLink: { alignSelf: 'flex-end' },
     forgotText: { fontSize: 13, fontWeight: '700' },
     mainBtn: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
-    mainBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    mainBtnText: { fontSize: 16, fontWeight: '800' },
     switchMode: { alignItems: 'center', marginTop: 12 },
-    switchModeText: { color: '#6B7280' },
-    switchModeLink: { color: '#F97316', fontWeight: '700' },
+    switchModeText: {},
+    switchModeLink: { fontWeight: '700' },
 });

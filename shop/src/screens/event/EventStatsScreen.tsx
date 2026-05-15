@@ -19,12 +19,12 @@ export const EventStatsScreen = () => {
             <ScrollView contentContainerStyle={styles.content}>
                 {/* Total Revenue Card */}
                 <View style={[styles.mainCard, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.cardLabel}>TOTAL REVENUE</Text>
-                    <Text style={styles.cardValue}>$12,350.00</Text>
+                    <Text style={[styles.cardLabel, { color: 'rgba(255,255,255,0.7)' }]}>TOTAL REVENUE</Text>
+                    <Text style={[styles.cardValue, { color: colors.textInverse }]}>$12,350.00</Text>
                     <View style={styles.cardDivider} />
                     <View style={styles.rowBetween}>
-                        <Text style={styles.cardSub}>Ticket Sales: $4,200</Text>
-                        <Text style={styles.cardSub}>Stall Sales: $8,150</Text>
+                        <Text style={[styles.cardSub, { color: colors.textInverse }]}>Ticket Sales: $4,200</Text>
+                        <Text style={[styles.cardSub, { color: colors.textInverse }]}>Stall Sales: $8,150</Text>
                     </View>
                 </View>
 
@@ -38,7 +38,7 @@ export const EventStatsScreen = () => {
                     <View style={[styles.progressBg, { backgroundColor: colors.border }]}>
                         <View style={[styles.progressFill, { width: '60%', backgroundColor: colors.primary }]} />
                     </View>
-                    <Text style={styles.metaText}>60% capacity filled</Text>
+                    <Text style={[styles.metaText, { color: colors.textSecondary }]}>60% capacity filled</Text>
                 </View>
 
                 {/* Vendor Spot Breakdown */}
@@ -49,9 +49,9 @@ export const EventStatsScreen = () => {
                         <Text style={[styles.statQty, { color: colors.text }]}>4 / 5</Text>
                     </View>
                     <View style={[styles.progressBg, { backgroundColor: colors.border }]}>
-                        <View style={[styles.progressFill, { width: '80%', backgroundColor: '#F97316' }]} />
+                        <View style={[styles.progressFill, { width: '80%', backgroundColor: colors.warning }]} />
                     </View>
-                    <Text style={styles.metaText}>1 spot remaining</Text>
+                    <Text style={[styles.metaText, { color: colors.textSecondary }]}>1 spot remaining</Text>
                 </View>
 
                 {/* Free Event Interest (Notify me/RSVP) */}
@@ -75,10 +75,10 @@ const styles = StyleSheet.create({
     headerTitle: { fontSize: 18, fontWeight: '800' },
     content: { padding: 20 },
     mainCard: { padding: 24, borderRadius: 24, marginBottom: 24 },
-    cardLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: '800', letterSpacing: 1 },
-    cardValue: { color: '#FFF', fontSize: 36, fontWeight: '900', marginVertical: 8 },
+    cardLabel: { fontSize: 12, fontWeight: '800', letterSpacing: 1 },
+    cardValue: { fontSize: 36, fontWeight: '900', marginVertical: 8 },
     cardDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: 16 },
-    cardSub: { color: '#FFF', fontSize: 13, fontWeight: '600' },
+    cardSub: { fontSize: 13, fontWeight: '600' },
     sectionTitle: { fontSize: 18, fontWeight: '800', marginBottom: 12, marginTop: 16 },
     statBox: { padding: 20, borderRadius: 20, borderWidth: 1, marginBottom: 12 },
     rowBetween: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
@@ -87,6 +87,6 @@ const styles = StyleSheet.create({
     statQty: { fontSize: 15, fontWeight: '800' },
     progressBg: { height: 8, borderRadius: 4, width: '100%', marginBottom: 8 },
     progressFill: { height: '100%', borderRadius: 4 },
-    metaText: { fontSize: 12, color: '#999', fontWeight: '600' },
+    metaText: { fontSize: 12, fontWeight: '600' },
     largeVal: { fontSize: 28, fontWeight: '900', marginVertical: 4 },
 });

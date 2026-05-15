@@ -46,7 +46,7 @@ export const ForgotPasswordScreen = ({ navigation }: Props) => {
                             disabled={!contactInfo}
                             onPress={() => navigation.navigate('VerifyResetCode', { contactInfo })}
                         >
-                            <Text style={[styles.mainBtnText, { color: contactInfo ? '#FFF' : colors.textSecondary }]}>Send Reset Code</Text>
+                            <Text style={[styles.mainBtnText, { color: contactInfo ? colors.textInverse : colors.textSecondary }]}>Send Reset Code</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

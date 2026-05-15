@@ -74,8 +74,8 @@ const SettingsScreen = ({ navigation }: any) => {
                                 <Switch
                                     value={pushNotifications}
                                     onValueChange={setPushNotifications}
-                                    trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                    thumbColor={pushNotifications ? colors.primary : '#FFF'}
+                                    trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                    thumbColor={pushNotifications ? colors.primary : colors.surfaceElevated}
                                 />
                             }
                         />
@@ -88,8 +88,8 @@ const SettingsScreen = ({ navigation }: any) => {
                                 <Switch
                                     value={emailNotifications}
                                     onValueChange={setEmailNotifications}
-                                    trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                    thumbColor={emailNotifications ? colors.primary : '#FFF'}
+                                    trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                    thumbColor={emailNotifications ? colors.primary : colors.surfaceElevated}
                                 />
                             }
                         />
@@ -108,8 +108,8 @@ const SettingsScreen = ({ navigation }: any) => {
                                 <Switch
                                     value={locationServices}
                                     onValueChange={setLocationServices}
-                                    trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                    thumbColor={locationServices ? colors.primary : '#FFF'}
+                                    trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                    thumbColor={locationServices ? colors.primary : colors.surfaceElevated}
                                 />
                             }
                         />
@@ -123,8 +123,8 @@ const SettingsScreen = ({ navigation }: any) => {
                                 <Switch
                                     value={isDark}
                                     onValueChange={toggleTheme}
-                                    trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                    thumbColor={isDark ? colors.primary : '#FFF'}
+                                    trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                                    thumbColor={isDark ? colors.primary : colors.surfaceElevated}
                                 />
                             }
                         />
@@ -144,9 +144,9 @@ const SettingsScreen = ({ navigation }: any) => {
 
                 {/* 6. Destructive Actions */}
                 <View style={[styles.section, { marginTop: 16 }]}>
-                    <TouchableOpacity style={[styles.deleteBtn, { backgroundColor: '#FEE2E2', borderColor: '#FCA5A5' }]} onPress={handleDeleteAccount}>
-                        <AppIcon library="Feather" name="trash-2" size={18} color="#EF4444" />
-                        <Text style={styles.deleteBtnText}>Delete Account</Text>
+                    <TouchableOpacity style={[styles.deleteBtn, { backgroundColor: colors.destructiveSurface, borderColor: colors.destructive }]} onPress={handleDeleteAccount}>
+                        <AppIcon library="Feather" name="trash-2" size={18} color={colors.destructive} />
+                        <Text style={[styles.deleteBtnText, { color: colors.destructive }]}>Delete Account</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
 
     // Delete Action
     deleteBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 16, borderWidth: 1, gap: 8 },
-    deleteBtnText: { color: '#EF4444', fontSize: 15, fontWeight: '700' },
+    deleteBtnText: { fontSize: 15, fontWeight: '700' },
 
     // Version
     appVersion: { textAlign: 'center', marginTop: 16, marginBottom: 32, fontSize: 12, fontWeight: '500' },

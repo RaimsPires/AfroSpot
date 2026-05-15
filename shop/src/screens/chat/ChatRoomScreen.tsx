@@ -51,7 +51,7 @@ export const ChatRoomScreen = () => {
                 left: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderBottomLeftRadius: 4, padding: 2 },
             }}
             textStyle={{
-                right: { color: '#FFF' },
+                right: { color: colors.textInverse },
                 left: { color: colors.text },
             }}
         />
@@ -68,7 +68,7 @@ export const ChatRoomScreen = () => {
     const renderSend = (props: any) => (
         <Send {...props} containerStyle={styles.sendContainer}>
             <View style={[styles.sendBtn, { backgroundColor: colors.primary }]}>
-                <AppIcon library="Feather" name="send" size={16} color="#FFF" />
+                <AppIcon library="Feather" name="send" size={16} color={colors.textInverse} />
             </View>
         </Send>
     );
@@ -87,7 +87,7 @@ export const ChatRoomScreen = () => {
                         <Image source={{ uri: CUSTOMER.avatar }} style={styles.headerAvatar} />
                         <View>
                             <Text style={[styles.headerName, { color: colors.text }]}>{CUSTOMER.name}</Text>
-                            <Text style={[styles.headerStatus, { color: '#10B981' }]}>Online</Text>
+                            <Text style={[styles.headerStatus, { color: colors.success }]}>Online</Text>
                         </View>
                     </View>
                 </View>

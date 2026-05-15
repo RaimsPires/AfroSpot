@@ -14,18 +14,19 @@ export type BusinessTabParamList = {
     DashboardTab: undefined;
     CalendarTab: undefined;
     MessagesTab: undefined;
-    StoreTab: undefined;
-    ProfileTab: undefined;
+    Settings: undefined;
 };
 
 export type AppStackParamList = {
     MainTabs: undefined;
+    ProfileStack: undefined;
     BusinessNotifications: undefined;
+    BusinessNotificationsScreen: undefined;
     ManageStaff: undefined;
     MerchantSupport: undefined;
     PayoutsEarnings: undefined;
     Report: undefined;
-    Settings: undefined;
+    StoreStack: undefined;
     StoreAnalytics: undefined;
     TaxInvoice: undefined;
     BusinessKYC: undefined;
@@ -51,6 +52,7 @@ export type AppStackParamList = {
     ManageProfile: undefined;
     ManageReviews: undefined;
     ManageServices: undefined;
+    ClientsList: undefined;
 };
 
 export type RootStackParamList = {

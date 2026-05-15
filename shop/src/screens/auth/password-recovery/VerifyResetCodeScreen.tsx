@@ -55,7 +55,7 @@ export const VerifyResetCodeScreen = ({ navigation, route }: Props) => {
                             disabled={otp.length !== 6}
                             onPress={() => navigation.navigate('ResetPassword', { contactInfo })}
                         >
-                            <Text style={[styles.mainBtnText, { color: otp.length === 6 ? '#FFF' : colors.textSecondary }]}>Verify Code</Text>
+                            <Text style={[styles.mainBtnText, { color: otp.length === 6 ? colors.textInverse : colors.textSecondary }]}>Verify Code</Text>
                         </TouchableOpacity>
 
                         <View style={styles.resendContainer}>

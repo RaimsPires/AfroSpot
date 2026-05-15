@@ -19,7 +19,7 @@ export function AppIcon({
     library = 'Feather',
     name,
     size = 20,
-    color = '#111827',
+    color = 'currentColor',
     style,
     ...rest
 }: CustomIconProps) {

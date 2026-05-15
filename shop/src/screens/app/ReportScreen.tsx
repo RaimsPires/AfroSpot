@@ -50,8 +50,8 @@ const ReportScreen = ({ navigation }: any) => {
         return (
             <SafeAreaView style={[styles.statusContainer, { backgroundColor: colors.background }]}>
                 <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-                <View style={styles.successCircle}>
-                    <AppIcon library="Feather" name="check" size={40} color="#FFF" />
+                <View style={[styles.successCircle, { backgroundColor: colors.success, shadowColor: colors.success }]}>
+                    <AppIcon library="Feather" name="check" size={40} color={colors.textInverse} />
                 </View>
                 <Text style={[styles.statusTitle, { color: colors.text }]}>Report Submitted</Text>
                 <Text style={[styles.statusSub, { color: colors.textSecondary }]}>
@@ -95,7 +95,7 @@ const ReportScreen = ({ navigation }: any) => {
 
                     {/* Context Info */}
                     <View style={[styles.contextBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                        <AppIcon library="Feather" name="alert-triangle" size={20} color="#F59E0B" style={{ marginRight: 12 }} />
+                        <AppIcon library="Feather" name="alert-triangle" size={20} color={colors.warning} style={{ marginRight: 12 }} />
                         <Text style={[styles.contextText, { color: colors.textSecondary }]}>
                             You are reporting <Text style={{ fontWeight: '700', color: colors.text }}>@kofi_styles</Text>'s post.
                             This report will be sent anonymously to our moderation team.
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
 
     // Success State
     statusContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-    successCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#10B981', alignItems: 'center', justifyContent: 'center', marginBottom: 24, elevation: 5, shadowColor: '#10B981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
+    successCircle: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', marginBottom: 24, elevation: 5, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
     statusTitle: { fontSize: 24, fontWeight: '900', marginBottom: 12 },
     statusSub: { fontSize: 15, lineHeight: 22, textAlign: 'center' },
 });

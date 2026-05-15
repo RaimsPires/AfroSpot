@@ -66,7 +66,7 @@ export const MessageTimelineScreen = () => {
                                 </Text>
                                 {thread.unread > 0 && (
                                     <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]}>
-                                        <Text style={styles.unreadText}>{thread.unread}</Text>
+                                        <Text style={[styles.unreadText, { color: colors.textInverse }]}>{thread.unread}</Text>
                                     </View>
                                 )}
                             </View>
@@ -95,5 +95,5 @@ const styles = StyleSheet.create({
     threadFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     lastMessage: { flex: 1, fontSize: 14, marginRight: 12 },
     unreadBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
-    unreadText: { color: '#FFF', fontSize: 11, fontWeight: '800' },
+    unreadText: { fontSize: 11, fontWeight: '800' },
 });

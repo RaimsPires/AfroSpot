@@ -44,7 +44,7 @@ export const TaxInvoiceScreen = () => {
                             </View>
                             <View style={styles.invRight}>
                                 <Text style={[styles.invAmount, { color: colors.primary }]}>{inv.amount}</Text>
-                                <Text style={[styles.invStatus, { color: inv.status === 'Paid' ? '#10B981' : colors.textSecondary }]}>{inv.status}</Text>
+                                <Text style={[styles.invStatus, { color: inv.status === 'Paid' ? colors.success : colors.textSecondary }]}>{inv.status}</Text>
                             </View>
                         </View>
                     ))

@@ -33,7 +33,7 @@ const BusinessStoreScreen = () => {
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
             {/* Header */}
-            <View style={[styles.header, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
                 <TouchableOpacity style={styles.iconBtn}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
@@ -80,7 +80,7 @@ const BusinessStoreScreen = () => {
                             <View style={styles.itemInfo}>
                                 <Text style={[styles.itemTitle, { color: colors.text }]} numberOfLines={1}>{product.title}</Text>
                                 <Text style={[styles.itemPrice, { color: colors.primary }]}>{product.price}</Text>
-                                <Text style={[styles.stockText, { color: product.stock === 0 ? '#EF4444' : '#10B981' }]}>
+                                <Text style={[styles.stockText, { color: product.stock === 0 ? colors.destructive : colors.success }]}>
                                     {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
                                 </Text>
                             </View>
@@ -110,7 +110,7 @@ const BusinessStoreScreen = () => {
 
             {/* FAB */}
             <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary }]}>
-                <AppIcon library="Feather" name="plus" size={24} color="#FFF" />
+                <AppIcon library="Feather" name="plus" size={24} color={colors.textInverse} />
             </TouchableOpacity>
         </SafeAreaView>
     );
@@ -118,7 +118,7 @@ const BusinessStoreScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 },
     headerTitle: { fontSize: 18, fontWeight: '800' },
     iconBtn: { padding: 8 },
     statsContainer: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 },

@@ -130,11 +130,11 @@ const ManageReviewsScreen = () => {
                         <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 16 }]}>Overall Rating</Text>
 
                         <View style={styles.analyticsContent}>
-                            <View style={styles.analyticsLeft}>
+                            <View style={[styles.analyticsLeft, { borderRightColor: colors.divider }]}>
                                 <Text style={[styles.averageScore, { color: colors.text }]}>{RATING_STATS.average}</Text>
                                 <View style={styles.starsRow}>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <AppIcon key={star} library="AntDesign" name="star" size={16} color="#F59E0B" />
+                                        <AppIcon key={star} library="AntDesign" name="star" size={16} color={colors.warning} />
                                     ))}
                                 </View>
                                 <Text style={[styles.totalReviews, { color: colors.textSecondary }]}>
@@ -148,7 +148,7 @@ const ManageReviewsScreen = () => {
                                     return (
                                         <View key={item.stars} style={styles.barRow}>
                                             <Text style={[styles.barStarText, { color: colors.textSecondary }]}>{item.stars}</Text>
-                                            <AppIcon library="AntDesign" name="star" size={10} color="#F59E0B" />
+                                            <AppIcon library="AntDesign" name="star" size={10} color={colors.warning} />
                                             <View style={[styles.barTrack, { backgroundColor: colors.border }]}>
                                                 <View style={[styles.barFill, { width: `${widthPercent}%`, backgroundColor: colors.primary }]} />
                                             </View>
@@ -176,7 +176,7 @@ const ManageReviewsScreen = () => {
                                         },
                                     ]}
                                 >
-                                    <Text style={[styles.tabPillText, { color: isActive ? '#FFF' : colors.textSecondary }]}>
+                                    <Text style={[styles.tabPillText, { color: isActive ? colors.textInverse : colors.textSecondary }]}>
                                         {tab}
                                     </Text>
                                 </TouchableOpacity>
@@ -210,7 +210,7 @@ const ManageReviewsScreen = () => {
                                                     library="AntDesign"
                                                     name="star"
                                                     size={12}
-                                                    color={star <= review.rating ? "#F59E0B" : colors.border}
+                                                    color={star <= review.rating ? colors.warning : colors.border}
                                                 />
                                             ))}
                                         </View>
@@ -232,7 +232,7 @@ const ManageReviewsScreen = () => {
 
                                     {/* Actions / Inline Reply Input */}
                                     {!review.businessReply && (
-                                        <View style={styles.actionContainer}>
+                                        <View style={[styles.actionContainer, { borderTopColor: colors.divider }]}>
                                             {replyingTo === review.id ? (
                                                 <View style={styles.replyInputArea}>
                                                     <TextInput
@@ -252,7 +252,7 @@ const ManageReviewsScreen = () => {
                                                             onPress={() => handleSubmitReply(review.id)}
                                                             style={[styles.submitReplyBtn, { backgroundColor: colors.primary }]}
                                                         >
-                                                            <Text style={styles.submitReplyText}>Post Reply</Text>
+                                                            <Text style={[styles.submitReplyText, { color: colors.textInverse }]}>Post Reply</Text>
                                                         </TouchableOpacity>
                                                     </View>
                                                 </View>
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     analyticsCard: { margin: 20, padding: 20, borderRadius: 16, borderWidth: 1 },
     sectionTitle: { fontSize: 16, fontWeight: '800' },
     analyticsContent: { flexDirection: 'row' },
-    analyticsLeft: { flex: 0.4, alignItems: 'center', justifyContent: 'center', borderRightWidth: 1, borderRightColor: 'rgba(0,0,0,0.05)', paddingRight: 16 },
+    analyticsLeft: { flex: 0.4, alignItems: 'center', justifyContent: 'center', borderRightWidth: 1, paddingRight: 16 },
     averageScore: { fontSize: 40, fontWeight: '900', marginBottom: 4 },
     starsRow: { flexDirection: 'row', gap: 2, marginBottom: 8 },
     totalReviews: { fontSize: 11, textAlign: 'center' },
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     replyContent: { fontSize: 14, lineHeight: 20 },
 
     // Action / Reply Input
-    actionContainer: { marginTop: 8, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.05)' },
+    actionContainer: { marginTop: 8, paddingTop: 16, borderTopWidth: 1 },
     replyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, borderRadius: 12, borderWidth: 1, gap: 8 },
     replyBtnText: { fontSize: 14, fontWeight: '700' },
 
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     cancelReplyBtn: { paddingVertical: 8, paddingHorizontal: 12 },
     cancelReplyText: { fontSize: 14, fontWeight: '600' },
     submitReplyBtn: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8 },
-    submitReplyText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
+    submitReplyText: { fontSize: 14, fontWeight: '700' },
 
     // Empty State
     emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40 },

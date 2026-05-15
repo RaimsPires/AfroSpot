@@ -15,63 +15,18 @@ import { useTheme } from '@contexts/ThemeContext';
 // --- Mock Data ---
 const FILTER_TABS = ['All', 'Bookings', 'Reviews', 'System'];
 
-const NOTIFICATIONS = [
-    {
-        id: '1',
-        type: 'Bookings',
-        title: 'New Booking Request',
-        message: 'Marcus Johnson requested a Fresh Fade & Lineup for Tomorrow at 10:30 AM.',
-        time: '10m ago',
-        icon: 'calendar',
-        iconColor: '#3B82F6',
-        iconBg: '#DBEAFE',
-        isUnread: true,
-        action: 'Review Request',
-    },
-    {
-        id: '2',
-        type: 'System',
-        title: 'Low Stock Alert',
-        message: 'Shea Butter Luxe is out of stock. Update your inventory to keep selling.',
-        time: '1h ago',
-        icon: 'alert-triangle',
-        iconColor: '#EF4444',
-        iconBg: '#FEE2E2',
-        isUnread: true,
-        action: 'Update Inventory',
-    },
-    {
-        id: '3',
-        type: 'Reviews',
-        title: 'New 5-Star Review!',
-        message: 'Sarah Jenkins left a positive review for your service. Take a moment to reply.',
-        time: '2h ago',
-        icon: 'star',
-        iconColor: '#F59E0B',
-        iconBg: '#FEF3C7',
-        isUnread: false,
-        action: 'Reply to Review',
-    },
-    {
-        id: '4',
-        type: 'System',
-        title: 'Payout Initiated',
-        message: 'Your weekly payout of $1,240.00 has been processed and is on its way to your bank.',
-        time: 'Yesterday',
-        icon: 'dollar-sign',
-        iconColor: '#10B981',
-        iconBg: '#D1FAE5',
-        isUnread: false,
-    },
-];
-
 export const BusinessNotificationsScreen = () => {
     const { colors, isDark } = useTheme();
     const [activeTab, setActiveTab] = useState('All');
 
-    const filteredNotifications = NOTIFICATIONS.filter(
-        (notif) => activeTab === 'All' || notif.type === activeTab
-    );
+    // Derive icon colors from theme at render time
+    const NOTIFICATIONS_THEMED = [
+        { id: '1', type: 'Bookings', title: 'New Booking Request', message: 'Marcus Johnson requested a Fresh Fade & Lineup for Tomorrow at 10:30 AM.', time: '10m ago', icon: 'calendar', isUnread: true, action: 'Review Request', iconColor: colors.info, iconBg: colors.infoSurface },
+        { id: '2', type: 'System', title: 'Low Stock Alert', message: 'Shea Butter Luxe is out of stock. Update your inventory to keep selling.', time: '1h ago', icon: 'alert-triangle', isUnread: true, action: 'Update Inventory', iconColor: colors.destructive, iconBg: colors.destructiveSurface },
+        { id: '3', type: 'Reviews', title: 'New 5-Star Review!', message: 'Sarah Jenkins left a positive review for your service. Take a moment to reply.', time: '2h ago', icon: 'star', isUnread: false, action: 'Reply to Review', iconColor: colors.warning, iconBg: colors.warningSurface },
+        { id: '4', type: 'System', title: 'Payout Initiated', message: 'Your weekly payout of $1,240.00 has been processed and is on its way to your bank.', time: 'Yesterday', icon: 'dollar-sign', isUnread: false, iconColor: colors.success, iconBg: colors.successSurface },
+    ];
+    const filteredNotifications = NOTIFICATIONS_THEMED.filter(n => activeTab === 'All' || n.type === activeTab);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -102,7 +57,7 @@ export const BusinessNotificationsScreen = () => {
                                     },
                                 ]}
                             >
-                                <Text style={[styles.tabPillText, { color: isActive ? '#FFF' : colors.textSecondary }]}>
+                                <Text style={[styles.tabPillText, { color: isActive ? colors.textInverse : colors.textSecondary }]}>
                                     {tab}
                                 </Text>
                             </TouchableOpacity>

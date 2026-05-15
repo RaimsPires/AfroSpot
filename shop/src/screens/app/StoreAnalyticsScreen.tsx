@@ -50,7 +50,7 @@ const TOP_SERVICES = [
     { id: 's3', title: 'Full Grooming Experience', bookings: 6, revenue: '$390', progress: 25 },
 ];
 
-export const StoreAnalyticsScreen = () => {
+export const StoreAnalyticsScreen = ({ navigation }) => {
     const { colors, isDark } = useTheme();
     const [activeTimeframe, setActiveTimeframe] = useState('This Week');
 
@@ -63,7 +63,9 @@ export const StoreAnalyticsScreen = () => {
 
             {/* 1. Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.iconBtn}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Analytics & Reports</Text>
@@ -104,9 +106,9 @@ export const StoreAnalyticsScreen = () => {
                 <View style={[styles.mainMetricCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                     <View style={styles.metricHeaderRow}>
                         <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>TOTAL REVENUE</Text>
-                        <View style={[styles.growthBadge, { backgroundColor: '#D1FAE5' }]}>
-                            <AppIcon library="Feather" name="trending-up" size={12} color="#10B981" />
-                            <Text style={styles.growthText}>{METRICS.revenueGrowth}</Text>
+                    <View style={[styles.growthBadge, { backgroundColor: colors.successSurface }]}>
+                        <AppIcon library="Feather" name="trending-up" size={12} color={colors.success} />
+                        <Text style={[styles.growthText, { color: colors.success }]}>{METRICS.revenueGrowth}</Text>
                         </View>
                     </View>
                     <Text style={[styles.metricValue, { color: colors.text }]}>{METRICS.revenue}</Text>
@@ -139,7 +141,7 @@ export const StoreAnalyticsScreen = () => {
                         <View style={styles.chartBars}>
                             {CHART_DATA.map((data, index) => {
                                 // Calculate height relative to max value (leaving some padding at top)
-                                const barHeight = `${(data.value / maxChartValue) * 85}%`;
+                                const barHeight = Number.parseFloat(`${(data.value / maxChartValue) * 85}%`);
                                 return (
                                     <View key={index} style={styles.barCol}>
                                         <View style={[styles.barBg, { backgroundColor: colors.border }]}>
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     metricHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
     metricLabel: { fontSize: 11, fontWeight: '800', letterSpacing: 1 },
     growthBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, gap: 4 },
-    growthText: { color: '#065F46', fontSize: 11, fontWeight: '800' },
+    growthText: { fontSize: 11, fontWeight: '800' },
     metricValue: { fontSize: 36, fontWeight: '900', marginBottom: 4, letterSpacing: -1 },
     metricSub: { fontSize: 13, fontWeight: '500' },
 

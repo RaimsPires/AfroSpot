@@ -69,7 +69,7 @@ export const ResetPasswordScreen = ({ navigation }: Props) => {
                             disabled={!isValid}
                             onPress={() => navigation.navigate('PasswordResetSuccess')}
                         >
-                            <Text style={[styles.mainBtnText, { color: isValid ? '#FFF' : colors.textSecondary }]}>Reset Password</Text>
+                            <Text style={[styles.mainBtnText, { color: isValid ? colors.textInverse : colors.textSecondary }]}>Reset Password</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

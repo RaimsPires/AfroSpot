@@ -25,15 +25,15 @@ export const MyTicketsScreen = () => {
 
                     {/* Dotted Divider */}
                     <View style={styles.dividerContainer}>
-                        <View style={styles.sideHole} />
-                        <View style={styles.dottedLine} />
-                        <View style={[styles.sideHole, { right: -10 }]} />
+                        <View style={[styles.sideHole, { backgroundColor: colors.border }]} />
+                        <View style={[styles.dottedLine, { borderColor: colors.border }]} />
+                        <View style={[styles.sideHole, { right: -10, backgroundColor: colors.border }]} />
                     </View>
 
                     <View style={styles.bottomPart}>
                         <Text style={styles.qrLabel}>SCAN AT ENTRANCE</Text>
-                        <View style={styles.qrContainer}>
-                            <AppIcon library="Feather" name="layers" size={100} color="#000" />
+                        <View style={[styles.qrContainer, { backgroundColor: colors.surfaceElevated }]}>
+                            <AppIcon library="Feather" name="layers" size={100} color={colors.text} />
                             {/* Note: Use a real QR library in production */}
                         </View>
                         <Text style={styles.ticketId}>ID: AS-9923-4410</Text>
@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
     ticketTitle: { fontSize: 18, fontWeight: '800', marginBottom: 5 },
     ticketInfo: { fontSize: 12, opacity: 0.7, marginBottom: 2 },
     dividerContainer: { height: 20, flexDirection: 'row', alignItems: 'center', overflow: 'hidden' },
-    sideHole: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#f0f0f0', position: 'absolute', left: -10 },
-    dottedLine: { flex: 1, borderStyle: 'dashed', borderWidth: 1, borderColor: '#DDD', marginHorizontal: 15 },
+    sideHole: { width: 20, height: 20, borderRadius: 10, position: 'absolute', left: -10 },
+    dottedLine: { flex: 1, borderStyle: 'dashed', borderWidth: 1, marginHorizontal: 15 },
     bottomPart: { padding: 25, alignItems: 'center' },
     qrLabel: { fontSize: 10, fontWeight: '900', letterSpacing: 2, marginBottom: 20 },
-    qrContainer: { padding: 15, backgroundColor: '#FFF', borderRadius: 15 },
+    qrContainer: { padding: 15, borderRadius: 15 },
     ticketId: { marginTop: 15, fontSize: 12, fontWeight: '700', opacity: 0.5 },
     calendarBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16, borderRadius: 16, borderWidth: 1, marginTop: 30, gap: 10 },
     calendarText: { fontWeight: '700' }

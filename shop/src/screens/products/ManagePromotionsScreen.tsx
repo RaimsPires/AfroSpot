@@ -145,7 +145,7 @@ const ManagePromotionsScreen = () => {
                                     },
                                 ]}
                             >
-                                <Text style={[styles.tabPillText, { color: isActive ? '#FFF' : colors.textSecondary }]}>
+                                <Text style={[styles.tabPillText, { color: isActive ? colors.textInverse : colors.textSecondary }]}>
                                     {tab} ({count})
                                 </Text>
                             </TouchableOpacity>
@@ -232,10 +232,10 @@ const ManagePromotionsScreen = () => {
                                     )}
 
                                     <TouchableOpacity
-                                        style={[styles.deleteBtn, { backgroundColor: '#FEE2E2' }]}
+                                        style={[styles.deleteBtn, { backgroundColor: colors.destructiveSurface }]}
                                         onPress={() => handleDelete(promo.id)}
                                     >
-                                        <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
+                                        <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -247,7 +247,7 @@ const ManagePromotionsScreen = () => {
 
             {/* 4. Floating Action Button to Create New Promo */}
             <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}>
-                <AppIcon library="Feather" name="plus" size={24} color="#FFF" />
+                <AppIcon library="Feather" name="plus" size={24} color={colors.textInverse} />
             </TouchableOpacity>
 
         </SafeAreaView>

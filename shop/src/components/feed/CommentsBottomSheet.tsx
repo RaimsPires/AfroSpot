@@ -13,10 +13,10 @@ export const CommentsBottomSheet = () => {
   const [comment, setComment] = useState('');
 
   return (
-    <View style={styles.overlay}>
+    <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.sheet, { backgroundColor: colors.background }]}>
 
-        <View style={styles.sheetHeader}>
+        <View style={[styles.sheetHeader, { borderBottomColor: colors.divider }]}>
           <Text style={[styles.headerTitle, { color: colors.text }]}>Comments (128)</Text>
           <TouchableOpacity><AppIcon library="Feather" name="x" size={24} color={colors.text} /></TouchableOpacity>
         </View>
@@ -57,9 +57,9 @@ export const CommentsBottomSheet = () => {
 };
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  overlay: { flex: 1, justifyContent: 'flex-end' },
   sheet: { height: '70%', borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden' },
-  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.05)' },
+  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1 },
   headerTitle: { fontSize: 16, fontWeight: '800' },
   commentList: { padding: 20, gap: 20 },
   commentRow: { flexDirection: 'row' },

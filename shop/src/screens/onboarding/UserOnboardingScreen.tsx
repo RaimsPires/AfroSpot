@@ -37,8 +37,8 @@ export const UserOnboardingScreen = () => {
                             onPress={() => toggleInterest(item.id)}
                             style={[styles.card, { backgroundColor: isActive ? colors.primary : colors.surface, borderColor: isActive ? colors.primary : colors.border }]}
                         >
-                            <AppIcon library="Feather" name={item.icon} size={28} color={isActive ? '#FFF' : colors.text} style={{ marginBottom: 12 }} />
-                            <Text style={[styles.cardLabel, { color: isActive ? '#FFF' : colors.text }]}>{item.label}</Text>
+                            <AppIcon library="Feather" name={item.icon} size={28} color={isActive ? colors.textInverse : colors.text} style={{ marginBottom: 12 }} />
+                            <Text style={[styles.cardLabel, { color: isActive ? colors.textInverse : colors.text }]}>{item.label}</Text>
                         </TouchableOpacity>
                     );
                 })}
@@ -46,7 +46,7 @@ export const UserOnboardingScreen = () => {
 
             <View style={[styles.footer, { borderTopColor: colors.border }]}>
                 <TouchableOpacity style={[styles.continueBtn, { backgroundColor: selected.length > 0 ? colors.primary : colors.surface }]}>
-                    <Text style={[styles.continueText, { color: selected.length > 0 ? '#FFF' : colors.textSecondary }]}>Continue to App</Text>
+                    <Text style={[styles.continueText, { color: selected.length > 0 ? colors.textInverse : colors.textSecondary }]}>Continue to App</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

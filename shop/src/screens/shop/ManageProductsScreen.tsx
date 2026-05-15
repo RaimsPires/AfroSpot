@@ -46,7 +46,7 @@ const INITIAL_PRODUCTS = [
     },
 ];
 
-const ManageProductsScreen = () => {
+const ManageProductsScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
     const [products, setProducts] = useState(INITIAL_PRODUCTS);
@@ -123,9 +123,9 @@ const ManageProductsScreen = () => {
     };
 
     const getStockColor = (count: number) => {
-        if (count === 0) return '#EF4444'; // Red (Out of Stock)
-        if (count < 5) return '#F59E0B'; // Orange (Low Stock)
-        return '#10B981'; // Green (In Stock)
+        if (count === 0) return colors.destructive;
+        if (count < 5) return colors.warning;
+        return colors.success;
     };
 
     return (
@@ -134,7 +134,7 @@ const ManageProductsScreen = () => {
 
             {/* Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack() }>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Manage Products</Text>
@@ -153,7 +153,7 @@ const ManageProductsScreen = () => {
                         <Text style={[styles.emptyTitle, { color: colors.text }]}>No Products Yet</Text>
                         <Text style={[styles.emptyDesc, { color: colors.textSecondary }]}>Add physical or digital products to sell in the AfroSpot marketplace.</Text>
                         <TouchableOpacity style={[styles.emptyBtn, { backgroundColor: colors.primary }]} onPress={openAddModal}>
-                            <Text style={styles.emptyBtnText}>Add First Product</Text>
+                            <Text style={[styles.emptyBtnText, { color: colors.textInverse }]}>Add First Product</Text>
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -182,8 +182,8 @@ const ManageProductsScreen = () => {
                                     <Text style={[styles.actionText, { color: colors.textSecondary }]}>Edit</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.actionBtn} onPress={() => handleDelete(product.id)}>
-                                    <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
-                                    <Text style={[styles.actionText, { color: '#EF4444' }]}>Delete</Text>
+                                    <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
+                                    <Text style={[styles.actionText, { color: colors.destructive }]}>Delete</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -195,7 +195,7 @@ const ManageProductsScreen = () => {
             <Modal visible={modalVisible} transparent animationType="slide">
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                    style={styles.modalOverlay}
+                    style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
                 >
                     <View style={[styles.modalContent, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
 
@@ -217,10 +217,10 @@ const ManageProductsScreen = () => {
                                     <View style={styles.previewContainer}>
                                         <Image source={{ uri: productImage }} style={styles.imagePreview} />
                                         <TouchableOpacity
-                                            style={styles.changeImageBtn}
+                                            style={[styles.changeImageBtn, { backgroundColor: colors.destructive, borderColor: colors.surfaceElevated }]}
                                             onPress={() => setProductImage(null)}
                                         >
-                                            <AppIcon library="Feather" name="x" size={16} color="#FFF" />
+                                            <AppIcon library="Feather" name="x" size={16} color={colors.textInverse} />
                                         </TouchableOpacity>
                                     </View>
                                 ) : (
@@ -293,7 +293,7 @@ const ManageProductsScreen = () => {
                                 style={[styles.saveActionBtn, { backgroundColor: colors.primary }]}
                                 onPress={handleSave}
                             >
-                                <Text style={styles.saveActionBtnText}>Save Product</Text>
+                                <Text style={[styles.saveActionBtnText, { color: colors.textInverse }]}>Save Product</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -342,10 +342,10 @@ const styles = StyleSheet.create({
     emptyTitle: { fontSize: 20, fontWeight: '800', marginBottom: 8 },
     emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 22, marginBottom: 24 },
     emptyBtn: { paddingHorizontal: 24, paddingVertical: 14, borderRadius: 24 },
-    emptyBtnText: { color: '#FFF', fontSize: 15, fontWeight: '800' },
+    emptyBtnText: { fontSize: 15, fontWeight: '800' },
 
     // Modal
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    modalOverlay: { flex: 1, justifyContent: 'flex-end' },
     modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '95%' },
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, paddingBottom: 10 },
     modalTitle: { fontSize: 20, fontWeight: '800' },
@@ -365,14 +365,14 @@ const styles = StyleSheet.create({
     uploadText: { marginTop: 8, fontSize: 13, fontWeight: '600' },
     previewContainer: { position: 'relative', height: 120, width: 120 },
     imagePreview: { width: '100%', height: '100%', borderRadius: 12 },
-    changeImageBtn: { position: 'absolute', top: -8, right: -8, backgroundColor: '#EF4444', width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#FFF' },
+    changeImageBtn: { position: 'absolute', top: -8, right: -8, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
 
     // Modal Footer
     modalFooter: { flexDirection: 'row', padding: 20, paddingBottom: 34, borderTopWidth: 1, gap: 12 },
     cancelBtn: { flex: 1, height: 52, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
     cancelBtnText: { fontSize: 15, fontWeight: '700' },
     saveActionBtn: { flex: 1.5, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-    saveActionBtnText: { color: '#FFF', fontSize: 15, fontWeight: '700' },
+    saveActionBtnText: { fontSize: 15, fontWeight: '700' },
 });
 
 export default ManageProductsScreen;

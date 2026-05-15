@@ -51,7 +51,7 @@ export const StoreFeedsScreen = ({ navigation }: any) => {
                         <Text style={[styles.summaryValue, { color: colors.text }]}>39.1K</Text>
                         <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Total Views</Text>
                     </View>
-                    <View style={styles.summaryDivider} />
+                    <View style={[styles.summaryDivider, { backgroundColor: colors.divider }]} />
                     <View style={styles.summaryItem}>
                         <Text style={[styles.summaryValue, { color: colors.text }]}>4.6K</Text>
                         <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Total Likes</Text>
@@ -72,7 +72,7 @@ export const StoreFeedsScreen = ({ navigation }: any) => {
                                 </View>
                                 <View style={styles.statsOverlay}>
                                     <AppIcon library="Feather" name="eye" size={12} color="#FFF" style={{ marginRight: 4 }} />
-                                    <Text style={styles.statsText}>{feed.views}</Text>
+                                    <Text style={[styles.statsText, { color: '#FFF' }]}>{feed.views}</Text>
                                 </View>
                             </ImageBackground>
                         </TouchableOpacity>
@@ -95,12 +95,12 @@ const styles = StyleSheet.create({
     summaryItem: { flex: 1, alignItems: 'center' },
     summaryValue: { fontSize: 24, fontWeight: '900', marginBottom: 4 },
     summaryLabel: { fontSize: 12, fontWeight: '600' },
-    summaryDivider: { width: 1, backgroundColor: 'rgba(0,0,0,0.1)', marginHorizontal: 16 },
+    summaryDivider: { width: 1, marginHorizontal: 16 },
 
     gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     gridItem: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE * 1.5, borderRadius: 8 },
     thumbnail: { width: '100%', height: '100%', justifyContent: 'space-between' },
     playIconOverlay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     statsOverlay: { flexDirection: 'row', alignItems: 'center', padding: 8, backgroundColor: 'rgba(0,0,0,0.4)', borderBottomLeftRadius: 8, borderBottomRightRadius: 8 },
-    statsText: { color: '#FFF', fontSize: 10, fontWeight: '700' },
+    statsText: { fontSize: 10, fontWeight: '700' },
 });

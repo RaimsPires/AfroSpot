@@ -18,7 +18,7 @@ export const OrganizerEventListScreen = () => {
             <View style={styles.header}>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>My Events</Text>
                 <TouchableOpacity style={[styles.addCircle, { backgroundColor: colors.primary }]}>
-                    <AppIcon library="Feather" name="plus" size={20} color="#FFF" />
+                    <AppIcon library="Feather" name="plus" size={20} color={colors.textInverse} />
                 </TouchableOpacity>
             </View>
 
@@ -43,15 +43,15 @@ export const OrganizerEventListScreen = () => {
                             <View style={styles.statsRow}>
                                 <View style={styles.statItem}>
                                     <Text style={[styles.statVal, { color: colors.text }]}>{event.ticketSales}</Text>
-                                    <Text style={styles.statLab}>Tickets</Text>
+                                    <Text style={[styles.statLab, { color: colors.textSecondary }]}>Tickets</Text>
                                 </View>
                                 <View style={styles.statItem}>
                                     <Text style={[styles.statVal, { color: colors.text }]}>{event.stallSales}</Text>
-                                    <Text style={styles.statLab}>Stalls</Text>
+                                    <Text style={[styles.statLab, { color: colors.textSecondary }]}>Stalls</Text>
                                 </View>
                                 <View style={styles.statItem}>
                                     <Text style={[styles.statVal, { color: colors.text }]}>{event.revenue}</Text>
-                                    <Text style={styles.statLab}>Revenue</Text>
+                                    <Text style={[styles.statLab, { color: colors.textSecondary }]}>Revenue</Text>
                                 </View>
                             </View>
                         </View>
@@ -79,5 +79,5 @@ const styles = StyleSheet.create({
     statsRow: { flexDirection: 'row', gap: 20 },
     statItem: { alignItems: 'center' },
     statVal: { fontSize: 14, fontWeight: '800' },
-    statLab: { fontSize: 10, color: '#999' },
+    statLab: { fontSize: 10 },
 });

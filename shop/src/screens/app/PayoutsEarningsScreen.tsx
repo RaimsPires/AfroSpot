@@ -27,9 +27,9 @@ export const PayoutsEarningsScreen = () => {
 
                 {/* Balances */}
                 <View style={[styles.balanceCard, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.balanceLabel}>AVAILABLE FOR PAYOUT</Text>
-                    <Text style={styles.balanceAmount}>$450.00</Text>
-                    <TouchableOpacity style={styles.withdrawBtn}>
+                    <Text style={[styles.balanceLabel, { color: 'rgba(255,255,255,0.8)' }]}>AVAILABLE FOR PAYOUT</Text>
+                    <Text style={[styles.balanceAmount, { color: colors.textInverse }]}>$450.00</Text>
+                    <TouchableOpacity style={[styles.withdrawBtn, { backgroundColor: colors.surfaceElevated }]}>
                         <Text style={[styles.withdrawText, { color: colors.primary }]}>Withdraw Funds</Text>
                     </TouchableOpacity>
                 </View>
@@ -59,7 +59,7 @@ export const PayoutsEarningsScreen = () => {
                             </View>
                             <View style={styles.historyStatus}>
                                 <Text style={[styles.historyDate, { color: colors.textSecondary }]}>{item.date}</Text>
-                                <Text style={[styles.statusBadge, { color: '#10B981', backgroundColor: '#D1FAE5' }]}>{item.status}</Text>
+                                <Text style={[styles.statusBadge, { color: colors.success, backgroundColor: colors.successSurface }]}>{item.status}</Text>
                             </View>
                         </View>
                     ))}
@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
     iconBtn: { padding: 4 },
     content: { padding: 20 },
     balanceCard: { padding: 24, borderRadius: 20, alignItems: 'center', marginBottom: 16 },
-    balanceLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: '800', letterSpacing: 1, marginBottom: 8 },
-    balanceAmount: { color: '#FFF', fontSize: 40, fontWeight: '900', marginBottom: 20 },
-    withdrawBtn: { backgroundColor: '#FFF', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24 },
+    balanceLabel: { fontSize: 12, fontWeight: '800', letterSpacing: 1, marginBottom: 8 },
+    balanceAmount: { fontSize: 40, fontWeight: '900', marginBottom: 20 },
+    withdrawBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24 },
     withdrawText: { fontSize: 15, fontWeight: '800' },
     statsRow: { flexDirection: 'row', gap: 16, marginBottom: 32 },
     statBox: { flex: 1, padding: 16, borderRadius: 16, borderWidth: 1 },

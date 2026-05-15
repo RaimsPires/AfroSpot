@@ -40,7 +40,7 @@ export const EventsDiscoveryScreen = () => {
                             onPress={() => setActiveCat(cat)}
                             style={[styles.catBtn, activeCat === cat && { backgroundColor: colors.primary }]}
                         >
-                            <Text style={[styles.catText, { color: activeCat === cat ? '#FFF' : colors.textSecondary }]}>{cat}</Text>
+                            <Text style={[styles.catText, { color: activeCat === cat ? colors.textInverse : colors.textSecondary }]}>{cat}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
@@ -53,9 +53,9 @@ export const EventsDiscoveryScreen = () => {
                         imageStyle={{ borderRadius: 20 }}
                     >
                         <View style={styles.featuredOverlay}>
-                            <View style={styles.featuredTag}><Text style={styles.tagText}>FEATURED</Text></View>
-                            <Text style={styles.featuredTitle}>Harlem Afro-Market 2024</Text>
-                            <Text style={styles.featuredDate}>June 15 • Marcus Garvey Park</Text>
+                            <View style={[styles.featuredTag, { backgroundColor: colors.warning }]}><Text style={[styles.tagText, { color: colors.textInverse }]}>FEATURED</Text></View>
+                            <Text style={[styles.featuredTitle, { color: colors.textInverse }]}>Harlem Afro-Market 2024</Text>
+                            <Text style={[styles.featuredDate, { color: colors.textInverse }]}>June 15 • Marcus Garvey Park</Text>
                         </View>
                     </ImageBackground>
                 </View>
@@ -94,10 +94,10 @@ const styles = StyleSheet.create({
     featuredSection: { paddingHorizontal: 20, marginBottom: 30 },
     featuredCard: { height: 200, width: '100%', justifyContent: 'flex-end' },
     featuredOverlay: { padding: 20, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 20 },
-    featuredTag: { backgroundColor: '#F59E0B', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginBottom: 8 },
-    tagText: { color: '#FFF', fontSize: 10, fontWeight: '900' },
-    featuredTitle: { color: '#FFF', fontSize: 22, fontWeight: '900' },
-    featuredDate: { color: '#FFF', fontSize: 14, fontWeight: '600' },
+    featuredTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginBottom: 8 },
+    tagText: { fontSize: 10, fontWeight: '900' },
+    featuredTitle: { fontSize: 22, fontWeight: '900' },
+    featuredDate: { fontSize: 14, fontWeight: '600' },
     sectionTitle: { fontSize: 18, fontWeight: '900', marginHorizontal: 20, marginBottom: 15 },
     listContainer: { paddingHorizontal: 20, gap: 15 },
     eventRow: { flexDirection: 'row', padding: 12, borderRadius: 16, borderWidth: 1 },

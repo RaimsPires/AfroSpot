@@ -10,7 +10,7 @@ export const BusinessKYCScreen = () => {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={styles.header}>
+            <View style={[styles.header, { borderBottomColor: colors.divider }]}>
                 <Text style={[styles.title, { color: colors.text }]}>Merchant Verification</Text>
                 <View style={styles.progressRow}>
                     <View style={[styles.progressDot, { backgroundColor: colors.primary }]} />
@@ -62,7 +62,7 @@ export const BusinessKYCScreen = () => {
 
             <View style={[styles.footer, { borderTopColor: colors.border }]}>
                 <TouchableOpacity style={[styles.mainBtn, { backgroundColor: colors.primary }]} onPress={() => step < 3 ? setStep(step + 1) : console.log('Submit KYC')}>
-                    <Text style={styles.mainBtnText}>{step === 3 ? 'Submit for Verification' : 'Next Step'}</Text>
+                    <Text style={[styles.mainBtnText, { color: colors.textInverse }]}>{step === 3 ? 'Submit for Verification' : 'Next Step'}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -71,7 +71,7 @@ export const BusinessKYCScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    header: { padding: 24, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+    header: { padding: 24, borderBottomWidth: 1 },
     title: { fontSize: 24, fontWeight: '900', marginBottom: 16 },
     progressRow: { flexDirection: 'row', alignItems: 'center' },
     progressDot: { width: 12, height: 12, borderRadius: 6 },
@@ -83,5 +83,5 @@ const styles = StyleSheet.create({
     uploadText: { marginTop: 8, fontWeight: '600' },
     footer: { padding: 24, borderTopWidth: 1 },
     mainBtn: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-    mainBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    mainBtnText: { fontSize: 16, fontWeight: '800' },
 });
