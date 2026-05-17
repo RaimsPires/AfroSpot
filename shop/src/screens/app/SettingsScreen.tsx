@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Alert,
+    Modal,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CurrencyBottomSheet } from '@components/settings/CurrencyBottomSheet';
+import { LanguageBottomSheet } from '@components/settings/LanguageBottomSheet';
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 
@@ -21,20 +23,19 @@ const SettingsScreen = ({ navigation }: any) => {
     const [pushNotifications, setPushNotifications] = useState(true);
     const [emailNotifications, setEmailNotifications] = useState(false);
     const [locationServices, setLocationServices] = useState(true);
+    const [selectedLanguage, setSelectedLanguage] = useState('English (US)');
+    const [selectedCurrency, setSelectedCurrency] = useState('USD');
+    const [languageSheetVisible, setLanguageSheetVisible] = useState(false);
+    const [currencySheetVisible, setCurrencySheetVisible] = useState(false);
+    const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 
     const handleDeleteAccount = () => {
-        Alert.alert(
-            'Delete Account',
-            'Are you sure you want to permanently delete your account? This action cannot be undone and you will lose all saved data.',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete Permanently',
-                    style: 'destructive',
-                    onPress: () => console.log('Account deleted')
-                },
-            ]
-        );
+        setDeleteConfirmVisible(true);
+    };
+
+    const confirmDeleteAccount = () => {
+        setDeleteConfirmVisible(false);
+        console.log('Account deleted');
     };
 
     return (
@@ -43,9 +44,6 @@ const SettingsScreen = ({ navigation }: any) => {
 
             {/* 1. Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn} onPress={() => {/* navigation.goBack() */ }}>
-                    <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
-                </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
                 <View style={{ width: 40 }} /> {/* Spacer to center title */}
             </View>
@@ -56,9 +54,9 @@ const SettingsScreen = ({ navigation }: any) => {
                 <View style={styles.section}>
                     <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>ACCOUNT</Text>
                     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                        <SettingsItem icon="user" label="Personal Information" colors={colors} />
-                        <SettingsItem icon="lock" label="Password & Security" colors={colors} />
-                        <SettingsItem icon="credit-card" label="Payment Methods" colors={colors} isLast />
+                        <SettingsItem icon="user" label="Personal Information" colors={colors} onPress={() => navigation.navigate('PersonalInfo')} />
+                        <SettingsItem icon="lock" label="Password & Security" colors={colors} onPress={() => navigation.navigate('PasswordSecurity')} />
+                        <SettingsItem icon="credit-card" label="Payment Methods" colors={colors} isLast onPress={() => navigation.navigate('PaymentMethods')} />
                     </View>
                 </View>
 
@@ -113,7 +111,8 @@ const SettingsScreen = ({ navigation }: any) => {
                                 />
                             }
                         />
-                        <SettingsItem icon="globe" label="Language" value="English (US)" colors={colors} />
+                        <SettingsItem icon="globe" label="Language" value={selectedLanguage} colors={colors} onPress={() => setLanguageSheetVisible(true)} />
+                        <SettingsItem icon="dollar-sign" label="Currency" value={selectedCurrency} colors={colors} onPress={() => setCurrencySheetVisible(true)} />
                         <SettingsItem
                             icon={isDark ? "moon" : "sun"}
                             label="Dark Theme"
@@ -135,10 +134,10 @@ const SettingsScreen = ({ navigation }: any) => {
                 <View style={styles.section}>
                     <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>SUPPORT & ABOUT</Text>
                     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                        <SettingsItem icon="help-circle" label="Help Center & FAQ" colors={colors} />
-                        <SettingsItem icon="message-square" label="Contact Support" colors={colors} />
-                        <SettingsItem icon="file-text" label="Terms of Service" colors={colors} />
-                        <SettingsItem icon="shield" label="Privacy Policy" colors={colors} isLast />
+                        <SettingsItem icon="help-circle" label="Help Center & FAQ" colors={colors} onPress={() => navigation.navigate('HelpCenter')} />
+                        <SettingsItem icon="message-square" label="Contact Support" colors={colors} onPress={() => navigation.navigate('ContactSupport')} />
+                        <SettingsItem icon="file-text" label="Terms of Service" colors={colors} onPress={() => navigation.navigate('TermsOfService')} />
+                        <SettingsItem icon="shield" label="Privacy Policy" colors={colors} isLast onPress={() => navigation.navigate('PrivacyPolicy')} />
                     </View>
                 </View>
 
@@ -153,19 +152,84 @@ const SettingsScreen = ({ navigation }: any) => {
                 <Text style={[styles.appVersion, { color: colors.textSecondary }]}>AfroSpot App v1.0.0 (Build 42)</Text>
 
             </ScrollView>
+
+            <Modal
+                visible={languageSheetVisible}
+                transparent
+                animationType="slide"
+                onRequestClose={() => setLanguageSheetVisible(false)}
+            >
+                <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => setLanguageSheetVisible(false)} />
+                <LanguageBottomSheet
+                    selectedLanguage={selectedLanguage}
+                    onSelectLanguage={(language) => {
+                        setSelectedLanguage(language);
+                        setLanguageSheetVisible(false);
+                    }}
+                    onClose={() => setLanguageSheetVisible(false)}
+                />
+            </Modal>
+
+            <Modal
+                visible={currencySheetVisible}
+                transparent
+                animationType="slide"
+                onRequestClose={() => setCurrencySheetVisible(false)}
+            >
+                <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => setCurrencySheetVisible(false)} />
+                <CurrencyBottomSheet
+                    selectedCurrency={selectedCurrency}
+                    onSelectCurrency={(currencyCode) => {
+                        setSelectedCurrency(currencyCode);
+                        setCurrencySheetVisible(false);
+                    }}
+                    onClose={() => setCurrencySheetVisible(false)}
+                />
+            </Modal>
+
+            <Modal
+                visible={deleteConfirmVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setDeleteConfirmVisible(false)}
+            >
+                <View style={[styles.confirmOverlay, { backgroundColor: colors.overlay }]}> 
+                    <TouchableOpacity style={{ flex: 1, width: '100%' }} onPress={() => setDeleteConfirmVisible(false)} />
+                    <View style={[styles.confirmCard, { backgroundColor: colors.background, borderColor: colors.border }]}> 
+                        <Text style={[styles.confirmTitle, { color: colors.text }]}>Delete Account?</Text>
+                        <Text style={[styles.confirmMessage, { color: colors.textSecondary }]}>This action is permanent and cannot be undone. All your account data will be removed.</Text>
+
+                        <View style={styles.confirmActionsRow}>
+                            <TouchableOpacity
+                                style={[styles.cancelBtn, { borderColor: colors.border, backgroundColor: colors.surface }]}
+                                onPress={() => setDeleteConfirmVisible(false)}
+                            >
+                                <Text style={[styles.cancelBtnText, { color: colors.text }]}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.confirmDeleteBtn, { backgroundColor: colors.destructive }]}
+                                onPress={confirmDeleteAccount}
+                            >
+                                <Text style={[styles.confirmDeleteBtnText, { color: colors.textInverse }]}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 };
 
 // --- Reusable Settings Item Component ---
 
-const SettingsItem = ({ icon, label, value, isLast, rightElement, colors }: any) => (
+const SettingsItem = ({ icon, label, value, isLast, rightElement, colors, onPress }: any) => (
     <TouchableOpacity
         style={[
             styles.itemContainer,
             !isLast && { borderBottomWidth: 1, borderBottomColor: colors.border }
         ]}
-        disabled={!!rightElement} // Disable full row touch if there's a toggle switch
+        disabled={!!rightElement}
+        onPress={onPress}
         activeOpacity={0.7}
     >
         <View style={styles.itemLeft}>
@@ -195,7 +259,6 @@ const styles = StyleSheet.create({
     // Header
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 },
     headerTitle: { fontSize: 18, fontWeight: '800' },
-    iconBtn: { padding: 8 },
 
     scrollContent: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 60 },
 
@@ -215,6 +278,24 @@ const styles = StyleSheet.create({
     // Delete Action
     deleteBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 16, borderWidth: 1, gap: 8 },
     deleteBtnText: { fontSize: 15, fontWeight: '700' },
+
+    confirmOverlay: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' },
+    confirmCard: {
+        width: '100%',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderWidth: 1,
+        borderBottomWidth: 0,
+        paddingHorizontal: 20,
+        paddingVertical: 18,
+    },
+    confirmTitle: { fontSize: 18, fontWeight: '800', marginBottom: 8 },
+    confirmMessage: { fontSize: 13, fontWeight: '500', lineHeight: 20, marginBottom: 16 },
+    confirmActionsRow: { flexDirection: 'row', gap: 10 },
+    cancelBtn: { flex: 1, borderWidth: 1, borderRadius: 12, alignItems: 'center', paddingVertical: 12 },
+    cancelBtnText: { fontSize: 14, fontWeight: '700' },
+    confirmDeleteBtn: { flex: 1, borderRadius: 12, alignItems: 'center', paddingVertical: 12 },
+    confirmDeleteBtnText: { fontSize: 14, fontWeight: '800' },
 
     // Version
     appVersion: { textAlign: 'center', marginTop: 16, marginBottom: 32, fontSize: 12, fontWeight: '500' },

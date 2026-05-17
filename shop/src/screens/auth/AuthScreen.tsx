@@ -1,10 +1,11 @@
+import { logo } from '@assets/index';
 import { Button } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList, RootStackParamList } from '@navigation/types';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AuthScreenNavigationProp = CompositeNavigationProp<
@@ -28,7 +29,9 @@ export const AuthScreen = () => {
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flexOne}>
                 <ScrollView contentContainerStyle={styles.content}>
-
+                    <View>
+                        <Image source={logo} style={styles.logo} />
+                    </View>
                     <View style={styles.header}>
                         <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
                         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
@@ -80,6 +83,7 @@ export const AuthScreen = () => {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     flexOne: { flex: 1 },
+    logo: { width: 120, height: 120, resizeMode: 'contain', alignSelf: 'center', marginBottom: 32 },
     content: { padding: 24, flexGrow: 1, justifyContent: 'center' },
     header: { marginBottom: 32 },
     title: { fontSize: 32, fontWeight: '900', marginBottom: 8 },

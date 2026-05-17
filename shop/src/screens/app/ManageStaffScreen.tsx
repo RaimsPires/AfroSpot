@@ -24,7 +24,7 @@ const INITIAL_STAFF = [
     { id: '3', name: 'Malik T.', role: 'Senior Stylist', email: 'malik@kushitecutz.com', phone: '555-0103', avatar: 'https://i.pravatar.cc/150?img=8', status: 'Active' },
 ];
 
-export const ManageStaffScreen = () => {
+export const ManageStaffScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
     const [staff, setStaff] = useState(INITIAL_STAFF);
@@ -82,7 +82,11 @@ export const ManageStaffScreen = () => {
 
             {/* Header */}
             <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
+                <TouchableOpacity style={styles.iconBtn}
+                    onPress={() => navigation.goBack()}
+                >
+                    <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
+                </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Manage Staff</Text>
                 <TouchableOpacity style={styles.iconBtn} onPress={openAddModal}>
                     <AppIcon library="Feather" name="plus" size={24} color={colors.primary} />

@@ -67,7 +67,7 @@ const INITIAL_PROMOS = [
 
 const FILTER_TABS = ['Active', 'Paused', 'Expired'];
 
-const ManagePromotionsScreen = () => {
+const ManagePromotionsScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
     const [promos, setPromos] = useState(INITIAL_PROMOS);
@@ -119,7 +119,7 @@ const ManagePromotionsScreen = () => {
 
             {/* 1. Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Promotions</Text>
@@ -214,6 +214,14 @@ const ManagePromotionsScreen = () => {
                                 </View>
 
                                 <View style={styles.actionsCol}>
+                                    <TouchableOpacity
+                                        style={[styles.actionBtn, { borderColor: colors.border }]}
+                                        onPress={() => navigation.navigate('CreatePromo', { promo })}
+                                    >
+                                        <AppIcon library="Feather" name="edit-2" size={14} color={colors.text} />
+                                        <Text style={[styles.actionBtnText, { color: colors.text }]}>Edit</Text>
+                                    </TouchableOpacity>
+
                                     {promo.status !== 'Expired' && (
                                         <TouchableOpacity
                                             style={[styles.actionBtn, { borderColor: colors.border }]}
@@ -246,7 +254,10 @@ const ManagePromotionsScreen = () => {
             </ScrollView>
 
             {/* 4. Floating Action Button to Create New Promo */}
-            <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}>
+            <TouchableOpacity
+                style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
+                onPress={() => navigation.navigate('CreatePromo')}
+            >
                 <AppIcon library="Feather" name="plus" size={24} color={colors.textInverse} />
             </TouchableOpacity>
 

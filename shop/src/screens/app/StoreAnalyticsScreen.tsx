@@ -50,7 +50,7 @@ const TOP_SERVICES = [
     { id: 's3', title: 'Full Grooming Experience', bookings: 6, revenue: '$390', progress: 25 },
 ];
 
-export const StoreAnalyticsScreen = ({ navigation }) => {
+export const StoreAnalyticsScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
     const [activeTimeframe, setActiveTimeframe] = useState('This Week');
 
@@ -106,9 +106,9 @@ export const StoreAnalyticsScreen = ({ navigation }) => {
                 <View style={[styles.mainMetricCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                     <View style={styles.metricHeaderRow}>
                         <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>TOTAL REVENUE</Text>
-                    <View style={[styles.growthBadge, { backgroundColor: colors.successSurface }]}>
-                        <AppIcon library="Feather" name="trending-up" size={12} color={colors.success} />
-                        <Text style={[styles.growthText, { color: colors.success }]}>{METRICS.revenueGrowth}</Text>
+                        <View style={[styles.growthBadge, { backgroundColor: colors.successSurface }]}>
+                            <AppIcon library="Feather" name="trending-up" size={12} color={colors.success} />
+                            <Text style={[styles.growthText, { color: colors.success }]}>{METRICS.revenueGrowth}</Text>
                         </View>
                     </View>
                     <Text style={[styles.metricValue, { color: colors.text }]}>{METRICS.revenue}</Text>

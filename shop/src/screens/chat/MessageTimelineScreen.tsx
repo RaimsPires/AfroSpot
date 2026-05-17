@@ -20,7 +20,7 @@ const CHAT_THREADS = [
     { id: '3', name: 'Sarah Jenkins', avatar: 'https://i.pravatar.cc/150?img=5', lastMessage: 'I loved the silk scarf! I might buy another one.', time: 'Monday', unread: 0 },
 ];
 
-export const MessageTimelineScreen = () => {
+export const MessageTimelineScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
     return (
@@ -50,6 +50,7 @@ export const MessageTimelineScreen = () => {
                     <TouchableOpacity
                         key={thread.id}
                         style={[styles.threadRow, index !== CHAT_THREADS.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }]}
+                        onPress={() => navigation.navigate('ChatRoomInTab', { thread })}
                     >
                         <Image source={{ uri: thread.avatar }} style={styles.avatar} />
                         <View style={styles.threadContent}>
