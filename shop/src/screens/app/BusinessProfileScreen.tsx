@@ -3,6 +3,7 @@ import {
     ScrollView,
     StatusBar,
     Text,
+    TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -11,6 +12,10 @@ import { MenuItem, MenuSection, ProfileHeader, ScreenHeader, styles } from '../.
 
 export const BusinessProfileScreen = ({navigation}:any) => {
     const { colors, isDark } = useTheme();
+
+    const handleSignOut = () => {
+        navigation.getParent()?.getParent()?.replace('AuthFlow');
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -39,6 +44,14 @@ export const BusinessProfileScreen = ({navigation}:any) => {
                     <MenuItem icon="package" label="Orders & Fulfillment" colors={colors} handlePress={() => navigation.getParent()?.navigate('OrderFulfillment')} />
                     <MenuItem icon="file-text" label="Taxes & Invoices" colors={colors} isLast handlePress={() => navigation.navigate('TaxInvoice')} />
                 </MenuSection>
+
+                <TouchableOpacity
+                    style={[styles.signOutButton, { borderColor: colors.error }]}
+                    onPress={handleSignOut}
+                    activeOpacity={0.8}
+                >
+                    <Text style={[styles.signOutText, { color: colors.error }]}>Sign Out</Text>
+                </TouchableOpacity>
 
                 <Text style={[styles.appVersion, { color: colors.textSecondary }]}>AfroSpot Business v1.0.0</Text>
             </ScrollView>

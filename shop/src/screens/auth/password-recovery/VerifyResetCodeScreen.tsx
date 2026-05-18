@@ -3,7 +3,7 @@ import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'VerifyResetCode'>;
@@ -32,7 +32,12 @@ export const VerifyResetCodeScreen = ({ navigation, route }: Props) => {
             </View>
 
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-                <ScrollView contentContainerStyle={styles.scrollContent}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        keyboardDismissMode="on-drag"
+                        keyboardShouldPersistTaps="handled"
+                    >
                     <View style={styles.formContainer}>
                         <Text style={[styles.title, { color: colors.text }]}>Verify Code</Text>
                         <Text style={[styles.subtitle, { color: colors.textSecondary }]}> 
@@ -67,7 +72,8 @@ export const VerifyResetCodeScreen = ({ navigation, route }: Props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </ScrollView>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );

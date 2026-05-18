@@ -1,12 +1,14 @@
 import type { BuyerOrderTab, OrderLifecycleStatus } from '@type/commerce';
 
 export type AuthStackParamList = {
-    Auth: undefined;
+    AccountChoice: undefined;
+    Auth: { mode?: 'businessRegistration' } | undefined;
     SignUp: undefined;
     ForgotPassword: undefined;
     VerifyResetCode: { contactInfo: string };
     ResetPassword: { contactInfo: string };
     PasswordResetSuccess: undefined;
+    BusinessKYCSuccess: undefined;
     UserOnboarding: undefined;
     BusinessKYC: undefined;
     OrderFulfillment: undefined;
@@ -39,10 +41,8 @@ export type AppStackParamList = {
     StoreStack: undefined;
     StoreAnalytics: undefined;
     TaxInvoice: undefined;
-    BusinessKYC: undefined;
     OrderFulfillment: { initialStatus?: OrderLifecycleStatus } | undefined;
     SellerOrderDetail: { orderId: string };
-    UserOnboarding: undefined;
     MessageTimeline: undefined;
     ChatRoom: undefined;
     CreateEvent: undefined;

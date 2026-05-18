@@ -1,15 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { OrderFulfillmentScreen } from '@screens/app/OrderFulfillmentScreen';
-import { BusinessKYCScreen } from '@screens/auth/BusinessKYCScreen';
-import BuyerOrderDetailScreen from '@screens/app/BuyerOrderDetailScreen';
-import BuyerOrdersScreen from '@screens/app/BuyerOrdersScreen';
 import CartScreen from '@screens/app/CartScreen';
-import { ChatRoomScreen } from '@screens/chat/ChatRoomScreen';
 import CheckoutScreen from '@screens/app/CheckoutScreen';
-import { MessageTimelineScreen } from '@screens/chat/MessageTimelineScreen';
-import OrderSuccessScreen from '@screens/app/OrderSuccessScreen';
-import OrderTrackingScreen from '@screens/app/OrderTrackingScreen';
 import SellerOrderDetailScreen from '@screens/app/SellerOrderDetailScreen';
+import { ChatRoomScreen } from '@screens/chat/ChatRoomScreen';
+import { MessageTimelineScreen } from '@screens/chat/MessageTimelineScreen';
 import { CreateEventScreen } from '@screens/event/CreateEventScreen';
 import { EventDetailScreen } from '@screens/event/EventDetailScreen';
 import { EventStatsScreen } from '@screens/event/EventStatsScreen';
@@ -23,15 +17,18 @@ import { CreateFeedScreen } from '@screens/feeds/CreateFeedScreen';
 import { FeedInsightsScreen } from '@screens/feeds/FeedInsightsScreen';
 import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
 import { StoreFeedsScreen } from '@screens/feeds/StoreFeedsScreen';
-import { UserOnboardingScreen } from '@screens/onboarding/UserOnboardingScreen';
+import BuyerOrderDetailScreen from '@screens/orders/BuyerOrderDetailScreen';
+import BuyerOrdersScreen from '@screens/orders/BuyerOrdersScreen';
+import { OrderFulfillmentScreen } from '@screens/orders/OrderFulfillmentScreen';
+import OrderSuccessScreen from '@screens/orders/OrderSuccessScreen';
 import CreatePromoScreen from '@screens/products/CreatePromoScreen';
 import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
 import ManageProductsScreen from '@screens/shop/ManageProductsScreen';
 import ManageProfileScreen from '@screens/shop/ManageProfileScreen';
-import ProductCatalogScreen from '@screens/shop/ProductCatalogScreen';
-import ProductDetailScreen from '@screens/shop/ProductDetailScreen';
 import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
 import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
+import ProductCatalogScreen from '@screens/shop/ProductCatalogScreen';
+import ProductDetailScreen from '@screens/shop/ProductDetailScreen';
 import React from 'react';
 
 import { BusinessNotificationsScreen } from '@screens/app/BusinessNotificationsScreen';
@@ -42,6 +39,7 @@ import { PayoutsEarningsScreen } from '@screens/app/PayoutsEarningsScreen';
 import ReportScreen from '@screens/app/ReportScreen';
 import { StoreAnalyticsScreen } from '@screens/app/StoreAnalyticsScreen';
 import { TaxInvoiceScreen } from '@screens/app/TaxInvoiceScreen';
+import OrderTrackingScreen from '@screens/orders/OrderTrackingScreen';
 import { ContactSupportScreen } from '@screens/settings/ContactSupportScreen';
 import { HelpCenterScreen } from '@screens/settings/HelpCenterScreen';
 import { PasswordSecurityScreen } from '@screens/settings/PasswordSecurityScreen';
@@ -79,10 +77,8 @@ const AppStackNavigator = () => {
             <Stack.Screen name="StoreAnalytics" component={StoreAnalyticsScreen} />
             <Stack.Screen name="TaxInvoice" component={TaxInvoiceScreen} />
 
-            <Stack.Screen name="BusinessKYC" component={BusinessKYCScreen} />
             <Stack.Screen name="OrderFulfillment" component={OrderFulfillmentScreen} />
             <Stack.Screen name="SellerOrderDetail" component={SellerOrderDetailScreen} />
-            <Stack.Screen name="UserOnboarding" component={UserOnboardingScreen} />
 
             <Stack.Screen name="MessageTimeline" component={MessageTimelineScreen} />
             <Stack.Screen name="ChatRoom" component={ChatRoomScreen} />

@@ -27,5 +27,15 @@ export const styles = StyleSheet.create({
     itemRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     itemValue: { fontSize: 13, fontWeight: '600' },
 
+    signOutButton: {
+        marginTop: 8,
+        borderWidth: 1,
+        borderRadius: 14,
+        height: 52,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    signOutText: { fontSize: 15, fontWeight: '800' },
+
     appVersion: { textAlign: 'center', marginTop: 16, marginBottom: 32, fontSize: 12, fontWeight: '500' },
 });
