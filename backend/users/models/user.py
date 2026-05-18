@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
-from backend.core import settings
-from backend.core.upload import user_profile_image_path
+from core import settings
+from core.upload import user_profile_image_path
 from users.manager import UserManager
 from core.models import BaseModel
 from phonenumber_field.modelfields import PhoneNumberField

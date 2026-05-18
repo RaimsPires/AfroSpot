@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,13 +40,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # third-party apps
     'rest_framework',
-    # 'allauth',  # Required for social auth
+    'allauth',  # Required for social auth
     # 'allauth.account',  # Required for social auth
     # 'allauth.socialaccount',  # For social login
     # 'allauth.socialaccount.providers.google',  # For Google login
     'auth_kit',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
+    'phonenumber_field',
+    'django_filters',
+    'django_extensions',
     
+    # local apps
     'users.apps.UsersConfig',
 ]
 
@@ -117,16 +125,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGES = [
-    ('en', 'English'),
-    ('fr', 'French'),
-    ('es', 'Spanish'),
-    ('de', 'German'),
-    ('zh', 'Chinese'),
-    ('ja', 'Japanese'),
-    ('ru', 'Russian'),
-    ('ar', 'Arabic'),
-    ('pt', 'Portuguese'),
-    ('hi', 'Hindi'),
+    ('en', _('English')),
+    ('fr', _('French')),
+    ('es', _('Spanish')),
+    ('de', _('German')),
+    ('zh', _('Chinese')),
+    ('ja', _('Japanese')),
+    ('ru', _('Russian')),
+    ('ar', _('Arabic')),
+    ('pt', _('Portuguese')),
+    ('hi', _('Hindi')),
 ]
 
 LANGUAGE_CODE = 'en'
@@ -161,6 +169,17 @@ REST_FRAMEWORK = {
         'auth_kit.authentication.JWTCookieAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': _('AfroSpot API'),
+    'DESCRIPTION': _('AfroSpot is a marketplace for African products. This API allows you to interact with the AfroSpot platform programmatically.'),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    # OTHER SETTINGS
 }
 
 AUTH_KIT = {

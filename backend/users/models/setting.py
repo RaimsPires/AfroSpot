@@ -1,12 +1,14 @@
 from django.db import models
 from users.models import User
+from core.models import BaseModel
+from django.utils.translation  import gettext_lazy as _
 
 
-class UserSettings(models.Model):
+class UserSettings(BaseModel):
     THEME_CHOICES = [
-        ('light', 'Light'),
-        ('dark', 'Dark'),
-        ('system', 'System Default'),
+        ('light', _('Light')),
+        ('dark', _('Dark')),
+        ('system', _('System Default')),
     ]
 
     user = models.OneToOneField(
