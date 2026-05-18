@@ -57,9 +57,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    # third party middlewares like auth_kit's JWT middleware would go here if needed 
     'user_language_middleware.UserLanguageMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'core.urls'
 
@@ -147,13 +149,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+AUTH_USER_MODEL = 'users.User' # Custom user model
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'auth_kit.authentication.JWTCookieAuthentication',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 AUTH_KIT = {
@@ -281,6 +288,6 @@ SIMPLE_JWT = {
 
 
 AUTHENTICATION_BACKENDS = [
-    'users.backends.EmailOrPhoneModelBackend',
+    'users.auth.EmailOrPhoneModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]

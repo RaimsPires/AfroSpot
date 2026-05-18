@@ -12,7 +12,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     phone_number = PhoneNumberField(region=None, blank=True, null=True, unique=True)
-    country_code = models.CharField(max_length=5, blank=True) 
     dob = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
     language = models.CharField(max_length=10,choices=settings.LANGUAGES,default=settings.LANGUAGE_CODE)
