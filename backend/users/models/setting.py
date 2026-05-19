@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import User
-from core.models import BaseModel
+from utils.models import BaseModel
 from django.utils.translation  import gettext_lazy as _
 
 
@@ -18,12 +18,12 @@ class UserSettings(BaseModel):
     )
     
     country_of_residence = models.CharField(max_length=100, blank=True)
+    country_of_origin = models.CharField(max_length=100, blank=True)
+    
     theme = models.CharField(max_length=10, choices=THEME_CHOICES, default='system')
     email_notifications = models.BooleanField(default=True)
     email_verifications = models.BooleanField(default=True)
     push_notifications = models.BooleanField(default=True)
-    marketing_emails = models.BooleanField(default=False)
-    country_of_origin = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f"{self.user.email} - Settings"

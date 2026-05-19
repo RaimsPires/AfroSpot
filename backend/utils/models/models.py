@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils import timezone
-from core.managers import SoftDeleteManager
+from utils.managers import SoftDeleteManager
 
 class BaseModel(models.Model):
     """

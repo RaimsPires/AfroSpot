@@ -1,11 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
-from core import settings
-from core.upload import user_profile_image_path
+from utils.upload import user_profile_image_path
+from utils.upload import user_profile_image_path
 from users.manager import UserManager
-from core.models import BaseModel
+from utils.models import BaseModel
 from phonenumber_field.modelfields import PhoneNumberField
+from django.conf import settings
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True, db_index=True)
@@ -13,6 +14,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     last_name = models.CharField(max_length=50, blank=True)
     phone_number = PhoneNumberField(region=None, blank=True, null=True, unique=True)
     dob = models.DateField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
     profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
     language = models.CharField(max_length=10,choices=settings.LANGUAGES,default=settings.LANGUAGE_CODE)
     is_store_owner = models.BooleanField(default=False)
