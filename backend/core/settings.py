@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     # third-party apps
     'rest_framework',
     'allauth',  # Required for social auth
-    # 'allauth.account',  # Required for social auth
+    'allauth.account',  # Required for social auth
     # 'allauth.socialaccount',  # For social login
     # 'allauth.socialaccount.providers.google',  # For Google login
     'auth_kit',
@@ -75,6 +75,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # third party middlewares like auth_kit's JWT middleware would go here if needed 
@@ -234,7 +235,7 @@ AUTH_KIT = {
     # LOGIN & LOGOUT SERIALIZERS & VIEWS
     # ===================================================================
     # 'LOGIN_REQUEST_SERIALIZER': 'auth_kit.serializers.login_factors.LoginRequestSerializer',
-    'LOGIN_REQUEST_SERIALIZER': 'users.serializers.EmailOrPhoneLoginSerializer',
+    'LOGIN_REQUEST_SERIALIZER': 'users.serializers.email_or_phone_login_serializer.EmailOrPhoneLoginSerializer',
     'LOGIN_RESPONSE_SERIALIZER': 'auth_kit.serializers.login_factors.BaseLoginResponseSerializer',
     'LOGIN_SERIALIZER_FACTORY': 'auth_kit.serializers.login.get_login_serializer',
     'LOGIN_VIEW': 'auth_kit.views.LoginView',
@@ -244,13 +245,13 @@ AUTH_KIT = {
     # ===================================================================
     # USER MANAGEMENT SERIALIZERS & VIEWS
     # ===================================================================
-    'USER_SERIALIZER': 'users.serializers.UserSerializer',
+    'USER_SERIALIZER': 'users.serializers.user_serializer.UserSerializer',
     'USER_VIEW': 'auth_kit.views.UserView',
 
     # ===================================================================
     # REGISTRATION SERIALIZERS & VIEWS
     # ===================================================================
-    'REGISTER_SERIALIZER': 'auth_kit.serializers.RegisterSerializer',
+    'REGISTER_SERIALIZER': 'users.serializers.register_user.RegisterUserSerializer',
     'REGISTER_VIEW': 'auth_kit.views.RegisterView',
     'VERIFY_EMAIL_VIEW': 'auth_kit.views.VerifyEmailView',
     'RESEND_EMAIL_VERIFICATION_VIEW': 'auth_kit.views.ResendEmailVerificationView',
@@ -262,16 +263,16 @@ AUTH_KIT = {
     # ===================================================================
     # PASSWORD MANAGEMENT SERIALIZERS & VIEWS
     # ===================================================================
-    'PASSWORD_CHANGE_SERIALIZER': 'auth_kit.serializers.PasswordChangeSerializer',
-    'PASSWORD_CHANGE_VIEW': 'auth_kit.views.PasswordChangeView',
-    'PASSWORD_RESET_SERIALIZER': 'auth_kit.serializers.PasswordResetSerializer',
-    'PASSWORD_RESET_VIEW': 'auth_kit.views.PasswordResetView',
-    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'auth_kit.serializers.PasswordResetConfirmSerializer',
-    'PASSWORD_RESET_CONFIRM_VIEW': 'auth_kit.views.PasswordResetConfirmView',
-    'PASSWORD_RESET_CONFIRM_PATH': None,
-    'PASSWORD_RESET_URL_GENERATOR': 'auth_kit.forms.password_reset_url_generator',
-    'OLD_PASSWORD_FIELD_ENABLED': False,
-    'PASSWORD_RESET_PREVENT_ENUMERATION': True,
+    # 'PASSWORD_CHANGE_SERIALIZER': 'auth_kit.serializers.PasswordChangeSerializer',
+    # 'PASSWORD_CHANGE_VIEW': 'auth_kit.views.PasswordChangeView',
+    # 'PASSWORD_RESET_SERIALIZER': 'auth_kit.serializers.PasswordResetSerializer',
+    # 'PASSWORD_RESET_VIEW': 'auth_kit.views.PasswordResetView',
+    # 'PASSWORD_RESET_CONFIRM_SERIALIZER': 'auth_kit.serializers.PasswordResetConfirmSerializer',
+    # 'PASSWORD_RESET_CONFIRM_VIEW': 'auth_kit.views.PasswordResetConfirmView',
+    # 'PASSWORD_RESET_CONFIRM_PATH': None,
+    # 'PASSWORD_RESET_URL_GENERATOR': 'auth_kit.forms.password_reset_url_generator',
+    # 'OLD_PASSWORD_FIELD_ENABLED': False,
+    # 'PASSWORD_RESET_PREVENT_ENUMERATION': True,
 }
 
 SIMPLE_JWT = {
@@ -297,3 +298,7 @@ AUTHENTICATION_BACKENDS = [
     'users.auth.EmailOrPhoneModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]

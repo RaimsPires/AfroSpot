@@ -1,44 +1,65 @@
+import { apiClient } from '@services/apiClient';
+import { AuthPayload, AuthUser, LoginRequestResponse } from '@type/auth';
 import { create } from 'zustand';
 
-export type AuthUser = {
-    id: string;
-    name: string;
-    email: string;
-};
+
 
 type AuthState = {
     isAuthenticated: boolean;
     user: AuthUser | null;
-    signIn: (user?: Partial<AuthUser>) => void;
-    signOut: () => void;
+    signIn: (payload: AuthPayload) => Promise<void>;
+    signUp: (payload: AuthPayload) => Promise<void>;
+    signOut: () => Promise<void>;
     setAuthenticated: (value: boolean) => void;
 };
 
-const STATIC_USER: AuthUser = {
-    id: '1',
-    name: 'Amara Okoro',
-    email: 'amara@example.com',
-};
 
 export const useAuthStore = create<AuthState>((set) => ({
     isAuthenticated: false,
     user: null,
-    signIn: (user) =>
-        set({
-            isAuthenticated: true,
-            user: {
-                ...STATIC_USER,
-                ...user,
-            },
-        }),
-    signOut: () =>
-        set({
-            isAuthenticated: false,
-            user: null,
-        }),
+    signIn: async (login_data) => {
+        try {
+            const response = await apiClient.post<LoginRequestResponse>('/auth/login/', login_data);
+            set({
+                isAuthenticated: true,
+                user: response.data.user,
+            });
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            throw error;
+        }
+    },
+    signUp: async (signup_data) => {
+        try {
+            const response = await apiClient.post<LoginRequestResponse>('/auth/register/', signup_data);
+            set({
+                isAuthenticated: true,
+                user: response.data.user,
+            });
+        } catch (error) {
+            console.error('Error during sign-up:', error);
+            throw error;
+        }
+    },
+    signOut: async () => {
+        try {
+            await apiClient.post('/auth/logout/');
+            set({
+                isAuthenticated: false,
+                user: null,
+            });
+        } catch (error) {
+            set({
+                isAuthenticated: false,
+                user: null,
+            });
+            console.error('Error during sign-out:', error);
+            throw error;
+        }
+    },
     setAuthenticated: (value) =>
         set((state) => ({
             isAuthenticated: value,
-            user: value ? state.user ?? STATIC_USER : null,
+            user: value ? state.user : null,
         })),
 }));

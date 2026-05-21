@@ -17,7 +17,7 @@ class UserSettings(BaseModel):
         related_name='settings'
     )
     
-    country_of_residence = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
     country_of_origin = models.CharField(max_length=100, blank=True)
     
     theme = models.CharField(max_length=10, choices=THEME_CHOICES, default='system')

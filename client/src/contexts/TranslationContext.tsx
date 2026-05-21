@@ -41,6 +41,7 @@ export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             language,
             supportedLanguages: SUPPORTED_LANGUAGES,
             setLanguage,
+            t: i18n.t.bind(i18n),
         }),
         [language],
     );
@@ -48,11 +49,11 @@ export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return <TranslationContext.Provider value={value}>{children}</TranslationContext.Provider>;
 };
 
-export const useTranslationContext = () => {
+export const useTranslation = () => {
     const context = useContext(TranslationContext);
 
     if (!context) {
-        throw new Error('useTranslationContext must be used within a TranslationProvider');
+        throw new Error('useTranslation must be used within a TranslationProvider');
     }
 
     return context;

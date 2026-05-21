@@ -17,6 +17,7 @@ module.exports = {
           '@services': './src/services',
           '@store': './src/store',
           '@utils': './src/utils',
+          '@type': './src/types',
         },
         extensions: [
           '.ios.ts',
