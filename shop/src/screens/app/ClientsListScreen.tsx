@@ -206,7 +206,19 @@ export const ClientsListScreen = ({ navigation }: any) => {
                                     <TouchableOpacity
                                         onPress={() => {
                                             handleCloseClient();
-                                            navigation.navigate('ChatRoom', { customer: selectedClient });
+                                            navigation.navigate('MainTabs', {
+                                                screen: 'MessagesTab',
+                                                params: {
+                                                    screen: 'ChatRoomInTab',
+                                                    params: {
+                                                        thread: {
+                                                            id: `client-${selectedClient.id}`,
+                                                            name: selectedClient.name,
+                                                            avatar: selectedClient.avatar,
+                                                        },
+                                                    },
+                                                },
+                                            });
                                             }}
                                         style={[styles.actionCircle, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                                         <AppIcon library="Feather" name="message-circle" size={20} color={colors.primary} />

@@ -39,6 +39,8 @@ const QuickActionsSeparator = () => <View style={styles.quickActionsSeparator} /
 export const QuickActionsRow = ({ colors }: QuickActionsRowProps) => {
     const navigation = useNavigation<any>();
     const quickActions: QuickActionItem[] = [
+        { key: 'orders', icon: 'package', label: 'Orders', onPress: () => navigation.getParent()?.navigate('OrderFulfillment') },
+        { key: 'catalog', icon: 'shopping-bag', label: 'Catalog', onPress: () => navigation.getParent()?.navigate('MarketplaceProducts') },
         { key: 'services', icon: 'settings', label: 'Services', onPress: () => navigation.navigate('ManageServices') },
         { key: 'products', icon: 'box', label: 'Products', onPress: () => navigation.navigate('ManageProducts') },
         { key: 'promo', icon: 'tag', label: 'Create Promo', onPress: () => navigation.navigate('CreatePromo') },

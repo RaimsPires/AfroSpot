@@ -1,6 +1,7 @@
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import ManageBookingsScreen from '@screens/shop/BookingManagementScreen';
 import BusinessDashboardScreen from '@screens/shop/BusinessDashboardScreen';
 
@@ -36,6 +37,10 @@ const BusinessTabNavigator = () => {
                 tabBarActiveTintColor: colors.primary,
                 tabBarInactiveTintColor: colors.textSecondary,
                 tabBarStyle: {
+                    display:
+                        route.name === 'MessagesTab' && getFocusedRouteNameFromRoute(route) === 'ChatRoomInTab'
+                            ? 'none'
+                            : 'flex',
                     backgroundColor: colors.background,
                     borderTopColor: colors.border,
                     borderTopWidth: 1,

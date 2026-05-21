@@ -17,17 +17,20 @@ import { useTheme } from '@contexts/ThemeContext';
 
 const APPLIES_TO_OPTIONS = ['All Services', 'All Products', 'Specific Items'];
 
-const CreatePromoScreen = () => {
+const CreatePromoScreen = ({ navigation, route }: any) => {
     const { colors, isDark } = useTheme();
 
+    const editingPromo = route?.params?.promo;
+    const isEditing = !!editingPromo;
+
     // Form States
-    const [title, setTitle] = useState('');
-    const [promoCode, setPromoCode] = useState('');
-    const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
-    const [discountValue, setDiscountValue] = useState('');
-    const [appliesTo, setAppliesTo] = useState('All Services');
-    const [startDate, setStartDate] = useState('Oct 24, 2023'); // Mocked date string
-    const [endDate, setEndDate] = useState('Oct 31, 2023');     // Mocked date string
+    const [title, setTitle] = useState(editingPromo?.title ?? '');
+    const [promoCode, setPromoCode] = useState(editingPromo?.code ?? '');
+    const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>(editingPromo?.discountType ?? 'percentage');
+    const [discountValue, setDiscountValue] = useState(editingPromo?.discountValue?.toString() ?? '');
+    const [appliesTo, setAppliesTo] = useState(editingPromo?.target ?? 'All Services');
+    const [startDate, setStartDate] = useState(editingPromo?.startDate ?? 'Oct 24, 2023');
+    const [endDate, setEndDate] = useState(editingPromo?.endDate ?? 'Oct 31, 2023');
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -35,10 +38,10 @@ const CreatePromoScreen = () => {
 
             {/* 1. Header */}
             <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="x" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>Create Promotion</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{isEditing ? 'Edit Promotion' : 'Create Promotion'}</Text>
                 <View style={{ width: 40 }} />
             </View>
 
@@ -204,7 +207,9 @@ const CreatePromoScreen = () => {
             <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
                 <TouchableOpacity style={[styles.publishBtn, { backgroundColor: colors.primary }]}>
                     <AppIcon library="Feather" name="check" size={20} color={colors.textInverse} />
-                    <Text style={[styles.publishBtnText, { color: colors.textInverse }]}>Publish Promotion</Text>
+                    <Text style={[styles.publishBtnText, { color: colors.textInverse }]}>
+                        {isEditing ? 'Save Changes' : 'Publish Promotion'}
+                    </Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

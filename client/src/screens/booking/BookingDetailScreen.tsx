@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Dimensions,
     Image,
-    SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -16,6 +15,7 @@ import AppButton from '@components/ui/Button';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AppStackNavigationProp, AppStackRouteProp } from '@navigation/types';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 

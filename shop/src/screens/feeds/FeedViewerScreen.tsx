@@ -27,7 +27,7 @@ const FEED_ITEM = {
 };
 
 
-export const FeedViewerScreen = () => {
+export const FeedViewerScreen = ({ navigation }: any) => {
     const { colors } = useTheme();
     const [commentsVisible, setCommentsVisible] = React.useState(false);
 
@@ -41,7 +41,7 @@ export const FeedViewerScreen = () => {
 
                 {/* Top Header (Absolute) */}
                 <View style={styles.header}>
-                    <TouchableOpacity style={styles.iconBtn} onPress={() => {/* navigation.goBack() */ }}>
+                    <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                         <AppIcon library="Feather" name="chevron-left" size={28} color={colors.textInverse} />
                     </TouchableOpacity>
                     <Text style={[styles.headerTitle, { color: colors.textInverse }]}>Feed Insights</Text>
@@ -76,6 +76,16 @@ export const FeedViewerScreen = () => {
                             <AppIcon library="Feather" name="trash-2" size={20} color={colors.textInverse} />
                         </View>
                         <Text style={[styles.actionText, { color: colors.textInverse }]}>Delete</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.actionItem}
+                        onPress={() => navigation.navigate('BoostFeed', { feed: FEED_ITEM })}
+                    >
+                        <View style={[styles.iconCircle, { backgroundColor: colors.primary + 'CC' }]}>
+                            <AppIcon library="Feather" name="zap" size={20} color={colors.textInverse} />
+                        </View>
+                        <Text style={[styles.actionText, { color: colors.textInverse }]}>Boost</Text>
                     </TouchableOpacity>
                 </View>
 

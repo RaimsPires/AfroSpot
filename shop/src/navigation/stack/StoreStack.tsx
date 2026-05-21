@@ -17,7 +17,7 @@ const StoreStack = () => (
         <Stack.Screen name="ManageProductsInTab" component={ManageProductsScreen} />
         <Stack.Screen name="ManageServicesInTab" component={ManageServicesScreen} />
         <Stack.Screen name="ManagePromotionsInTab" component={ManagePromotionsScreen} />
-        <Stack.Screen name="CreatePromoInTab" component={CreatePromoScreen} />
+        <Stack.Screen name="CreatePromo" component={CreatePromoScreen} />
         <Stack.Screen name="ManageProfileInTab" component={ManageProfileScreen} />
         <Stack.Screen name="ManageReviewsInTab" component={ManageReviewsScreen} />
     </Stack.Navigator>
