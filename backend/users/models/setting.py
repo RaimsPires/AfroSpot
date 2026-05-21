@@ -24,6 +24,7 @@ class UserSettings(BaseModel):
     email_notifications = models.BooleanField(default=True)
     email_verifications = models.BooleanField(default=True)
     push_notifications = models.BooleanField(default=True)
+    marketing_emails = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.email} - Settings"

@@ -15,7 +15,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = PhoneNumberField(region=None, blank=True, null=True, unique=True)
     dob = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
-    profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
     language = models.CharField(max_length=10,choices=settings.LANGUAGES,default=settings.LANGUAGE_CODE)
     is_store_owner = models.BooleanField(default=False)
     
@@ -24,8 +23,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
     
-    
-
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
