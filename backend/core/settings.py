@@ -33,6 +33,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    
+    "unfold",  # before django.contrib.admin
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.inlines",  # optional, if special inlines are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+    "unfold.contrib.location_field",  # optional, if django-location-field package is used
+    "unfold.contrib.constance",  # optional, if django-constance package is used
+    
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,7 +78,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # third party middlewares like auth_kit's JWT middleware would go here if needed 
-    'user_language_middleware.UserLanguageMiddleware',
+    # 'user_language_middleware.UserLanguageMiddleware',
 ]
 
 
@@ -129,7 +141,7 @@ LANGUAGES = [
     ('fr', _('French')),
     ('es', _('Spanish')),
     ('de', _('German')),
-    ('zh', _('Chinese')),
+    # ('zh', _('Chinese')),
     ('ja', _('Japanese')),
     ('ru', _('Russian')),
     ('ar', _('Arabic')),
@@ -150,6 +162,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -157,7 +172,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = 'users.User' # Custom user model
+AUTH_USER_MODEL = 'users.User' 
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -218,7 +233,8 @@ AUTH_KIT = {
     # ===================================================================
     # LOGIN & LOGOUT SERIALIZERS & VIEWS
     # ===================================================================
-    'LOGIN_REQUEST_SERIALIZER': 'auth_kit.serializers.login_factors.LoginRequestSerializer',
+    # 'LOGIN_REQUEST_SERIALIZER': 'auth_kit.serializers.login_factors.LoginRequestSerializer',
+    'LOGIN_REQUEST_SERIALIZER': 'users.serializers.EmailOrPhoneLoginSerializer',
     'LOGIN_RESPONSE_SERIALIZER': 'auth_kit.serializers.login_factors.BaseLoginResponseSerializer',
     'LOGIN_SERIALIZER_FACTORY': 'auth_kit.serializers.login.get_login_serializer',
     'LOGIN_VIEW': 'auth_kit.views.LoginView',
@@ -228,7 +244,7 @@ AUTH_KIT = {
     # ===================================================================
     # USER MANAGEMENT SERIALIZERS & VIEWS
     # ===================================================================
-    'USER_SERIALIZER': 'auth_kit.serializers.user.UserSerializer',
+    'USER_SERIALIZER': 'users.serializers.UserSerializer',
     'USER_VIEW': 'auth_kit.views.UserView',
 
     # ===================================================================
