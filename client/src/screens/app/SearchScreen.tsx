@@ -1,7 +1,7 @@
-import { AppIcon, Input } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp, AppStackRouteProp } from '@/navigation/types';
+import { AppIcon, Input } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp, AppStackRouteProp } from '@navigation/types';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {

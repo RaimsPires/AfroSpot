@@ -30,7 +30,7 @@ const darkTheme: AppTheme = {
         textSecondary: palette.gray[500],
         border: palette.gray[800],
         primary: palette.primary,
-        secondary: palette.gray[100],
+        secondary: palette.secondary,
         error: palette.error,
         buttonDisabled: palette.gray[800],
         buttonDisabledText: palette.gray[500],

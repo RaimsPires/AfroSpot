@@ -7,9 +7,9 @@ import {
     View,
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // --- Reusable Layout for all Empty/Error States ---

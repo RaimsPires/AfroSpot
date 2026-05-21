@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 type FeedHeaderOverlayProps = {
     activeTab: 'Following' | 'Explore';

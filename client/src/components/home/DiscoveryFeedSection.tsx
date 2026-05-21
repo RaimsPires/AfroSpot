@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, ImageBackground, StyleSheet, Text, View } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 import SectionHeader from './SectionHeader';
 

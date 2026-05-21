@@ -8,12 +8,12 @@ import {
     View
 } from 'react-native';
 
-import FeedHeaderOverlay from '@/components/feeds/FeedHeaderOverlay';
-import FeedPostCard from '@/components/feeds/FeedPostCard';
-import { FEED_POSTS, TRENDING_TAGS } from '@/components/feeds/mockData';
-import { FeedComment, FeedPostItem } from '@/components/feeds/types';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import FeedHeaderOverlay from '@components/feeds/FeedHeaderOverlay';
+import FeedPostCard from '@components/feeds/FeedPostCard';
+import { FEED_POSTS, TRENDING_TAGS } from '@components/feeds/mockData';
+import { FeedComment, FeedPostItem } from '@components/feeds/types';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import CommentsBottomSheet from './CommentsBottomSheet';
 

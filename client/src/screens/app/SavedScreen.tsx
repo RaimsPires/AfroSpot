@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { FlatList, StatusBar, StyleSheet } from 'react-native';
 
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import SavedEmptyState from '@/components/saved/SavedEmptyState';
-import SavedFilterTabs from '@/components/saved/SavedFilterTabs';
-import SavedHeader from '@/components/saved/SavedHeader';
-import SavedItemCard from '@/components/saved/SavedItemCard';
-import { SAVED_ITEMS, TABS } from '@/components/saved/mockData';
-import { SavedItem } from '@/components/saved/types';
+import SavedEmptyState from '@components/saved/SavedEmptyState';
+import SavedFilterTabs from '@components/saved/SavedFilterTabs';
+import SavedHeader from '@components/saved/SavedHeader';
+import SavedItemCard from '@components/saved/SavedItemCard';
+import { SAVED_ITEMS, TABS } from '@components/saved/mockData';
+import { SavedItem } from '@components/saved/types';
 
 const SavedScreen = () => {
     const { colors, isDark } = useTheme();

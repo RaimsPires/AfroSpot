@@ -10,10 +10,10 @@ import {
     View,
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AuthStackParamList } from '@/navigation/AuthStackNavigator';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';

@@ -1,9 +1,9 @@
-import { logo } from '@/assets';
-import { AppIcon, Input } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AuthStackParamList } from '@/navigation/AuthStackNavigator';
+import { logo } from '@assets';
+import { AppIcon, Input } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useAuth } from '@contexts/AuthContext';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Marker } from 'react-native-maps';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 import { MapLocationItem } from './types';
 

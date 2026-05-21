@@ -8,18 +8,18 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import { AppIcon } from '@components/ui';
+import { useAuth } from '@contexts/AuthContext';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LanguageBottomSheet from '@/components/profile/LanguageBottomSheet';
-import ProfileHeader from '@/components/profile/ProfileHeader';
-import ProfileMenuGroup from '@/components/profile/ProfileMenuGroup';
-import ProfileMenuItem from '@/components/profile/ProfileMenuItem';
-import ProfileUserInfo from '@/components/profile/ProfileUserInfo';
+import LanguageBottomSheet from '@components/profile/LanguageBottomSheet';
+import ProfileHeader from '@components/profile/ProfileHeader';
+import ProfileMenuGroup from '@components/profile/ProfileMenuGroup';
+import ProfileMenuItem from '@components/profile/ProfileMenuItem';
+import ProfileUserInfo from '@components/profile/ProfileUserInfo';
 
 const ProfileScreen = () => {
     const { colors, isDark, toggleTheme } = useTheme();

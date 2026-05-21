@@ -1,5 +1,5 @@
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
 import React from 'react';
 import {
     Dimensions,

@@ -4,14 +4,14 @@ import {
     StyleSheet,
 } from 'react-native';
 
-import CategoryStrip from '@/components/home/CategoryStrip';
-import DiscoveryFeedSection from '@/components/home/DiscoveryFeedSection';
-import FeaturedCarousel from '@/components/home/FeaturedCarousel';
-import HomeSearchBar from '@/components/home/HomeSearchBar';
-import HomeTopHeader from '@/components/home/HomeTopHeader';
-import NearbySection from '@/components/home/NearbySection';
-import TrendingSection from '@/components/home/TrendingSection';
-import { useTheme } from '@/contexts/ThemeContext';
+import CategoryStrip from '@components/home/CategoryStrip';
+import DiscoveryFeedSection from '@components/home/DiscoveryFeedSection';
+import FeaturedCarousel from '@components/home/FeaturedCarousel';
+import HomeSearchBar from '@components/home/HomeSearchBar';
+import HomeTopHeader from '@components/home/HomeTopHeader';
+import NearbySection from '@components/home/NearbySection';
+import TrendingSection from '@components/home/TrendingSection';
+import { useTheme } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {

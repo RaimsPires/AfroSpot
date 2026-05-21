@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 import { LANGUAGES } from './mockData';
 

@@ -1,6 +1,6 @@
-import AppNavigator from "@/navigation/AppNavigator";
-import OnboardingScreen from "@/screens/onboarding/OnboardingScreen";
-import SplashScreen from "@/screens/onboarding/SplashScreen";
+import AppNavigator from "@navigation/AppNavigator";
+import OnboardingScreen from "@screens/onboarding/OnboardingScreen";
+import SplashScreen from "@screens/onboarding/SplashScreen";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { AuthProvider, useAuth } from "./src/contexts/AuthContext";

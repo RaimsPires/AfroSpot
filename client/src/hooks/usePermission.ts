@@ -1,5 +1,5 @@
 import { checkPermission, getPermissionStatus, getPermissionStatusMessage, PermissionType, RESULTS } from '@/permissions';
-import { usePermissionStore } from '@/store/permissionStore';
+import { usePermissionStore } from '@store/permissionStore';
 import { useCallback } from 'react';
 
 /**

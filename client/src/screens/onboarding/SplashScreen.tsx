@@ -1,4 +1,4 @@
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
 import React from 'react';
 import {
     Image,
@@ -30,8 +30,8 @@ const SplashScreen = ({ onNext,  }: SplashScreenProps) => {
             {/* Background Gradient */}
             <LinearGradient
                 start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }}
-                // locations={[0,0.5,0.6]}
-                colors={[colors.primary, colors.secondary, colors.text]}
+                locations={[0,0.5,0.6]}
+                colors={[colors.primary, colors.secondary]}
                 style={styles.background}
 
             />

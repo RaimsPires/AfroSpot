@@ -10,8 +10,8 @@ import {
     View
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import { useTheme } from '@/contexts/ThemeContext';
+import { AppIcon } from '@components/ui';
+import { useTheme } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 

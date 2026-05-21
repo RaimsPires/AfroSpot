@@ -9,10 +9,10 @@ import {
     NotificationsFilterTabs,
     NotificationsHeader,
     NotificationsSafetyBox,
-} from '@/components/notifications';
-import { FILTER_TABS } from '@/components/notifications/mockData';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+} from '@components/notifications';
+import { FILTER_TABS } from '@components/notifications/mockData';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
 const NotificationsScreen = () => {
