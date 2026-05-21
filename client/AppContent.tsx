@@ -1,10 +1,11 @@
-import AppNavigator from "@/navigation/AppNavigator";
-import OnboardingScreen from "@/screens/onboarding/OnboardingScreen";
-import SplashScreen from "@/screens/onboarding/SplashScreen";
+import { AuthProvider, useAuth } from "@contexts/AuthContext";
+import { ThemeProvider } from "@contexts/ThemeContext";
+import { TranslationProvider } from "@contexts/TranslationContext";
+import AppNavigator from "@navigation/AppNavigator";
+import OnboardingScreen from "@screens/onboarding/OnboardingScreen";
+import SplashScreen from "@screens/onboarding/SplashScreen";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { AuthProvider, useAuth } from "./src/contexts/AuthContext";
-import { ThemeProvider } from "./src/contexts/ThemeContext";
 
 const AppRoot = () => {
     const { isAuthenticated } = useAuth();
@@ -37,11 +38,13 @@ const AppBootstrap = () => {
 function AppContent() {
     return (
         <View style={styles.container}>
-            <AuthProvider>
-                <ThemeProvider>
-                    <AppBootstrap />
-                </ThemeProvider>
-            </AuthProvider>
+            <TranslationProvider>
+                <AuthProvider>
+                    <ThemeProvider>
+                        <AppBootstrap />
+                    </ThemeProvider>
+                </AuthProvider>
+            </TranslationProvider>
         </View>
     );
 }

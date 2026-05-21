@@ -1,4 +1,4 @@
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

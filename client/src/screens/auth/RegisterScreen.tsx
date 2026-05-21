@@ -1,5 +1,5 @@
 import CountryPicker, { CountryCode } from '@avaiyakapil/react-native-country-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Alert,
     Image,
@@ -8,15 +8,15 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
 // Using your specific imports
-import { AppIcon, Input } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AuthStackParamList } from '@/navigation/AuthStackNavigator';
+import { AppIcon, DatePickerField, Input } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,19 +27,12 @@ const RegisterScreen = () => {
     const { colors, spacing, isDark } = useTheme();
     const navigation = useNavigation<AuthNavigationProp>();
 
+
     // State for Image and Country
     const [profileImage, setProfileImage] = useState<string | null>(null);
-    const [countryCode, setCountryCode] = useState<CountryCode>('NG');
-    const [callingCode, setCallingCode] = useState('234');
-
-
-    useEffect(() => {
-        const handleSubmit = () => {
-            console.log(callingCode);
-            console.log(countryCode);
-        };
-        handleSubmit();
-    }, [callingCode, countryCode]);
+    const [phoneCountryCode, setPhoneCountryCode] = useState<CountryCode>('NG');
+    const [residenceCountryCode, setResidenceCountryCode] = useState<CountryCode>('NG');
+    const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
     const handlePickImage = () => {
         ImagePicker.openPicker({
@@ -108,11 +101,11 @@ const RegisterScreen = () => {
                 {/* 3. Form Section */}
                 <View style={styles.form}>
                     <View style={styles.row}>
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Input label="First Name" placeholder="Amina" />
                         </View>
                         <View style={{ width: spacing(2) }} />
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Input label="Last Name" placeholder="Okoro" />
                         </View>
                     </View>
@@ -123,25 +116,67 @@ const RegisterScreen = () => {
                         leftIcon={{ library: 'Feather', name: 'mail' }}
                     />
 
+                    <DatePickerField
+                        label="Date of Birth"
+                        value={dateOfBirth}
+                        onChange={setDateOfBirth}
+                        placeholder="Select your date of birth"
+                        maximumDate={new Date()}
+                        minimumDate={new Date(1900, 0, 1)}
+                        helperText="Used to personalize your profile and verify your age."
+                    />
+
+                    <View style={styles.fieldGroup}>
+                        <Text style={[styles.labelFix, { color: colors.text }]}>Country of Residence</Text>
+                        <View style={[styles.countryPickerField, { backgroundColor: colors.surface, borderColor: colors.border }]}> 
+                            <CountryPicker
+                                modalStyle={{ backgroundColor: colors.surface }}
+                                modalAnimationType='fade'
+                                colors={{
+                                    grayLight: colors.border,
+                                    grayBackground: colors.background,
+                                    white: colors.border,
+                                    gray: colors.textSecondary,
+                                    dark: colors.text,
+                                }}
+                                iconColor={colors.text}
+                                countryCode={residenceCountryCode}
+                                showCallingCode={false}
+                                containerWidth="100%"
+                                onSelect={(countryCode) => {
+                                    setResidenceCountryCode(countryCode);
+                                }}
+                            />
+                        </View>
+                    </View>
+
                     {/* 4. Phone Row with Country Picker */}
                     <View style={styles.phoneRow}>
-                        <View style={{ width: 110 }}>
+                        <View style={styles.phoneCountryColumn}>
                             <Text style={[styles.labelFix, { color: colors.text }]}>Phone</Text>
                             <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                                 <CountryPicker
-                                    countryCode={countryCode}
-                                    // withFilter
-                                    // withFlag
-                                    // withCallingCode
+                                    modalStyle={{ backgroundColor: colors.surface }}
+                                    modalAnimationType='fade'
+                                    colors={{
+                                        grayLight: colors.border,
+                                        grayBackground: colors.background,
+                                        white: colors.border,
+                                        gray: colors.textSecondary,
+                                        dark: colors.text,
+                                    }}
+                                    // callingCodeStyle={{ color: colors.text }}
+                                    iconColor={colors.text}
+                                    countryCode={phoneCountryCode}
                                     onSelect={(countryCode, country) => {
-                                        setCountryCode(countryCode);
-                                        setCallingCode(country.callingCode[0] || '');
+                                        console.log('Selected Country:', country);
+                                        setPhoneCountryCode(countryCode);
                                     }}
                                 />
                             </View>
                         </View>
                         <View style={{ width: spacing(1.5) }} />
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.flexOne}>
                             <Input label=" " placeholder="812 345 6789" keyboardType="phone-pad" />
                         </View>
                     </View>
@@ -170,7 +205,7 @@ const RegisterScreen = () => {
 
                     <TouchableOpacity style={styles.footerLink} onPress={() => navigation.navigate('LogIn')}>
                         <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                            Already have an account? <Text style={{ color: colors.primary, fontWeight: 'bold' }}>Sign In</Text>
+                            Already have an account? <Text style={[{ color: colors.primary }, styles.signInStrong]}>Sign In</Text>
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -198,7 +233,10 @@ const styles = StyleSheet.create({
     photoSub: { fontSize: 13, textAlign: 'center', marginTop: 4, paddingHorizontal: 40 },
     form: { gap: 16 },
     row: { flexDirection: 'row' },
+    fieldGroup: { gap: 8 },
+    flexOne: { flex: 1 },
     phoneRow: { flexDirection: 'row', alignItems: 'flex-end' },
+    phoneCountryColumn: { width: 110 },
     labelFix: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
     countryPickerWrap: {
         height: 48,
@@ -209,7 +247,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         justifyContent: 'center'
     },
+    countryPickerField: {
+        minHeight: 48,
+        borderRadius: 12,
+        borderWidth: 1,
+        paddingHorizontal: 8,
+        justifyContent: 'center'
+    },
+    countryPickerStyle: { padding: 10, borderRadius: 8, borderWidth: 1 },
     callingCode: { fontSize: 14, fontWeight: '600', marginLeft: 4 },
+    signInStrong: { fontWeight: 'bold' },
     footerLink: { marginTop: 20, alignItems: 'center' },
     footerText: { fontSize: 15 },
 });

@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
-import ExploreCategories from '@/components/explore/ExploreCategories';
-import ExploreCollectionCard from '@/components/explore/ExploreCollectionCard';
-import ExploreHeader from '@/components/explore/ExploreHeader';
-import ExploreSearchBar from '@/components/explore/ExploreSearchBar';
-import ExploreSectionHeader from '@/components/explore/ExploreSectionHeader';
-import ExploreTrendingCard from '@/components/explore/ExploreTrendingCard';
-import { CATEGORIES, COLLECTIONS, TRENDING_PLACES } from '@/components/explore/mockData';
+import ExploreCategories from '@components/explore/ExploreCategories';
+import ExploreCollectionCard from '@components/explore/ExploreCollectionCard';
+import ExploreHeader from '@components/explore/ExploreHeader';
+import ExploreSearchBar from '@components/explore/ExploreSearchBar';
+import ExploreSectionHeader from '@components/explore/ExploreSectionHeader';
+import ExploreTrendingCard from '@components/explore/ExploreTrendingCard';
+import { CATEGORIES, COLLECTIONS, TRENDING_PLACES } from '@components/explore/mockData';
 
 const ExploreScreen = () => {
     const navigation = useNavigation<AppStackNavigationProp<'Explore'>>();

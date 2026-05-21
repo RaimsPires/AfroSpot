@@ -12,10 +12,10 @@ import {
 import OtpInputs from 'react-native-otp-molecule';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AuthStackParamList } from '@/navigation/AuthStackNavigator';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
 
 type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 

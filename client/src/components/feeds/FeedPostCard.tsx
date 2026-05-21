@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import { useTheme } from '@/contexts/ThemeContext';
+import { AppIcon } from '@components/ui';
+import { useTheme } from '@contexts/ThemeContext';
 
 import { FeedPostItem } from './types';
 

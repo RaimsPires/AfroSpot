@@ -18,7 +18,7 @@ export { usePermission } from '../hooks/usePermission';
 /**
  * Usage Example:
  *
- * import { usePermission, PermissionType } from '@/permissions';
+ * import { usePermission, PermissionType } from '@permissions';
  *
  * export const MyComponent = () => {
  *   const { isGranted, requestPermission } = usePermission();

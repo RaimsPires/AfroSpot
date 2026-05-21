@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 type ExploreSearchBarProps = {
     searchQuery: string;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
 
 import { MapLocationItem } from './types';
 

@@ -1,0 +1,25 @@
+{
+    "common": {
+        "appName": "Afrospot",
+        "actions": {
+            "cancel": "Annuler",
+            "done": "Terminer",
+            "save": "Enregistrer",
+            "continue": "Continuer"
+        }
+    },
+    "auth": {
+        "register": {
+            "title": "Creer un compte",
+            "firstName": "Prenom",
+            "lastName": "Nom",
+            "email": "Adresse e-mail",
+            "dateOfBirth": "Date de naissance",
+            "countryOfResidence": "Pays de residence",
+            "phone": "Telephone",
+            "password": "Mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "createAccount": "Creer un compte"
+        }
+    }
+}

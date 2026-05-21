@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
-import type { AppStackNavigationProp } from '@/navigation/types';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { AllCategoriesBottomSheet } from './AllCategoriesBottomSheet';
 import { CategoryItem } from './CategoryItem';

@@ -1,7 +1,7 @@
-import { logo } from '@/assets';
-import { AppIcon } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
+import { logo } from '@assets';
+import { AppIcon } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
 import React from 'react';
 import {
     Image,

@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
 
-import CategoryChips from '@/components/map/CategoryChips';
-import MapBusinessCard from '@/components/map/MapBusinessCard';
-import MapControls from '@/components/map/MapControls';
-import MapHeader from '@/components/map/MapHeader';
-import MapMarkers from '@/components/map/MapMarkers';
-import { CATEGORIES, MOCK_LOCATIONS } from '@/components/map/mockData';
-import { MapLocationItem } from '@/components/map/types';
-import { useTheme } from '@/contexts/ThemeContext';
+import CategoryChips from '@components/map/CategoryChips';
+import MapBusinessCard from '@components/map/MapBusinessCard';
+import MapControls from '@components/map/MapControls';
+import MapHeader from '@components/map/MapHeader';
+import MapMarkers from '@components/map/MapMarkers';
+import { CATEGORIES, MOCK_LOCATIONS } from '@components/map/mockData';
+import { MapLocationItem } from '@components/map/types';
+import { useTheme } from '@contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');

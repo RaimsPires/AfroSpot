@@ -1,5 +1,5 @@
-import { FeedComment, FeedPostItem } from '@/components/feeds/types';
-import { AppIcon } from "@/components/ui";
+import { FeedComment, FeedPostItem } from '@components/feeds/types';
+import { AppIcon } from "@components/ui";
 import { useState } from "react";
 import { FlatList, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 

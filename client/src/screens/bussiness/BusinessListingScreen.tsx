@@ -17,10 +17,10 @@ import {
 } from 'react-native';
 import Skeleton from 'react-native-reanimated-skeleton';
 
-import { AppIcon, Input } from '@/components/ui';
-import AppButton from '@/components/ui/Button';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import { AppIcon, Input } from '@components/ui';
+import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');

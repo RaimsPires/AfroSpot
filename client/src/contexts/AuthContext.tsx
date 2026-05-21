@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import type { AuthUser } from '@/store/authStore';
-import { useAuthStore } from '@/store/authStore';
+import type { AuthUser } from '@store/authStore';
+import { useAuthStore } from '@store/authStore';
 
 type AuthContextValue = {
     isAuthenticated: boolean;

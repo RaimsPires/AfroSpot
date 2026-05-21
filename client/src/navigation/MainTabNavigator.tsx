@@ -3,13 +3,13 @@ import React, { useMemo } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 // Import your existing UI components and theme
-import { AppIcon } from '@/components/ui';
-import { useTheme } from '@/contexts/ThemeContext';
-import ExploreScreen from '@/screens/app/ExploreScreen';
-import HomeScreen from '@/screens/app/HomeScreen';
-import CommunityFeedScreen from '@/screens/feeds/CommunityFeedScreen';
-import InteractiveMapScreen from '@/screens/map/InteractiveMapScreen';
-import NotificationsScreen from '@/screens/notification/NotificationsScreen';
+import { AppIcon } from '@components/ui';
+import { useTheme } from '@contexts/ThemeContext';
+import ExploreScreen from '@screens/app/ExploreScreen';
+import HomeScreen from '@screens/app/HomeScreen';
+import CommunityFeedScreen from '@screens/feeds/CommunityFeedScreen';
+import InteractiveMapScreen from '@screens/map/InteractiveMapScreen';
+import NotificationsScreen from '@screens/notification/NotificationsScreen';
 
 
 const Tab = createBottomTabNavigator();

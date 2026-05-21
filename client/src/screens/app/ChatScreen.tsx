@@ -1,4 +1,3 @@
-import { Actions, Bubble, GiftedChat, IMessage, InputToolbar, Send } from 'react-native-gifted-chat';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     Image,
@@ -8,10 +7,11 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { Actions, Bubble, GiftedChat, IMessage, InputToolbar, Send } from 'react-native-gifted-chat';
 
-import { AppIcon } from '@/components/ui';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import { AppIcon } from '@components/ui';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 

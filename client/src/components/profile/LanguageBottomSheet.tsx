@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 import { LANGUAGES } from './mockData';
 
@@ -18,6 +18,7 @@ type LanguageBottomSheetProps = {
     onClose: () => void;
     onSelectLanguage: (languageId: string) => void;
     currentLanguage: string;
+    languages?: typeof LANGUAGES;
     colors: {
         background: string;
         surface: string;
@@ -33,8 +34,11 @@ const LanguageBottomSheet = ({
     onClose,
     onSelectLanguage,
     currentLanguage,
+    languages,
     colors,
 }: LanguageBottomSheetProps) => {
+    const languagesToRender = languages ?? LANGUAGES;
+
     const handleSelectLanguage = (languageId: string) => {
         onSelectLanguage(languageId);
         onClose();
@@ -58,11 +62,11 @@ const LanguageBottomSheet = ({
                     <Text style={[styles.title, { color: colors.text }]}>Select Language</Text>
 
                     <ScrollView
-                        scrollEnabled={LANGUAGES.length > 6}
+                        scrollEnabled={languagesToRender.length > 6}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={styles.languageList}
                     >
-                        {LANGUAGES.map((language, index) => (
+                        {languagesToRender.map((language, index) => (
                             <TouchableOpacity
                                 key={language.id}
                                 onPress={() => handleSelectLanguage(language.id)}
@@ -74,7 +78,7 @@ const LanguageBottomSheet = ({
                                             : 'transparent',
                                         borderColor: colors.border,
                                     },
-                                    index !== LANGUAGES.length - 1 && { borderBottomWidth: 1 },
+                                    index !== languagesToRender.length - 1 && { borderBottomWidth: 1 },
                                 ]}
                             >
                                 <Text style={styles.flag}>{language.flag}</Text>

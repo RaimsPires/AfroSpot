@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Dimensions,
+    FlatList,
+    Image,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
-import { useTheme } from '@/contexts/ThemeContext';
-import type { AppStackNavigationProp } from '@/navigation/types';
+import { AppIcon } from '@components/ui';
+import { useTheme } from '@contexts/ThemeContext';
+import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');

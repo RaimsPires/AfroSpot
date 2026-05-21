@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { AppIcon } from '@/components/ui';
+import { AppIcon } from '@components/ui';
 
 import { SavedItem } from './types';
 
