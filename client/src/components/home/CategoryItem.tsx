@@ -1,6 +1,6 @@
-import { IconLibrary } from '@/types/ui';
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
+import { IconLibrary } from '@types/ui';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

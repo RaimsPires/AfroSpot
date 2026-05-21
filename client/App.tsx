@@ -4,6 +4,7 @@ import {
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
 import AppContent from './AppContent';
+import './src/i18n';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
