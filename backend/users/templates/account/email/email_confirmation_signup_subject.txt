@@ -1,0 +1,1 @@
+{% load i18n %}{% trans "Verify Your Email Address" %}

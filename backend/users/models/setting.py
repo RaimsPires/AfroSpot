@@ -26,5 +26,11 @@ class UserSettings(BaseModel):
     push_notifications = models.BooleanField(default=True)
     marketing_emails = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'User Setting'
+        verbose_name_plural = 'User Settings'
+        db_table = 'user_settings'
+        
+        
     def __str__(self):
         return f"{self.user.email} - Settings"

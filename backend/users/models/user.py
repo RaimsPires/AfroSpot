@@ -12,7 +12,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True, db_index=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
-    phone_number = PhoneNumberField(region=None, blank=True, null=True, unique=True)
+    phone_number = PhoneNumberField(region=None, blank=True, null=True,)
     dob = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to=user_profile_image_path, null=True, blank=True)
     language = models.CharField(max_length=10,choices=settings.LANGUAGES,default=settings.LANGUAGE_CODE)
@@ -28,6 +28,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        db_table = 'users'
+        
+        
     def __str__(self):
         return self.email
     

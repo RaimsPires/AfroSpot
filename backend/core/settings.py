@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     "unfold.contrib.location_field",  # optional, if django-location-field package is used
     "unfold.contrib.constance",  # optional, if django-constance package is used
     
+    "tailwind",
+    "theme",
+    
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -82,6 +85,10 @@ MIDDLEWARE = [
     # 'user_language_middleware.UserLanguageMiddleware',
 ]
 
+
+if DEBUG:
+    INSTALLED_APPS += ["django_browser_reload"]
+    MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
 
 
 ROOT_URLCONF = 'core.urls'
@@ -155,6 +162,10 @@ LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 USE_TZ = True
 
@@ -255,8 +266,8 @@ AUTH_KIT = {
     'REGISTER_VIEW': 'auth_kit.views.RegisterView',
     'VERIFY_EMAIL_VIEW': 'auth_kit.views.VerifyEmailView',
     'RESEND_EMAIL_VERIFICATION_VIEW': 'auth_kit.views.ResendEmailVerificationView',
-    'FRONTEND_BASE_URL': None,
-    'REGISTER_EMAIL_CONFIRM_PATH': None,
+    'FRONTEND_BASE_URL': "localhost:8000",
+    'REGISTER_EMAIL_CONFIRM_PATH': 'api/auth/registration/verify-email/',
     'GET_EMAIL_VERIFICATION_URL_FUNC': 'auth_kit.views.registration.get_email_verification_url',
     'SEND_VERIFY_EMAIL_FUNC': 'auth_kit.views.registration.send_verify_email',
 
@@ -302,3 +313,14 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[AfroSpot] "
+DEFAULT_FROM_EMAIL = "AfroSpot <no-reply@afrospot.app>"
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'a1ed9b3cb00414'
+EMAIL_HOST_PASSWORD = '3929b68f9d634f'
+EMAIL_PORT = 2525
+
+TAILWIND_APP_NAME = "theme"
