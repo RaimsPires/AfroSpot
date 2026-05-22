@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from datetime import timedelta
+import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
@@ -96,7 +97,9 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -174,6 +177,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -264,10 +270,10 @@ AUTH_KIT = {
     # ===================================================================
     'REGISTER_SERIALIZER': 'users.serializers.register_user.RegisterUserSerializer',
     'REGISTER_VIEW': 'auth_kit.views.RegisterView',
-    'VERIFY_EMAIL_VIEW': 'auth_kit.views.VerifyEmailView',
+    'VERIFY_EMAIL_VIEW': 'users.views.VerifyEmailView',
     'RESEND_EMAIL_VERIFICATION_VIEW': 'auth_kit.views.ResendEmailVerificationView',
-    'FRONTEND_BASE_URL': "localhost:8000",
-    'REGISTER_EMAIL_CONFIRM_PATH': 'api/auth/registration/verify-email/',
+    'FRONTEND_BASE_URL': None,
+    'REGISTER_EMAIL_CONFIRM_PATH': None,
     'GET_EMAIL_VERIFICATION_URL_FUNC': 'auth_kit.views.registration.get_email_verification_url',
     'SEND_VERIFY_EMAIL_FUNC': 'auth_kit.views.registration.send_verify_email',
 
