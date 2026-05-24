@@ -18,7 +18,26 @@ type SplashScreenProps = {
 };
 
 const SplashScreen = ({ onNext }: SplashScreenProps) => {
-    const { colors } = useTheme();
+    const { colors, isDark } = useTheme();
+    const backgroundGradient = isDark
+        ? ['#07090F', '#0C111A', '#111928']
+        : [colors.surface, colors.background, '#F4F6FA'];
+    const tintGradient = isDark
+        ? ['rgba(12, 20, 32, 0.15)', 'rgba(80, 120, 175, 0.2)', 'rgba(0, 0, 0, 0)']
+        : ['rgba(113, 69, 28, 0.08)', 'rgba(237, 140, 43, 0.14)', 'rgba(0, 0, 0, 0)'];
+    const buttonGradient = isDark
+        ? ['#243A57', '#172233']
+        : [colors.primary, colors.secondary];
+    const logoFrameStyle = [styles.logoFrame, { borderColor: `${colors.border}80`, backgroundColor: `${colors.surface}B3` }];
+    const taglineStyle = [styles.tagline, { color: isDark ? '#EAF1FF' : colors.text }];
+    const poweredByStyle = [styles.poweredBy, { color: isDark ? 'rgba(225, 235, 255, 0.72)' : `${colors.textSecondary}CC` }];
+    const lineStyle = [styles.horizontalLine, { backgroundColor: isDark ? 'rgba(181, 204, 238, 0.33)' : `${colors.border}CC` }];
+    const versionStyle = [styles.versionText, { color: isDark ? 'rgba(220, 230, 252, 0.5)' : colors.textSecondary }];
+    const buttonStyle = [styles.nextButton, { borderColor: isDark ? 'rgba(160, 196, 255, 0.36)' : `${colors.secondary}80` }];
+    const nextTextStyle = [styles.nextText, { color: isDark ? '#F9FCFF' : '#FFFFFF' }];
+    const accentLineStyle = [styles.accentLine, { backgroundColor: `${colors.primary}B3` }];
+    const glowTopStyle = [styles.glow, styles.glowTop, { backgroundColor: `${colors.secondary}33` }];
+    const glowBottomStyle = [styles.glow, styles.glowBottom, { backgroundColor: `${colors.primary}2B` }];
 
 
     return (
@@ -30,7 +49,7 @@ const SplashScreen = ({ onNext }: SplashScreenProps) => {
             {/* Background Gradient */}
             <LinearGradient
                 start={{ x: 0.05, y: 0.1 }} end={{ x: 0.95, y: 1 }}
-                colors={['#07090F', '#0C111A', '#111928']}
+                colors={backgroundGradient}
                 style={styles.background}
 
             />
@@ -38,12 +57,12 @@ const SplashScreen = ({ onNext }: SplashScreenProps) => {
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                colors={['rgba(12, 20, 32, 0.15)', 'rgba(80, 120, 175, 0.2)', 'rgba(0, 0, 0, 0)']}
+                colors={tintGradient}
                 style={styles.tintOverlay}
             />
 
-            <View style={[styles.glow, styles.glowTop, { backgroundColor: `${colors.secondary}33` }]} />
-            <View style={[styles.glow, styles.glowBottom, { backgroundColor: `${colors.primary}2B` }]} />
+            <View style={glowTopStyle} />
+            <View style={glowBottomStyle} />
 
             <SafeAreaView style={styles.contentContainer}>
                 {/* Top Spacer */}
@@ -52,42 +71,42 @@ const SplashScreen = ({ onNext }: SplashScreenProps) => {
                 {/* Center Content */}
                 <View style={styles.centerSection}>
                     {/* Logo Container */}
-                    <View style={styles.logoFrame}>
+                    <View style={logoFrameStyle}>
                         <Image style={styles.logoBox}
                             source={logo} />
                     </View>
 
-                    <Text style={styles.tagline}>
+                    <Text style={taglineStyle}>
                         Discover African businesses{`\n`}in a darker, richer vibe
                     </Text>
 
                     {/* Accent Line */}
-                    <View style={styles.accentLine} />
+                    <View style={accentLineStyle} />
                 </View>
 
                 {/* Bottom Footer */}
                 <View style={styles.footerSection}>
-                    <Text style={styles.poweredBy}>POWERED BY CULTURE</Text>
+                    <Text style={poweredByStyle}>POWERED BY CULTURE</Text>
 
                     <View style={styles.versionRow}>
-                        <View style={styles.horizontalLine} />
-                        <Text style={styles.versionText}>Version 1.0.4</Text>
-                        <View style={styles.horizontalLine} />
+                        <View style={lineStyle} />
+                        <Text style={versionStyle}>Version 1.0.4</Text>
+                        <View style={lineStyle} />
                     </View>
 
 
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={onNext}
-                        style={styles.nextButton}
+                        style={buttonStyle}
                     >
                         <LinearGradient
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
-                            colors={['#243A57', '#172233']}
+                            colors={buttonGradient}
                             style={styles.nextButtonGradient}
                         />
-                        <Text style={styles.nextText}>Get Started</Text>
+                        <Text style={nextTextStyle}>Get Started</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -140,9 +159,7 @@ const styles = StyleSheet.create({
         marginBottom: 28,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.12)',
     },
     logoBox: {
         width: 98,
@@ -151,7 +168,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     tagline: {
-        color: '#EAF1FF',
         fontSize: 25,
         fontWeight: '700',
         textAlign: 'center',
@@ -162,7 +178,6 @@ const styles = StyleSheet.create({
     accentLine: {
         width: 64,
         height: 4,
-        backgroundColor: 'rgba(117, 155, 206, 0.7)',
         marginTop: 22,
         borderRadius: 2,
     },
@@ -172,7 +187,6 @@ const styles = StyleSheet.create({
         marginBottom: 34,
     },
     poweredBy: {
-        color: 'rgba(225, 235, 255, 0.72)',
         fontSize: 11,
         fontWeight: '700',
         letterSpacing: 3,
@@ -184,14 +198,12 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     versionText: {
-        color: 'rgba(220, 230, 252, 0.5)',
         fontSize: 12,
         marginHorizontal: 14,
     },
     horizontalLine: {
         width: 34,
         height: 1,
-        backgroundColor: 'rgba(181, 204, 238, 0.33)',
     },
     nextButton: {
         marginTop: 22,
@@ -202,13 +214,11 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         borderRadius: 999,
         borderWidth: 1,
-        borderColor: 'rgba(160, 196, 255, 0.36)',
     },
     nextButtonGradient: {
         ...StyleSheet.absoluteFill,
     },
     nextText: {
-        color: '#F9FCFF',
         fontSize: 15,
         fontWeight: '700',
         letterSpacing: 0.4,

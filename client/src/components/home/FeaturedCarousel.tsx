@@ -57,6 +57,7 @@ const FeaturedCarousel = () => {
 
     const renderItem = ({ item }: any) => (
         <TouchableOpacity
+            // style={{  }}
             activeOpacity={0.92}
             onPress={() =>
                 navigation.navigate('BusinessDetail', {
@@ -68,11 +69,11 @@ const FeaturedCarousel = () => {
         >
             <ImageBackground
                 source={{ uri: item.image }}
-                style={styles.carouselItem}
-                imageStyle={{ borderRadius: 24 }}
+                style={[styles.carouselItem, ]}
+                imageStyle={{ borderRadius: 24, borderColor: colors.surface, borderWidth: 2 }}
             >
                 <View style={styles.featuredOverlay}>
-                    <View style={[styles.featuredBadge, { backgroundColor: colors.primary }]}> 
+                    <View style={[styles.featuredBadge, { backgroundColor: colors.primary }]}>
                         <Text style={styles.badgeText}>{item.badge}</Text>
                     </View>
                     <View>

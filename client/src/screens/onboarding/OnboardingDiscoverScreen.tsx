@@ -1,5 +1,6 @@
 import { AppIcon } from '@components/ui';
 import AppButton from '@components/ui/Button';
+import { useTheme } from '@contexts/ThemeContext';
 import React from 'react';
 import {
     Dimensions,
@@ -13,30 +14,23 @@ import {
 
 const {  height } = Dimensions.get('window');
 
-// Palette de couleurs extraite de la maquette
-const theme = {
-    primary: '#ED8936', // Couleur orange
-    black: '#1A202C',
-    gray: '#718096',
-    lightGray: '#E2E8F0',
-    background: '#FFFFFF',
-};
-
 type OnboardingDiscoverProps = {
     onNext?: () => void;
     onSkip?: () => void;
 };
 
-const OnboardingDiscover = ({
+const OnboardingDiscoverScreen = ({
     onNext,
     onSkip,
 }: OnboardingDiscoverProps) => {
+    const { colors, isDark } = useTheme();
+
     return (
-        <View style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+        <View style={[styles.container, { backgroundColor: colors.background }] }>
+            <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor="transparent" translucent />
             
             {/* 1. Image Hero avec bords arrondis */}
-            <View style={styles.imageWrapper}>
+            <View style={[styles.imageWrapper, { backgroundColor: colors.surface }] }>
                 <Image 
                     // Remplacez par votre image locale ex: require('../../assets/images/discover-hero.png')
                     source={{ uri: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=1000&auto=format&fit=crop' }} 
@@ -49,23 +43,23 @@ const OnboardingDiscover = ({
             <View style={styles.contentContainer}>
                 
                 {/* Icône Éclair */}
-                <View style={styles.iconContainer}>
+                <View style={[styles.iconContainer, { backgroundColor: colors.text }] }>
                     <AppIcon 
                         library="Ionicons" 
                         name="flash" 
                         size={22} 
-                        color="#FFFFFF" 
+                        color={colors.background}
                     />
                 </View>
 
                 {/* Titres */}
                 <View style={styles.titleContainer}>
-                    <Text style={styles.titleBlack}>Discover African</Text>
-                    <Text style={styles.titleOrange}>Businesses Nearby</Text>
+                    <Text style={[styles.titleBlack, { color: colors.text }]}>Discover African</Text>
+                    <Text style={[styles.titleOrange, { color: colors.primary }]}>Businesses Nearby</Text>
                 </View>
 
                 {/* Sous-titre */}
-                <Text style={styles.subtitle}>
+                <Text style={[styles.subtitle, { color: colors.textSecondary }] }>
                     Support local Afro-owned restaurants, salons, and shops in your city with ease.
                 </Text>
 
@@ -85,7 +79,7 @@ const OnboardingDiscover = ({
                         activeOpacity={0.7}
                         onPress={onSkip }
                     >
-                        <Text style={styles.skipText}>Skip</Text>
+                        <Text style={[styles.skipText, { color: colors.textSecondary }]}>Skip</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -97,7 +91,6 @@ const OnboardingDiscover = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: theme.background,
     },
     imageWrapper: {
         height: height * 0.48, // Prend environ la moitié de l'écran
@@ -105,7 +98,6 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 40,
         borderBottomRightRadius: 40,
         overflow: 'hidden',
-        backgroundColor: '#F7FAFC', // Fond de secours pendant le chargement
     },
     image: {
         width: '100%',
@@ -121,7 +113,6 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: 22,
-        backgroundColor: theme.black,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 24,
@@ -133,19 +124,16 @@ const styles = StyleSheet.create({
     titleBlack: {
         fontSize: 28,
         fontWeight: '800',
-        color: theme.black,
         fontFamily: 'System', // À remplacer par votre police (ex: 'Inter-Black')
     },
     titleOrange: {
         fontSize: 28,
         fontWeight: '800',
-        color: theme.primary,
         textDecorationLine: 'underline',
         fontFamily: 'System',
     },
     subtitle: {
         fontSize: 15,
-        color: theme.gray,
         textAlign: 'center',
         lineHeight: 22,
         paddingHorizontal: 10,
@@ -155,7 +143,6 @@ const styles = StyleSheet.create({
         paddingVertical: 40, // Espace pour l'indicateur d'accueil iOS
     },
     nextButton: {
-        backgroundColor: theme.primary,
         borderRadius: 12,
         height: 56, // Légèrement plus grand pour correspondre à la maquette
     },
@@ -166,9 +153,8 @@ const styles = StyleSheet.create({
     },
     skipText: {
         fontSize: 16,
-        color: '#4A5568',
         fontWeight: '600',
     },
 });
 
-export default OnboardingDiscover;
+export default OnboardingDiscoverScreen;

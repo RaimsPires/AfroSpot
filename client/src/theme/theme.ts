@@ -2,7 +2,8 @@ export const palette = {
     primary: '#ed8c2b',
     secondary: '#71451c',
     white: '#FFFFFF',
-    black: '#130D0A',
+    black: '#000000',
+    // black: '#130D0A',
     error: '#FF5252',
     gray: {
         100: '#F5F5F5',

@@ -1,4 +1,5 @@
-import { logo } from '@assets';
+
+import { logo } from '@assets/index';
 import { AppIcon } from '@components/ui';
 import AppButton from '@components/ui/Button';
 import { useTheme } from '@contexts/ThemeContext';
@@ -39,9 +40,8 @@ type CommunityOnboardingProps = {
     totalSteps?: number;
 };
 
-const CommunityOnboarding = ({
-    onFinish,
-    onSkip,
+const CommunityOnboardingScreen = ({
+    onFinish
 }: CommunityOnboardingProps) => {
     const { colors } = useTheme();
 
@@ -61,7 +61,7 @@ const CommunityOnboarding = ({
                                 <Image source={logo} style={styles.logoImage} />
                                 {/* <AppIcon library="Feather" name="users" size={24} color={colors.text} /> */}
                             </View>
-                            <Text style={[styles.logoText, { color: colors.text }]}>AfroSpot</Text>
+                            <Text style={styles.logoText}>AfroSpot</Text>
                         </View>
 
                         <View style={styles.heroTextContent}>
@@ -187,4 +187,4 @@ const styles = StyleSheet.create({
     footer: { position: 'absolute', bottom: 0, width: '100%', padding: 24, paddingBottom: 40, borderTopLeftRadius: 30, borderTopRightRadius: 30 },
 });
 
-export default CommunityOnboarding;
+export default CommunityOnboardingScreen;

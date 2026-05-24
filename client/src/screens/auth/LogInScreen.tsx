@@ -1,5 +1,5 @@
-import { logo } from '@assets';
-import { AppIcon, Input } from '@components/ui';
+import { logo } from '@assets/index';
+import { AppAlert, AppIcon, Input } from '@components/ui';
 import AppButton from '@components/ui/Button';
 import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
@@ -23,12 +23,13 @@ type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 const LogInScreen = () => {
     const { colors } = useTheme();
-    const { signIn } = useAuth();
+    const { signIn, loading } = useAuth();
     const navigation = useNavigation<AuthNavigationProp>();
     const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
-    const [email, setEmail] = useState('');
+    const [loginError, setLoginError] = useState<string | null>(null);
+    const [email, setEmail] = useState('admin@admin.com');
     const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState('1234');
 
     const handleLogin = () => {
         const credential = loginMethod === 'email' ? email.trim() : phone.trim();
@@ -39,12 +40,15 @@ const LogInScreen = () => {
         }
 
         signIn({
-            email: loginMethod === 'email' ? credential : `${phone.trim()}@phone.local`,
+            login_id: credential,
+            password: password.trim(),
+        }).catch((error) => {
+            setLoginError(error.message || 'An error occurred while trying to log in.');
         });
     };
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.surface }]}>
             <StatusBar barStyle="dark-content" />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View>
@@ -57,6 +61,17 @@ const LogInScreen = () => {
                         Discover and support African businesses. Log in to your account to continue your journey.
                     </Text>
                 </View>
+
+                {loginError && (
+                    <AppAlert
+                        title="Login failed"
+                        message={loginError}
+                        variant="error"
+                        dismissible
+                        onClose={() => setLoginError(null)}
+                        containerStyle={styles.loginErrorAlert}
+                    />
+                )}
 
                 {/* 3. Segmented Control (Email/Phone) */}
                 <View style={[styles.segmentContainer, { backgroundColor: colors.surface }]}>
@@ -112,10 +127,11 @@ const LogInScreen = () => {
                     />
 
                     <AppButton
+                        loading={loading}
                         title="Log In"
                         onPress={handleLogin}
                         rightIcon='arrow-right'
-                        disabled={!(loginMethod === 'email' ? email.trim() : phone.trim()) || !password.trim()}
+                        disabled={!(loginMethod === 'email' ? email.trim() : phone.trim()) || !password.trim() || loading}
                         // rightIcon={<AppIcon library="Feather" name="arrow-right" size={20} color="#FFF" />}
                         style={styles.loginBtn}
                     />
@@ -148,6 +164,7 @@ const styles = StyleSheet.create({
 
     scrollContent: { padding: 24 },
     welcomeSection: { marginBottom: 32 },
+    loginErrorAlert: { marginBottom: 20 },
     title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
     subtitle: { fontSize: 15, lineHeight: 22 },
 

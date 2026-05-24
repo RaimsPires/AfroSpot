@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import CommunityOnboarding from './CommunityOnboarding';
 import OnboardingBookServices from './OnboardingBookServices';
-import OnboardingDiscover from './OnboardingDiscover';
+import OnboardingDiscover from './OnboardingDiscoverScreen';
 import SplashScreen from './SplashScreen';
 
 type OnboardingScreenProps = {

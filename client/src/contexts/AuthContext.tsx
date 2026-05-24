@@ -6,6 +6,7 @@ import { AuthPayload, AuthUser } from '@type/auth';
 type AuthContextValue = {
     isAuthenticated: boolean;
     user: AuthUser | null;
+    loading?: boolean;
     signIn: (payload: AuthPayload) => Promise<void>;  
     signOut: () => Promise<void>;
     signUp: (payload: any) => Promise<void>;
@@ -21,17 +22,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const signOut = useAuthStore((state) => state.signOut);
     const signUp = useAuthStore((state) => state.signUp);
     const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+    const loading = useAuthStore((state) => state.loading);
 
     const value = useMemo(
         () => ({
             isAuthenticated,
             user,
+            loading,
             signIn,
             signOut,
             signUp,
             setAuthenticated,
         }),
-        [isAuthenticated, setAuthenticated, signIn, signOut, signUp, user],
+        [isAuthenticated, setAuthenticated, signIn, signOut, signUp, user, loading],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

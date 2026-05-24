@@ -7,6 +7,7 @@ import { create } from 'zustand';
 type AuthState = {
     isAuthenticated: boolean;
     user: AuthUser | null;
+    loading?: boolean;
     signIn: (payload: AuthPayload) => Promise<void>;
     signUp: (payload: AuthPayload) => Promise<void>;
     signOut: () => Promise<void>;
@@ -19,6 +20,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     signIn: async (login_data) => {
         try {
+            set({ loading: true });
             const response = await apiClient.post<LoginRequestResponse>('/auth/login/', login_data);
             set({
                 isAuthenticated: true,
@@ -27,6 +29,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         } catch (error) {
             console.error('Error during sign-in:', error);
             throw error;
+        }finally {
+            set({ loading: false });
         }
     },
     signUp: async (signup_data) => {
@@ -39,6 +43,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         } catch (error) {
             console.error('Error during sign-up:', error);
             throw error;
+        }finally {
+            set({ loading: false });
         }
     },
     signOut: async () => {

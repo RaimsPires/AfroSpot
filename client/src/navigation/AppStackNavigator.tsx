@@ -14,10 +14,6 @@ import CommunityFeedScreen from '@screens/feeds/CommunityFeedScreen';
 import MainScreen from '@screens/MainScreen';
 import InteractiveMapScreen from '@screens/map/InteractiveMapScreen';
 import NotificationsScreen from '@screens/notification/NotificationsScreen';
-import CommunityOnboarding from '@screens/onboarding/CommunityOnboarding';
-import OnboardingBookServices from '@screens/onboarding/OnboardingBookServices';
-import OnboardingDiscover from '@screens/onboarding/OnboardingDiscover';
-import OnboardingScreen from '@screens/onboarding/OnboardingScreen';
 import CheckoutPaymentScreen from '@screens/payment/CheckoutPaymentScreen';
 
 import CartScreen from '@screens/app/CartScreen';
@@ -58,10 +54,6 @@ const AppStackNavigator = () => {
             <Stack.Screen name="RestaurantDetail" component={RestaurantDetailScreen} />
             <Stack.Screen name="CommunityFeed" component={CommunityFeedScreen} />
             <Stack.Screen name="CheckoutPayment" component={CheckoutPaymentScreen} />
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            <Stack.Screen name="OnboardingDiscover" component={OnboardingDiscover} />
-            <Stack.Screen name="OnboardingBookServices" component={OnboardingBookServices} />
-            <Stack.Screen name="CommunityOnboarding" component={CommunityOnboarding} />
             <Stack.Screen name="DeliveryAddresses" component={DeliveryAddressesScreen} />
             <Stack.Screen name="Cart" component={CartScreen} />
         </Stack.Navigator>
