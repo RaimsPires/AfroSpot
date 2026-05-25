@@ -1,12 +1,15 @@
 import { apiClient } from '@services/apiClient';
+import { createUserAddress, setPrimaryUserAddress } from '@services/addressService';
 import { localeStorage } from '@services/localeStorage';
 import {
     AuthPayload,
     AuthUser,
+    CreateUserAddressPayload,
     LoginRequestResponse,
     PasswordChangePayload,
     PasswordResetConfirmPayload,
     PasswordResetRequestPayload,
+    UserAddress,
 } from '@type/auth';
 import { STORAGE_KEYS } from '@utils/storage_constances';
 import { create } from 'zustand';
@@ -22,9 +25,15 @@ type AuthState = {
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
+    addAddress: (payload: CreateUserAddressPayload) => Promise<UserAddress>;
+    setPrimaryAddress: (addressId: string) => Promise<UserAddress>;
     bootstrapAuth: () => Promise<void>;
     setAuthenticated: (value: boolean) => void;
 };
+
+async function persistUserProfile(user: AuthUser): Promise<void> {
+    await localeStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+}
 
 // --- Session Helpers ---
 
@@ -200,6 +209,97 @@ export const useAuthStore = create<AuthState>((set) => ({
             await apiClient.post('/auth/password/change/', payload);
         } catch (error) {
             console.error('Error while changing password:', error);
+            throw error;
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    addAddress: async (payload) => {
+        try {
+            set({ loading: true });
+            const newAddress = await createUserAddress(payload);
+
+            let updatedUser: AuthUser | null = null;
+            set((state) => {
+                if (!state.user) {
+                    return state;
+                }
+
+                const existingAddresses = state.user.addresses.filter(
+                    (address) => address.id !== newAddress.id,
+                );
+
+                updatedUser = {
+                    ...state.user,
+                    addresses: [newAddress, ...existingAddresses].map((address) => ({
+                        ...address,
+                        is_active: newAddress.is_active ? address.id === newAddress.id : address.is_active,
+                    })),
+                };
+
+                return {
+                    ...state,
+                    user: updatedUser,
+                };
+            });
+
+            if (updatedUser) {
+                await persistUserProfile(updatedUser);
+            }
+
+            return newAddress;
+        } catch (error) {
+            console.error('Error while adding user address:', error);
+            throw error;
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    setPrimaryAddress: async (addressId) => {
+        try {
+            set({ loading: true });
+            const primaryAddress = await setPrimaryUserAddress(addressId);
+
+            let updatedUser: AuthUser | null = null;
+            set((state) => {
+                if (!state.user) {
+                    return state;
+                }
+
+                const hasTargetAddress = state.user.addresses.some((address) => address.id === primaryAddress.id);
+                const addresses = hasTargetAddress
+                    ? state.user.addresses
+                    : [primaryAddress, ...state.user.addresses];
+
+                updatedUser = {
+                    ...state.user,
+                    addresses: addresses.map((address) => {
+                        if (address.id === primaryAddress.id) {
+                            return primaryAddress;
+                        }
+
+                        return {
+                            ...address,
+                            is_active: false,
+                        };
+                    }),
+                };
+
+                return {
+                    ...state,
+                    user: updatedUser,
+                };
+            });
+
+            if (updatedUser) {
+                await persistUserProfile(updatedUser);
+            }
+
+            return primaryAddress;
+        } catch (error) {
+            console.error('Error while setting primary address:', error);
             throw error;
         } finally {
             set({ loading: false });

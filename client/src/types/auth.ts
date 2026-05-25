@@ -25,6 +25,8 @@ export type AuthUser = {
     email: string,
     first_name: string,
     last_name: string,
+    full_name: string,
+    active_address: string | null,
     phone_number: string,
     dob: string,
     profile_picture: string,
@@ -33,7 +35,8 @@ export type AuthUser = {
     is_staff: boolean,
     is_active: boolean,
     date_joined: string,
-    setting: UserSettings | null,
+    settings: UserSettings | null,
+    addresses: UserAddress[]
 };
 
 
@@ -51,6 +54,28 @@ export type UserSettings = {
     push_notifications: boolean,
     marketing_emails: boolean,
     user: string
+};
+
+export type UserAddress = {
+    id: string
+    address_type: 'home' | 'work' | 'other'
+    is_active: boolean
+    user: string
+    address: string
+    city: string
+    state: string
+    zip_code: string
+    country: string
+}
+
+export type CreateUserAddressPayload = {
+    address_type: 'home' | 'work' | 'other'
+    is_active?: boolean
+    address: string
+    city: string
+    state: string
+    zip_code: string
+    country: string
 };
 
 export type LoginRequestResponse = {

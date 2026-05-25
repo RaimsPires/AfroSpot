@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
+import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
@@ -9,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 const HomeTopHeader = () => {
     const { colors } = useTheme();
     const navigation = useNavigation<AppStackNavigationProp<'Home'>>();
+    const { user } = useAuth();
 
     return (
         <View style={styles.header}>
@@ -17,8 +19,14 @@ const HomeTopHeader = () => {
                     <AppIcon library="Feather" name="map-pin" size={16} color={colors.primary} />
                 </View>
                 <View>
-                    <Text style={[styles.locationLabel, { color: colors.textSecondary }]}>CURRENT LOCATION</Text>
-                    <Text style={[styles.cityName, { color: colors.text }]}> Brixton, London</Text>
+                    {
+                        user?.active_address &&
+                        (
+                            <>
+                                <Text style={[styles.locationLabel, { color: colors.textSecondary }]}>CURRENT LOCATION</Text>
+                                <Text style={[styles.cityName, { color: colors.text }]}>{user?.active_address || 'Brixton, London'}</Text>
+                            </>
+                        )}
                 </View>
             </TouchableOpacity>
             <View style={styles.rightRow}>
@@ -41,7 +49,7 @@ const HomeTopHeader = () => {
                     />
                     <View style={styles.profileTextWrap}>
                         <Text style={[styles.profileLabel, { color: colors.textSecondary }]}>PROFILE</Text>
-                        <Text style={[styles.profileName, { color: colors.text }]}>Amara</Text>
+                        <Text style={[styles.profileName, { color: colors.text }]}>{user?.full_name}</Text>
                     </View>
                     <AppIcon library="Feather" name="chevron-right" size={18} color={colors.textSecondary} />
                 </TouchableOpacity>
