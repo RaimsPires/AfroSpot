@@ -31,6 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '192.168.1.105',
     'localhost',
+    '10.17.17.129',
     
 ]
 
@@ -205,6 +206,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'auth_kit.authentication.JWTCookieAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '60/minute',
+        'user': '120/minute',
+    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -284,16 +293,16 @@ AUTH_KIT = {
     # ===================================================================
     # PASSWORD MANAGEMENT SERIALIZERS & VIEWS
     # ===================================================================
-    # 'PASSWORD_CHANGE_SERIALIZER': 'auth_kit.serializers.PasswordChangeSerializer',
-    # 'PASSWORD_CHANGE_VIEW': 'auth_kit.views.PasswordChangeView',
-    # 'PASSWORD_RESET_SERIALIZER': 'auth_kit.serializers.PasswordResetSerializer',
-    # 'PASSWORD_RESET_VIEW': 'auth_kit.views.PasswordResetView',
-    # 'PASSWORD_RESET_CONFIRM_SERIALIZER': 'auth_kit.serializers.PasswordResetConfirmSerializer',
-    # 'PASSWORD_RESET_CONFIRM_VIEW': 'auth_kit.views.PasswordResetConfirmView',
-    # 'PASSWORD_RESET_CONFIRM_PATH': None,
-    # 'PASSWORD_RESET_URL_GENERATOR': 'auth_kit.forms.password_reset_url_generator',
-    # 'OLD_PASSWORD_FIELD_ENABLED': False,
-    # 'PASSWORD_RESET_PREVENT_ENUMERATION': True,
+    'PASSWORD_CHANGE_SERIALIZER': 'auth_kit.serializers.PasswordChangeSerializer',
+    'PASSWORD_CHANGE_VIEW': 'auth_kit.views.PasswordChangeView',
+    'PASSWORD_RESET_SERIALIZER': 'auth_kit.serializers.PasswordResetSerializer',
+    'PASSWORD_RESET_VIEW': 'auth_kit.views.PasswordResetView',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'auth_kit.serializers.PasswordResetConfirmSerializer',
+    'PASSWORD_RESET_CONFIRM_VIEW': 'auth_kit.views.PasswordResetConfirmView',
+    'PASSWORD_RESET_CONFIRM_PATH': '/api/password-reset/',
+    'PASSWORD_RESET_URL_GENERATOR': 'auth_kit.forms.password_reset_url_generator',
+    'OLD_PASSWORD_FIELD_ENABLED': True,
+    'PASSWORD_RESET_PREVENT_ENUMERATION': True,
 }
 
 SIMPLE_JWT = {

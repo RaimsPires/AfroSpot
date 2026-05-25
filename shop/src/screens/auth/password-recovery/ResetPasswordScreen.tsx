@@ -1,20 +1,51 @@
 import { AppIcon } from '@components/ui';
+import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
-export const ResetPasswordScreen = ({ navigation }: Props) => {
+export const ResetPasswordScreen = ({ navigation, route }: Props) => {
     const { colors, isDark } = useTheme();
+    const { resetPassword, loading } = useAuth();
+    const uid = route.params?.uid;
+    const token = route.params?.token;
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const isValid = newPassword.length >= 8 && newPassword === confirmPassword;
+    const isValid = Boolean(uid && token) && newPassword.length >= 8 && newPassword === confirmPassword;
+
+    const handleResetPassword = () => {
+        if (!uid || !token) {
+            Alert.alert(
+                'Invalid reset link',
+                'This link is invalid or expired. Request a new reset email.',
+                [{ text: 'Go to Forgot Password', onPress: () => navigation.navigate('ForgotPassword') }],
+            );
+            return;
+        }
+
+        resetPassword({
+            uid,
+            token,
+            new_password1: newPassword,
+            new_password2: confirmPassword,
+        })
+            .then(() => navigation.navigate('PasswordResetSuccess'))
+            .catch((error) => {
+                Alert.alert(
+                    'Reset failed',
+                    error?.response?.data?.detail ||
+                        error?.response?.data?.token?.[0] ||
+                        'Unable to reset password with this link.',
+                );
+            });
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
@@ -71,10 +102,12 @@ export const ResetPasswordScreen = ({ navigation }: Props) => {
 
                         <TouchableOpacity
                             style={[styles.mainBtn, { backgroundColor: isValid ? colors.primary : colors.surface }]}
-                            disabled={!isValid}
-                            onPress={() => navigation.navigate('PasswordResetSuccess')}
+                            disabled={!isValid || loading}
+                            onPress={handleResetPassword}
                         >
-                            <Text style={[styles.mainBtnText, { color: isValid ? colors.textInverse : colors.textSecondary }]}>Reset Password</Text>
+                            <Text style={[styles.mainBtnText, { color: isValid ? colors.textInverse : colors.textSecondary }]}>
+                                {loading ? 'Resetting...' : 'Reset Password'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     </ScrollView>

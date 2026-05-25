@@ -1,34 +1,113 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import { apiClient } from '@services/apiClient';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
-import type { AuthUser } from '@store/authStore';
-import { useAuthStore } from '@store/authStore';
+export type AuthUser = {
+    id: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+};
+
+type PasswordResetRequestPayload = {
+    email: string;
+};
+
+type PasswordResetConfirmPayload = {
+    uid: string;
+    token: string;
+    new_password1: string;
+    new_password2: string;
+};
+
+type PasswordChangePayload = {
+    old_password: string;
+    new_password1: string;
+    new_password2: string;
+};
 
 type AuthContextValue = {
     isAuthenticated: boolean;
     user: AuthUser | null;
-    signIn: (user?: Partial<AuthUser>) => void;
+    loading: boolean;
+    signIn: (user?: Partial<AuthUser>) => Promise<void>;
     signOut: () => void;
+    forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
+    resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
+    changePassword: (payload: PasswordChangePayload) => Promise<void>;
     setAuthenticated: (value: boolean) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-    const user = useAuthStore((state) => state.user);
-    const signIn = useAuthStore((state) => state.signIn);
-    const signOut = useAuthStore((state) => state.signOut);
-    const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const signIn = async (nextUser?: Partial<AuthUser>) => {
+        setIsAuthenticated(true);
+        if (nextUser) {
+            setUser((prev) => ({
+                id: prev?.id ?? nextUser.id ?? 'shop-user',
+                email: nextUser.email ?? prev?.email ?? '',
+                first_name: nextUser.first_name ?? prev?.first_name,
+                last_name: nextUser.last_name ?? prev?.last_name,
+            }));
+        }
+    };
+
+    const signOut = () => {
+        setIsAuthenticated(false);
+        setUser(null);
+    };
+
+    const setAuthenticated = (value: boolean) => {
+        setIsAuthenticated(value);
+        if (!value) {
+            setUser(null);
+        }
+    };
+
+    const forgotPassword = async ({ email }: PasswordResetRequestPayload) => {
+        try {
+            setLoading(true);
+            await apiClient.post('/auth/password/reset/', { email: email.trim().toLowerCase() });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetPassword = async (payload: PasswordResetConfirmPayload) => {
+        try {
+            setLoading(true);
+            await apiClient.post('/auth/password/reset/confirm/', payload);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changePassword = async (payload: PasswordChangePayload) => {
+        try {
+            setLoading(true);
+            await apiClient.post('/auth/password/change/', payload);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const value = useMemo(
         () => ({
             isAuthenticated,
             user,
+            loading,
             signIn,
             signOut,
+            forgotPassword,
+            resetPassword,
+            changePassword,
             setAuthenticated,
         }),
-        [isAuthenticated, setAuthenticated, signIn, signOut, user],
+        [isAuthenticated, loading, user],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

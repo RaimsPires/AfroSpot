@@ -1,16 +1,41 @@
 import { AppIcon } from '@components/ui';
+import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
 export const ForgotPasswordScreen = ({ navigation }: Props) => {
     const { colors, isDark } = useTheme();
+    const { forgotPassword, loading } = useAuth();
     const [contactInfo, setContactInfo] = useState('');
+
+    const handleSubmit = () => {
+        const email = contactInfo.trim().toLowerCase();
+        if (!email) {
+            Alert.alert('Missing email', 'Please enter your account email address.');
+            return;
+        }
+
+        forgotPassword({ email })
+            .then(() => {
+                Alert.alert(
+                    'Reset email sent',
+                    'If your account exists, we sent a password reset link to your email.',
+                    [{ text: 'OK', onPress: () => navigation.navigate('Auth') }],
+                );
+            })
+            .catch((error) => {
+                Alert.alert(
+                    'Unable to send reset email',
+                    error?.response?.data?.detail || 'Please try again later.',
+                );
+            });
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
@@ -48,10 +73,12 @@ export const ForgotPasswordScreen = ({ navigation }: Props) => {
 
                         <TouchableOpacity
                             style={[styles.mainBtn, { backgroundColor: contactInfo ? colors.primary : colors.surface }]}
-                            disabled={!contactInfo}
-                            onPress={() => navigation.navigate('VerifyResetCode', { contactInfo })}
+                            disabled={!contactInfo || loading}
+                            onPress={handleSubmit}
                         >
-                            <Text style={[styles.mainBtnText, { color: contactInfo ? colors.textInverse : colors.textSecondary }]}>Send Reset Code</Text>
+                            <Text style={[styles.mainBtnText, { color: contactInfo ? colors.textInverse : colors.textSecondary }]}>
+                                {loading ? 'Sending...' : 'Send Reset Email'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     </ScrollView>

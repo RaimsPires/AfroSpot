@@ -4,9 +4,16 @@ export type AuthStackParamList = {
     AccountChoice: undefined;
     Auth: { mode?: 'businessRegistration' } | undefined;
     SignUp: undefined;
-    ForgotPassword: undefined;
+    ForgotPassword: { email?: string } | undefined;
     VerifyResetCode: { contactInfo: string };
-    ResetPassword: { contactInfo: string };
+    ResetPassword:
+        | {
+              contactInfo?: string;
+              uid?: string;
+              token?: string;
+              email?: string;
+          }
+        | undefined;
     PasswordResetSuccess: undefined;
     BusinessKYCSuccess: undefined;
     UserOnboarding: undefined;
