@@ -6,6 +6,9 @@ import i18n, {
     SUPPORTED_LANGUAGES,
     type SupportedLanguage,
 } from '@i18n/index';
+import { apiClient } from '@services/apiClient';
+import { localeStorage } from '@services/localeStorage';
+import { STORAGE_KEYS } from '@utils/storage_constances';
 
 type TranslationContextValue = {
     language: SupportedLanguage;
@@ -31,9 +34,39 @@ export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, []);
 
+    useEffect(() => {
+        const hydrateStoredLocale = async () => {
+            const encryptedLocale = await localeStorage.getEncryptedItem(STORAGE_KEYS.APP_LOCALE);
+            const asyncLocale = encryptedLocale
+                ? null
+                : await localeStorage.getItem(STORAGE_KEYS.APP_LOCALE);
+            const storedLocale = encryptedLocale || asyncLocale;
+
+            if (asyncLocale) {
+                await localeStorage.setEncryptedItem(STORAGE_KEYS.APP_LOCALE, asyncLocale);
+            }
+
+            const resolvedStoredLocale = resolveSupportedLanguage(storedLocale);
+            apiClient.setLocale(resolvedStoredLocale);
+
+            if (resolvedStoredLocale !== resolveSupportedLanguage(i18n.language)) {
+                await i18n.changeLanguage(resolvedStoredLocale);
+            }
+        };
+
+        hydrateStoredLocale().catch((error) => {
+            console.error('[TranslationContext] Failed to hydrate locale:', error);
+        });
+    }, []);
+
     const setLanguage = async (nextLanguage: string) => {
         const resolvedLanguage = resolveSupportedLanguage(nextLanguage);
+        apiClient.setLocale(resolvedLanguage);
         await i18n.changeLanguage(resolvedLanguage || FALLBACK_LANGUAGE);
+        await Promise.all([
+            localeStorage.setEncryptedItem(STORAGE_KEYS.APP_LOCALE, resolvedLanguage),
+            localeStorage.setItem(STORAGE_KEYS.APP_LOCALE, resolvedLanguage),
+        ]);
     };
 
     const value = useMemo(
@@ -58,3 +91,5 @@ export const useTranslation = () => {
 
     return context;
 };
+
+export const useTranslationContext = useTranslation;

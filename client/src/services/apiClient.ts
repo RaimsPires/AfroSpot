@@ -1,18 +1,21 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { localeStorage } from '@services/localeStorage';
 import { STORAGE_KEYS } from '@utils/storage_constances';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Extend Axios config to track retries internally
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
     _retryCount?: number;
+    _isAuthRefresh?: boolean; // Prevents infinite 401 → refresh → 401 loops
 }
 
 class ApiClient {
     private api: AxiosInstance;
     private pendingRequests: Map<string, Promise<any>>; // For Deduplication
+    private locale: string;
 
     constructor(baseURL: string) {
         this.pendingRequests = new Map();
+        this.locale = 'en';
 
         this.api = axios.create({
             baseURL,
@@ -24,6 +27,72 @@ class ApiClient {
         });
 
         this.initializeInterceptors();
+        this.initializeLocaleFromStorage().catch((error) => {
+            console.error('[API] Locale initialization failed:', error);
+            this.setLocale('en');
+        });
+    }
+
+    public setLocale(locale?: string | null) {
+        this.locale = locale || 'en';
+    }
+
+    // --- Silent Token Refresh ---
+    // Returns true and saves the new access token when refresh succeeds.
+    // Returns false if the refresh token is missing, expired, or the server rejects it.
+    private async tryRefreshToken(): Promise<boolean> {
+        try {
+            const [refreshToken, refreshExpiry] = await Promise.all([
+                localeStorage.getEncryptedItem(STORAGE_KEYS.REFRESH_TOKEN),
+                localeStorage.getEncryptedItem(STORAGE_KEYS.REFRESH_TOKEN_EXPIRY),
+            ]);
+
+            if (!refreshToken) { return false; }
+
+            const expiryMs = refreshExpiry ? new Date(refreshExpiry).getTime() - 30_000 : 0;
+            if (expiryMs <= Date.now()) { return false; }
+
+            const response = await this.api.post<{
+                access: string;
+                access_expiration: string;
+            }>('/auth/token/refresh/', { refresh: refreshToken }, {
+                _isAuthRefresh: true,
+            } as CustomAxiosRequestConfig);
+
+            await Promise.all([
+                localeStorage.setEncryptedItem(STORAGE_KEYS.ACCESS_TOKEN, response.data.access),
+                localeStorage.setEncryptedItem(
+                    STORAGE_KEYS.ACCESS_TOKEN_EXPIRY,
+                    response.data.access_expiration,
+                ),
+            ]);
+
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    private async initializeLocaleFromStorage() {
+        try {
+            const encryptedLocale = await localeStorage.getEncryptedItem(STORAGE_KEYS.APP_LOCALE);
+
+            if (encryptedLocale) {
+                this.setLocale(encryptedLocale);
+                return;
+            }
+
+            const asyncLocale = await localeStorage.getItem(STORAGE_KEYS.APP_LOCALE);
+
+            if (asyncLocale) {
+                await localeStorage.setEncryptedItem(STORAGE_KEYS.APP_LOCALE, asyncLocale);
+            }
+
+            this.setLocale(asyncLocale);
+        } catch (error) {
+            console.error('[API] Error initializing locale:', error);
+            this.setLocale('en');
+        }
     }
 
     // --- 1. Deduplication Helper ---
@@ -37,19 +106,15 @@ class ApiClient {
         this.api.interceptors.request.use(
             async (config) => {
                 try {
-                    // Fetch token and locale simultaneously for better performance
-                    const [token, locale] = await Promise.all([
-                        AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
-                        AsyncStorage.getItem(STORAGE_KEYS.APP_LOCALE), // e.g., 'fr', 'en'
-                    ]);
+                    const token = await localeStorage.getEncryptedItem(STORAGE_KEYS.ACCESS_TOKEN);
 
                     if (config.headers) {
                         if (token) config.headers.Authorization = `Bearer ${token}`;
                         // Inject Locale (Fallback to English if nothing is saved)
-                        config.headers['Accept-Language'] = locale || 'en';
+                        config.headers['Accept-Language'] = this.locale;
                     }
                 } catch (error) {
-                    console.error('[API] Error reading AsyncStorage:', error);
+                    console.error('[API] Error reading storage:', error);
                 }
                 return config;
             },
@@ -96,10 +161,29 @@ class ApiClient {
 
                     switch (status) {
                         case 401:
-                            // Unauthorized / Token Expired
-                            console.warn('[API 401] Unauthorized. Logging user out.');
-                            await AsyncStorage.removeMany([STORAGE_KEYS.ACCESS_TOKEN, STORAGE_KEYS.REFRESH_TOKEN, STORAGE_KEYS.USER_PROFILE]);
-                            // Trigger navigation to Auth stack via state change here
+                            // Try silent token refresh once before giving up
+                            if (!config._isAuthRefresh) {
+                                const refreshed = await this.tryRefreshToken();
+                                if (refreshed) {
+                                    const newToken = await localeStorage.getEncryptedItem(
+                                        STORAGE_KEYS.ACCESS_TOKEN,
+                                    );
+                                    config._isAuthRefresh = true;
+                                    if (config.headers && newToken) {
+                                        config.headers.Authorization = `Bearer ${newToken}`;
+                                    }
+                                    return this.api.request(config);
+                                }
+                            }
+                            // Refresh failed or this was the refresh request — clear session
+                            console.warn('[API 401] Session expired. Clearing auth.');
+                            await Promise.all([
+                                localeStorage.removeEncryptedItem(STORAGE_KEYS.ACCESS_TOKEN),
+                                localeStorage.removeEncryptedItem(STORAGE_KEYS.REFRESH_TOKEN),
+                                localeStorage.removeEncryptedItem(STORAGE_KEYS.ACCESS_TOKEN_EXPIRY),
+                                localeStorage.removeEncryptedItem(STORAGE_KEYS.REFRESH_TOKEN_EXPIRY),
+                                localeStorage.removeItem(STORAGE_KEYS.USER_PROFILE),
+                            ]);
                             break;
                         case 403:
                             console.error('[API 403] Forbidden. User lacks permissions.');
@@ -182,4 +266,4 @@ class ApiClient {
     }
 }
 
-export const apiClient = new ApiClient('http://192.168.1.105:8000/api');
+export const apiClient = new ApiClient('http://10.17.17.129:8000/api');

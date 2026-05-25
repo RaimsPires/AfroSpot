@@ -3,6 +3,23 @@ export type AuthPayload = {
     password: string;
 };
 
+export type PasswordResetRequestPayload = {
+    email: string;
+};
+
+export type PasswordResetConfirmPayload = {
+    uid: string;
+    token: string;
+    new_password1: string;
+    new_password2: string;
+};
+
+export type PasswordChangePayload = {
+    old_password: string;
+    new_password1: string;
+    new_password2: string;
+};
+
 export type AuthUser = {
     id: string,
     email: string,

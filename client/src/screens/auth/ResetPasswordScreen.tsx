@@ -11,20 +11,60 @@ import {
 
 import { AppIcon } from '@components/ui';
 import AppButton from '@components/ui/Button';
+import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 const ResetPasswordScreen = () => {
     const { colors, isDark } = useTheme();
+    const { resetPassword, loading } = useAuth();
     const navigation = useNavigation<AuthNavigationProp>();
+    const route = useRoute();
+    const routeParams = route.params as AuthStackParamList['ResetPassword'];
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    const uid = routeParams?.uid;
+    const token = routeParams?.token;
+    const isValid = Boolean(uid && token) && password.length >= 8 && password === confirmPassword;
+
+    const handlePasswordReset = () => {
+        if (!uid || !token) {
+            Alert.alert(
+                'Invalid reset link',
+                'This reset link is invalid or expired. Request a new one from Forgot Password.',
+                [{ text: 'Go to Forgot Password', onPress: () => navigation.navigate('ForgotPassword') }],
+            );
+            return;
+        }
+
+        resetPassword({
+            uid,
+            token,
+            new_password1: password,
+            new_password2: confirmPassword,
+        })
+            .then(() => {
+                Alert.alert('Password updated', 'Your password has been reset successfully.', [
+                    { text: 'Go to Login', onPress: () => navigation.navigate('LogIn') },
+                ]);
+            })
+            .catch((error) => {
+                Alert.alert(
+                    'Reset failed',
+                    error?.response?.data?.detail ||
+                        error?.response?.data?.token?.[0] ||
+                        'Unable to reset password with this link.',
+                );
+            });
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -83,7 +123,9 @@ const ResetPasswordScreen = () => {
 
                 <AppButton
                     title="Update Password"
-                    onPress={() => navigation.navigate('LogIn')}
+                    onPress={handlePasswordReset}
+                    loading={loading}
+                    disabled={!isValid || loading}
                     style={styles.submitBtn}
                 />
             </KeyboardAvoidingView>

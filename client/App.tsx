@@ -1,5 +1,6 @@
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-get-random-values';
 import {
   SafeAreaProvider,
 } from 'react-native-safe-area-context';

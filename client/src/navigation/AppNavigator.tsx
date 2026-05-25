@@ -1,22 +1,52 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { useAuth } from '@contexts/AuthContext';
+import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
+import { localeStorage } from '@services/localeStorage';
+import { STORAGE_KEYS } from '@utils/storage_constances';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '@utils/storage_constances';
 
+import AuthCheckingScreen from '@screens/auth/AuthCheckingScreen';
 import AppStackNavigator from './AppStackNavigator';
+import type { AuthStackParamList } from './AuthStackNavigator';
 import AuthStackNavigator from './AuthStackNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
 
+const linking: LinkingOptions<AuthStackParamList> = {
+    // Support both host-based deep links (afrospot://reset-password?uid=...)
+    // and path-based links (afrospot://login, afrospot://forgot-password).
+    prefixes: ['afrospot://reset-password', 'afrospot://'],
+    config: {
+        screens: {
+            LogIn: 'login',
+            ForgotPassword: {
+                path: 'forgot-password',
+                parse: {
+                    email: (value: string) => value,
+                },
+            },
+            ResetPassword: {
+                // Empty path here pairs with the host-based prefix above.
+                path: '',
+                parse: {
+                    uid: (value: string) => value,
+                    token: (value: string) => value,
+                    email: (value: string) => value,
+                },
+            },
+        },
+    },
+};
+
 const AppNavigator = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isAuthBootstrapping } = useAuth();
     const [phase, setPhase] = useState<'loading' | 'onboarding' | 'app'>('loading');
 
     useEffect(() => {
         const bootstrapApp = async () => {
             try {
-                const onboardingCompleted = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED);
+                const onboardingCompleted = await localeStorage.getItem(
+                    STORAGE_KEYS.ONBOARDING_COMPLETED,
+                );
                 setPhase(onboardingCompleted === 'true' ? 'app' : 'onboarding');
             } catch {
                 setPhase('onboarding');
@@ -28,7 +58,7 @@ const AppNavigator = () => {
 
     const handleOnboardingComplete = async () => {
         try {
-            await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, 'true');
+            await localeStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, 'true');
         } catch {
             // Continue to app even if storage write fails.
         }
@@ -36,11 +66,13 @@ const AppNavigator = () => {
     };
 
     return (
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
             {phase === 'loading' ? (
                 <View style={styles.loadingScreen} />
             ) : phase === 'onboarding' ? (
                 <OnboardingNavigator onComplete={handleOnboardingComplete} />
+            ) : isAuthBootstrapping ? (
+                <AuthCheckingScreen />
             ) : isAuthenticated ? (
                 <AppStackNavigator />
             ) : (
