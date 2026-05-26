@@ -1,6 +1,7 @@
 import { apiClient } from '@services/apiClient';
-import { createUserAddress, setPrimaryUserAddress } from '@services/addressService';
+import { createUserAddress, setPrimaryUserAddress, updateUserAddress } from '@services/addressService';
 import { localeStorage } from '@services/localeStorage';
+import { patchUserProfile } from '@services/profileService';
 import {
     AuthPayload,
     AuthUser,
@@ -9,6 +10,8 @@ import {
     PasswordChangePayload,
     PasswordResetConfirmPayload,
     PasswordResetRequestPayload,
+    UpdateUserProfilePayload,
+    UpdateUserAddressPayload,
     UserAddress,
 } from '@type/auth';
 import { STORAGE_KEYS } from '@utils/storage_constances';
@@ -25,11 +28,23 @@ type AuthState = {
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
+    updateProfile: (payload: UpdateUserProfilePayload) => Promise<AuthUser>;
     addAddress: (payload: CreateUserAddressPayload) => Promise<UserAddress>;
+    updateAddress: (addressId: string, payload: UpdateUserAddressPayload) => Promise<UserAddress>;
     setPrimaryAddress: (addressId: string) => Promise<UserAddress>;
     bootstrapAuth: () => Promise<void>;
     setAuthenticated: (value: boolean) => void;
 };
+
+function getActiveAddressLabel(addresses: UserAddress[]): string | null {
+    const activeAddress = addresses.find((address) => address.is_active);
+
+    if (!activeAddress) {
+        return null;
+    }
+
+    return `${activeAddress.address}, ${activeAddress.city}`;
+}
 
 async function persistUserProfile(user: AuthUser): Promise<void> {
     await localeStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
@@ -215,6 +230,25 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     },
 
+    updateProfile: async (payload) => {
+        try {
+            set({ loading: true });
+            const updatedUser = await patchUserProfile(payload);
+            apiClient.setLocale(updatedUser.language);
+            set((state) => ({
+                ...state,
+                user: updatedUser,
+            }));
+            await persistUserProfile(updatedUser);
+            return updatedUser;
+        } catch (error) {
+            console.error('Error while updating user profile:', error);
+            throw error;
+        } finally {
+            set({ loading: false });
+        }
+    },
+
     addAddress: async (payload) => {
         try {
             set({ loading: true });
@@ -238,6 +272,8 @@ export const useAuthStore = create<AuthState>((set) => ({
                     })),
                 };
 
+                updatedUser.active_address = getActiveAddressLabel(updatedUser.addresses);
+
                 return {
                     ...state,
                     user: updatedUser,
@@ -251,6 +287,57 @@ export const useAuthStore = create<AuthState>((set) => ({
             return newAddress;
         } catch (error) {
             console.error('Error while adding user address:', error);
+            throw error;
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    updateAddress: async (addressId, payload) => {
+        try {
+            set({ loading: true });
+            const updatedAddress = await updateUserAddress(addressId, payload);
+
+            let updatedUser: AuthUser | null = null;
+            set((state) => {
+                if (!state.user) {
+                    return state;
+                }
+
+                const hasTargetAddress = state.user.addresses.some((address) => address.id === updatedAddress.id);
+                const addresses = hasTargetAddress
+                    ? state.user.addresses
+                    : [updatedAddress, ...state.user.addresses];
+
+                updatedUser = {
+                    ...state.user,
+                    addresses: addresses.map((address) => {
+                        if (address.id === updatedAddress.id) {
+                            return updatedAddress;
+                        }
+
+                        return {
+                            ...address,
+                            is_active: updatedAddress.is_active ? false : address.is_active,
+                        };
+                    }),
+                };
+
+                updatedUser.active_address = getActiveAddressLabel(updatedUser.addresses);
+
+                return {
+                    ...state,
+                    user: updatedUser,
+                };
+            });
+
+            if (updatedUser) {
+                await persistUserProfile(updatedUser);
+            }
+
+            return updatedAddress;
+        } catch (error) {
+            console.error('Error while updating user address:', error);
             throw error;
         } finally {
             set({ loading: false });
@@ -286,6 +373,8 @@ export const useAuthStore = create<AuthState>((set) => ({
                         };
                     }),
                 };
+
+                updatedUser.active_address = getActiveAddressLabel(updatedUser.addresses);
 
                 return {
                     ...state,

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
-
-import { USER_DATA } from './mockData';
+import { AuthUser } from '@type/auth';
 
 type ProfileUserInfoProps = {
     colors: {
@@ -13,23 +12,56 @@ type ProfileUserInfoProps = {
         textSecondary: string;
         surface: string;
     };
+    user: AuthUser | null;
+    onEditAvatarPress: () => void;
+    isUploadingAvatar?: boolean;
 };
 
-const ProfileUserInfo = ({ colors }: ProfileUserInfoProps) => (
-    <View style={styles.userInfoContainer}>
-        <View style={styles.avatarWrapper}>
-            <Image source={{ uri: USER_DATA.avatar }} style={styles.avatar} />
-            <TouchableOpacity style={[styles.editAvatarBtn, { backgroundColor: colors.primary, borderColor: colors.background }]}>
-                <AppIcon library="Feather" name="camera" size={14} color="#FFF" />
-            </TouchableOpacity>
+const FALLBACK_AVATAR = 'https://i.pravatar.cc/150?img=47';
+
+function formatMemberSince(dateJoined?: string | null): string {
+    if (!dateJoined) {
+        return 'Member profile';
+    }
+
+    const parsedDate = new Date(dateJoined);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return 'Member profile';
+    }
+
+    return `Member since ${parsedDate.getFullYear()}`;
+}
+
+const ProfileUserInfo = ({ colors, user, onEditAvatarPress, isUploadingAvatar = false }: ProfileUserInfoProps) => {
+    const displayName = user?.full_name || [user?.first_name, user?.last_name].filter(Boolean).join(' ') || 'Your profile';
+
+    return (
+        <View style={styles.userInfoContainer}>
+            <View style={styles.avatarWrapper}>
+                <Image source={{ uri: user?.profile_picture || FALLBACK_AVATAR }} style={styles.avatar} />
+                <TouchableOpacity
+                    style={[styles.editAvatarBtn, { backgroundColor: colors.primary, borderColor: colors.background }]}
+                    onPress={onEditAvatarPress}
+                    disabled={isUploadingAvatar}
+                >
+                    {isUploadingAvatar ? (
+                        <ActivityIndicator size="small" color="#FFF" />
+                    ) : (
+                        <AppIcon library="Feather" name="camera" size={14} color="#FFF" />
+                    )}
+                </TouchableOpacity>
+            </View>
+            <Text style={[styles.userName, { color: colors.text }]}>{displayName}</Text>
+            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>{user?.email || 'No email available'}</Text>
+            <View style={[styles.memberBadge, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.memberText, { color: colors.textSecondary }]}>
+                    {isUploadingAvatar ? 'Uploading photo...' : formatMemberSince(user?.date_joined)}
+                </Text>
+            </View>
         </View>
-        <Text style={[styles.userName, { color: colors.text }]}>{USER_DATA.name}</Text>
-        <Text style={[styles.userEmail, { color: colors.textSecondary }]}>{USER_DATA.email}</Text>
-        <View style={[styles.memberBadge, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.memberText, { color: colors.textSecondary }]}>{USER_DATA.memberSince}</Text>
-        </View>
-    </View>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     userInfoContainer: { alignItems: 'center', paddingVertical: 32 },

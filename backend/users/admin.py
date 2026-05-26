@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 
 # Import Unfold's admin classes instead of standard Django ones
 from unfold.admin import ModelAdmin, StackedInline
-from .models import User, UserSettings
+from .models import User, UserSettings, UserAddress
 
 # 1. Create the Inline for UserSettings
 class UserSettingsInline(StackedInline):
@@ -58,3 +58,11 @@ admin.site.unregister(Group)
 class GroupAdmin(ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+    
+
+@admin.register(UserAddress)
+class UserAddressAdmin(ModelAdmin):
+    list_display = ('user', 'address_type', 'city', 'state', 'country', 'is_active')
+    list_filter = ('address_type', 'is_active', 'country')
+    search_fields = ('user__email', 'address', 'city', 'state', 'zip_code', 'country')
+    ordering = ('-created_at',)

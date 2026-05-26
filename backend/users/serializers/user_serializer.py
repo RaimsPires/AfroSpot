@@ -18,6 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
         
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
+    
+    
     def get_active_address(self, obj):
         active_address = obj.addresses.filter(is_active=True).first()
-        return str(active_address) if active_address and active_address.address_name else None
+        return active_address.address_name if active_address  else None

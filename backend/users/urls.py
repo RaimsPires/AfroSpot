@@ -4,11 +4,17 @@ from users.views import (
     PasswordResetLandingView,
     UserAddressCreateView,
     UserAddressSetPrimaryView,
+    UserAddressUpdateView,
 )
 
 urlpatterns = [
     path('password-reset/', PasswordResetLandingView.as_view(), name='password_reset_landing'),
     path('auth/addresses/', UserAddressCreateView.as_view(), name='user_address_create'),
+    path(
+        'auth/addresses/<uuid:address_id>/',
+        UserAddressUpdateView.as_view(),
+        name='user_address_update',
+    ),
     path(
         'auth/addresses/<uuid:address_id>/set-primary/',
         UserAddressSetPrimaryView.as_view(),

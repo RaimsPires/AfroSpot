@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { AppIcon } from '@components/ui';
+import { AppAlert, AppIcon } from '@components/ui';
 import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import { useTranslationContext } from '@contexts/TranslationContext';
@@ -17,28 +17,70 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LanguageBottomSheet from '@components/profile/LanguageBottomSheet';
+import ProfilePhotoActionSheet from '@components/profile/ProfilePhotoActionSheet';
 import { LANGUAGES } from '@components/profile/mockData';
 import ProfileHeader from '@components/profile/ProfileHeader';
 import ProfileMenuGroup from '@components/profile/ProfileMenuGroup';
 import ProfileMenuItem from '@components/profile/ProfileMenuItem';
 import ProfileUserInfo from '@components/profile/ProfileUserInfo';
+import { pickProfileImage, type ProfileImageSource } from '@utils/profileImagePicker';
 
 const ProfileScreen = () => {
     const { colors, isDark, toggleTheme } = useTheme();
-    const { signOut } = useAuth();
+    const { signOut, user, updateProfile } = useAuth();
     const { language, setLanguage, supportedLanguages } = useTranslationContext();
     const navigation = useNavigation<AppStackNavigationProp<'Profile'>>();
     const [showLanguageSheet, setShowLanguageSheet] = useState(false);
+    const [showPhotoSheet, setShowPhotoSheet] = useState(false);
+    const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
+    const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
+    const [profileError, setProfileError] = useState<{ title: string; message: string } | null>(null);
 
     const availableLanguages = LANGUAGES.filter((item) =>
         supportedLanguages.includes(item.id as (typeof supportedLanguages)[number]),
     );
 
     const selectedLanguageName =
-        availableLanguages.find((item) => item.id === language)?.name ?? 'English';
+        availableLanguages.find((item) => item.id === (user?.language || language))?.name ?? 'English';
 
-    const handleSelectLanguage = (languageId: string) => {
-        void setLanguage(languageId);
+    const handleSelectLanguage = async (languageId: string) => {
+        try {
+            setIsUpdatingLanguage(true);
+            await Promise.all([
+                setLanguage(languageId),
+                updateProfile({ language: languageId }),
+            ]);
+        } catch {
+            setProfileError({
+                title: 'Language update failed',
+                message: 'Could not update your language right now. Please try again.',
+            });
+        } finally {
+            setIsUpdatingLanguage(false);
+        }
+    };
+
+    const handlePickProfilePhoto = async (source: ProfileImageSource) => {
+        setShowPhotoSheet(false);
+
+        const image = await pickProfileImage(source);
+
+        if (!image) {
+            return;
+        }
+
+        try {
+            setProfileError(null);
+            setIsUpdatingAvatar(true);
+            await updateProfile({ profile_picture: image });
+        } catch {
+            setProfileError({
+                title: 'Photo update failed',
+                message: 'Could not update your profile photo right now. Please try again.',
+            });
+        } finally {
+            setIsUpdatingAvatar(false);
+        }
     };
 
     return (
@@ -49,7 +91,23 @@ const ProfileScreen = () => {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
-                <ProfileUserInfo colors={colors} />
+                {profileError ? (
+                    <AppAlert
+                        title={profileError.title}
+                        message={profileError.message}
+                        variant="error"
+                        dismissible
+                        onClose={() => setProfileError(null)}
+                        containerStyle={styles.avatarErrorAlert}
+                    />
+                ) : null}
+
+                <ProfileUserInfo
+                    colors={colors}
+                    user={user}
+                    onEditAvatarPress={() => setShowPhotoSheet(true)}
+                    isUploadingAvatar={isUpdatingAvatar}
+                />
 
                 {/* Account Menu Group */}
                 <ProfileMenuGroup label="ACCOUNT" colors={colors}>
@@ -96,7 +154,7 @@ const ProfileScreen = () => {
                     <ProfileMenuItem
                         icon="globe"
                         label="Language"
-                        value={selectedLanguageName}
+                        value={isUpdatingLanguage ? 'Updating...' : selectedLanguageName}
                         colors={colors}
                         onPress={() => setShowLanguageSheet(true)}
                     />
@@ -133,8 +191,21 @@ const ProfileScreen = () => {
                 visible={showLanguageSheet}
                 onClose={() => setShowLanguageSheet(false)}
                 onSelectLanguage={handleSelectLanguage}
-                currentLanguage={language}
+                currentLanguage={user?.language || language}
                 languages={availableLanguages}
+                colors={colors}
+            />
+
+            <ProfilePhotoActionSheet
+                visible={showPhotoSheet}
+                onClose={() => setShowPhotoSheet(false)}
+                onCameraPress={() => {
+                    handlePickProfilePhoto('camera').catch(() => undefined);
+                }}
+                onGalleryPress={() => {
+                    handlePickProfilePhoto('gallery').catch(() => undefined);
+                }}
+                isBusy={isUpdatingAvatar}
                 colors={colors}
             />
         </SafeAreaView>
@@ -144,6 +215,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollContent: { paddingBottom: 60 },
+    avatarErrorAlert: { marginHorizontal: 20, marginTop: 14, marginBottom: -4 },
     logoutBtn: {
         flexDirection: 'row',
         alignItems: 'center',

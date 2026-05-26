@@ -113,3 +113,63 @@ class UserAddressAPITests(APITestCase):
 		response = self.client.patch(set_primary_url, {}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+	def test_update_address_updates_fields_and_can_promote_primary(self):
+		current_primary = UserAddress.objects.create(
+			user=self.user,
+			address_type='home',
+			is_active=True,
+			address='Old Home',
+			city='Brooklyn',
+			state='NY',
+			zip_code='11201',
+			country='USA',
+		)
+		target_address = UserAddress.objects.create(
+			user=self.user,
+			address_type='work',
+			is_active=False,
+			address='Old Work',
+			city='New York',
+			state='NY',
+			zip_code='10001',
+			country='USA',
+		)
+
+		update_url = reverse('user_address_update', kwargs={'address_id': target_address.id})
+		response = self.client.patch(
+			update_url,
+			{
+				'address_type': 'other',
+				'address': '85 Bedford Ave',
+				'city': 'Williamsburg',
+				'is_active': True,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		current_primary.refresh_from_db()
+		target_address.refresh_from_db()
+		self.assertFalse(current_primary.is_active)
+		self.assertTrue(target_address.is_active)
+		self.assertEqual(target_address.address_type, 'other')
+		self.assertEqual(target_address.address, '85 Bedford Ave')
+		self.assertEqual(target_address.city, 'Williamsburg')
+
+	def test_update_address_rejects_address_from_other_user(self):
+		other_user_address = UserAddress.objects.create(
+			user=self.other_user,
+			address_type='home',
+			is_active=True,
+			address='Other Address',
+			city='Chicago',
+			state='IL',
+			zip_code='60601',
+			country='USA',
+		)
+
+		update_url = reverse('user_address_update', kwargs={'address_id': other_user_address.id})
+		response = self.client.patch(update_url, {'address': 'Should Fail'}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

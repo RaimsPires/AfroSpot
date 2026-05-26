@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     pickerWrap: {
-        backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'center',
     },

@@ -17,6 +17,7 @@ module.exports = {
           '@services': './src/services',
           '@store': './src/store',
           '@utils': './src/utils',
+          '@permissions': './src/permissions',
           '@type': './src/types',
         },
         extensions: [

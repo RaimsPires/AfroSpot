@@ -78,6 +78,37 @@ export type CreateUserAddressPayload = {
     country: string
 };
 
+export type UpdateUserAddressPayload = Partial<CreateUserAddressPayload>;
+
+export type UploadableImage = {
+    uri: string;
+    name: string;
+    type: string;
+};
+
+export type UpdateUserSettingsPayload = {
+    is_deleted?: boolean;
+    deleted_at?: string | null;
+    country?: string;
+    country_of_origin?: string;
+    theme?: string;
+    email_notifications?: boolean;
+    email_verifications?: boolean;
+    push_notifications?: boolean;
+    marketing_emails?: boolean;
+};
+
+export type UpdateUserProfilePayload = {
+    first_name?: string;
+    last_name?: string;
+    phone_number?: string;
+    dob?: string;
+    profile_picture?: string | UploadableImage | null;
+    language?: string;
+    is_store_owner?: boolean;
+    settings?: UpdateUserSettingsPayload;
+};
+
 export type LoginRequestResponse = {
     access: string,
     refresh: string,

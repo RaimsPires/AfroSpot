@@ -61,6 +61,7 @@ const DeliveryAddressesScreen = () => {
     const user = useAuthStore((state) => state.user);
     const loading = useAuthStore((state) => state.loading);
     const addAddress = useAuthStore((state) => state.addAddress);
+    const updateAddress = useAuthStore((state) => state.updateAddress);
     const setPrimaryAddress = useAuthStore((state) => state.setPrimaryAddress);
 
     const addresses = useMemo(() => {
@@ -73,7 +74,8 @@ const DeliveryAddressesScreen = () => {
         });
     }, [user?.addresses]);
 
-    const [showAddSheet, setShowAddSheet] = useState(false);
+    const [showAddressSheet, setShowAddressSheet] = useState(false);
+    const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
     const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingPrimary, setIsSettingPrimary] = useState<string | null>(null);
@@ -106,6 +108,16 @@ const DeliveryAddressesScreen = () => {
         return addresses.find((address) => address.id === selectedAddressId) ?? null;
     }, [addresses, selectedAddressId]);
 
+    const editingAddress = useMemo(() => {
+        if (!editingAddressId) {
+            return null;
+        }
+
+        return addresses.find((address) => address.id === editingAddressId) ?? null;
+    }, [addresses, editingAddressId]);
+
+    const isEditingAddress = Boolean(editingAddress);
+
     const resetForm = () => {
         setNewLabel('Home');
         setNewName('');
@@ -117,7 +129,39 @@ const DeliveryAddressesScreen = () => {
         setNewIsPrimary(false);
     };
 
-    const addNewAddress = async () => {
+    const populateForm = (address: UserAddress) => {
+        setNewLabel(getAddressTypeLabel(address.address_type));
+        setNewName(displayName);
+        setNewStreet(address.address);
+        setNewCity(address.city);
+        setNewState(address.state);
+        setNewZipCode(address.zip_code);
+        setNewCountry(address.country);
+        setNewIsPrimary(address.is_active);
+    };
+
+    const closeAddressSheet = () => {
+        setShowAddressSheet(false);
+        setEditingAddressId(null);
+        resetForm();
+    };
+
+    const openAddAddressSheet = () => {
+        setErrorMessage(null);
+        setEditingAddressId(null);
+        resetForm();
+        setShowAddressSheet(true);
+    };
+
+    const openEditAddressSheet = (address: UserAddress) => {
+        setErrorMessage(null);
+        setSelectedAddressId(null);
+        setEditingAddressId(address.id);
+        populateForm(address);
+        setShowAddressSheet(true);
+    };
+
+    const submitAddress = async () => {
         if (!newStreet.trim() || !newCity.trim() || !newState.trim() || !newZipCode.trim() || !newCountry.trim()) {
             setErrorMessage('Please fill in all required address fields.');
             return;
@@ -126,7 +170,7 @@ const DeliveryAddressesScreen = () => {
         try {
             setErrorMessage(null);
             setIsSubmitting(true);
-            await addAddress({
+            const payload = {
                 address_type: LABEL_TO_ADDRESS_TYPE[newLabel],
                 is_active: newIsPrimary,
                 address: newStreet.trim(),
@@ -134,12 +178,19 @@ const DeliveryAddressesScreen = () => {
                 state: newState.trim(),
                 zip_code: newZipCode.trim(),
                 country: newCountry.trim(),
-            });
+            };
 
-            setShowAddSheet(false);
-            resetForm();
+            if (editingAddressId) {
+                await updateAddress(editingAddressId, payload);
+            } else {
+                await addAddress(payload);
+            }
+
+            closeAddressSheet();
         } catch {
-            setErrorMessage('Unable to save address right now. Please try again.');
+            setErrorMessage(editingAddressId
+                ? 'Unable to update address right now. Please try again.'
+                : 'Unable to save address right now. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -172,7 +223,7 @@ const DeliveryAddressesScreen = () => {
                     )}
                 </View>
                 <View style={styles.actionIcons}>
-                    <TouchableOpacity style={styles.iconBtnSmall} disabled>
+                    <TouchableOpacity style={styles.iconBtnSmall} onPress={() => openEditAddressSheet(item)}>
                         <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
                     </TouchableOpacity>
                     {!item.is_active && (
@@ -228,7 +279,7 @@ const DeliveryAddressesScreen = () => {
                 {/* 2. Add New Button */}
                 <TouchableOpacity
                     style={[styles.addBtnLarge, { borderColor: colors.primary, backgroundColor: colors.primary + '05' }]}
-                    onPress={() => setShowAddSheet(true)}
+                    onPress={openAddAddressSheet}
                 >
                     <AppIcon library="Feather" name="plus-circle" size={20} color={colors.primary} />
                     <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>Add New Address</Text>
@@ -260,13 +311,13 @@ const DeliveryAddressesScreen = () => {
 
             {/* 4. Add Address Bottom Sheet */}
             <Modal
-                visible={showAddSheet}
+                visible={showAddressSheet}
                 transparent
                 animationType="slide"
                 statusBarTranslucent
-                onRequestClose={() => setShowAddSheet(false)}
+                onRequestClose={closeAddressSheet}
             >
-                <Pressable style={styles.sheetOverlay} onPress={() => setShowAddSheet(false)}>
+                <Pressable style={styles.sheetOverlay} onPress={closeAddressSheet}>
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                         keyboardVerticalOffset={Platform.OS === 'ios' ? 16 : 0}
@@ -283,7 +334,7 @@ const DeliveryAddressesScreen = () => {
                         >
                         <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
 
-                        <Text style={[styles.formTitle, { color: colors.text }]}>New Address</Text>
+                        <Text style={[styles.formTitle, { color: colors.text }]}>{isEditingAddress ? 'Edit Address' : 'New Address'}</Text>
 
                         <View style={styles.typeSelector}>
                             {['Home', 'Work', 'Other'].map((l) => (
@@ -384,13 +435,13 @@ const DeliveryAddressesScreen = () => {
                         </TouchableOpacity>
 
                         <View style={styles.formActions}>
-                            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowAddSheet(false)}>
+                            <TouchableOpacity style={styles.cancelBtn} onPress={closeAddressSheet}>
                                 <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Cancel</Text>
                             </TouchableOpacity>
                             <View style={styles.flexOne}>
                                 <AppButton
-                                    title={isSubmitting ? 'Saving...' : 'Save Address'}
-                                    onPress={addNewAddress}
+                                    title={isSubmitting ? (isEditingAddress ? 'Updating...' : 'Saving...') : (isEditingAddress ? 'Update Address' : 'Save Address')}
+                                    onPress={submitAddress}
                                     disabled={isSubmitting}
                                 />
                             </View>
@@ -439,6 +490,13 @@ const DeliveryAddressesScreen = () => {
                                 </View>
 
                                 <View style={styles.detailsActions}>
+                                    <TouchableOpacity
+                                        style={[styles.detailsEditBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
+                                        onPress={() => openEditAddressSheet(selectedAddress)}
+                                    >
+                                        <Text style={[styles.detailsEditBtnText, { color: colors.text }]}>Edit Address</Text>
+                                    </TouchableOpacity>
+
                                     {!selectedAddress.is_active ? (
                                         <TouchableOpacity
                                             style={[styles.detailsPrimaryBtn, { borderColor: colors.primary }]}
@@ -548,6 +606,8 @@ const styles = StyleSheet.create({
     detailsName: { fontSize: 15, fontWeight: '700', marginBottom: 6 },
     detailsLine: { fontSize: 14, lineHeight: 20 },
     detailsActions: { gap: 10 },
+    detailsEditBtn: { borderWidth: 1, borderRadius: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
+    detailsEditBtnText: { fontSize: 14, fontWeight: '700' },
     detailsPrimaryBtn: { borderWidth: 1, borderRadius: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
     detailsPrimaryBtnText: { fontSize: 14, fontWeight: '700' },
     detailsPrimaryHint: { fontSize: 13, lineHeight: 18 },

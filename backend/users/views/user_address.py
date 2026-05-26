@@ -44,3 +44,21 @@ class UserAddressSetPrimaryView(APIView):
             address.save(update_fields=['is_active', 'updated_at'])
 
         return Response(UserAddressSerializer(address).data, status=status.HTTP_200_OK)
+
+
+class UserAddressUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def patch(self, request, address_id):
+        address = get_object_or_404(UserAddress, id=address_id, user=request.user)
+        serializer = UserAddressCreateSerializer(address, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        requested_primary = serializer.validated_data.get('is_active', address.is_active)
+
+        if requested_primary:
+            UserAddress.objects.filter(user=request.user, is_active=True).exclude(id=address.id).update(is_active=False)
+
+        updated_address = serializer.save(is_active=requested_primary)
+        return Response(UserAddressSerializer(updated_address).data, status=status.HTTP_200_OK)

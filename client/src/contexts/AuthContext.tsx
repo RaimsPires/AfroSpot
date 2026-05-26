@@ -7,6 +7,7 @@ import {
     PasswordChangePayload,
     PasswordResetConfirmPayload,
     PasswordResetRequestPayload,
+    UpdateUserProfilePayload,
 } from '@type/auth';
 
 type AuthContextValue = {
@@ -20,6 +21,7 @@ type AuthContextValue = {
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
+    updateProfile: (payload: UpdateUserProfilePayload) => Promise<AuthUser>;
     setAuthenticated: (value: boolean) => void;
 };
 
@@ -34,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const forgotPassword = useAuthStore((state) => state.forgotPassword);
     const resetPassword = useAuthStore((state) => state.resetPassword);
     const changePassword = useAuthStore((state) => state.changePassword);
+    const updateProfile = useAuthStore((state) => state.updateProfile);
     const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
     const loading = useAuthStore((state) => state.loading);
     const isAuthBootstrapping = useAuthStore((state) => state.isAuthBootstrapping);
@@ -57,6 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             forgotPassword,
             resetPassword,
             changePassword,
+            updateProfile,
             setAuthenticated,
         }),
         [
@@ -69,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             forgotPassword,
             resetPassword,
             changePassword,
+            updateProfile,
             user,
             loading,
         ],
