@@ -1,3 +1,5 @@
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 export interface AppTheme {
     isDark: boolean;
     colors: {

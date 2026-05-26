@@ -43,7 +43,7 @@ const INITIAL_CART = [
     },
 ];
 
-const CartScreen = () => {
+const CartScreen = ({navigation}) => {
     const { colors, isDark } = useTheme();
     const [cartItems, setCartItems] = useState(INITIAL_CART);
 
@@ -101,7 +101,9 @@ const CartScreen = () => {
 
             {/* Header */}
             <View style={[styles.header, { backgroundColor: colors.background }]}>
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn}
+                onPress={() => navigation.goBack()}
+                >
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Shopping Cart</Text>

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     ScrollView,
     StatusBar,
     StyleSheet,
-    Switch,
     Text,
     TouchableOpacity,
 } from 'react-native';
@@ -22,7 +21,9 @@ import ProfileHeader from '@components/profile/ProfileHeader';
 import ProfileMenuGroup from '@components/profile/ProfileMenuGroup';
 import ProfileMenuItem from '@components/profile/ProfileMenuItem';
 import ProfilePhotoActionSheet from '@components/profile/ProfilePhotoActionSheet';
+import ThemeSelectionModal from '@components/profile/ThemeSelectionModal';
 import ProfileUserInfo from '@components/profile/ProfileUserInfo';
+import type { ThemeMode } from '@type/theme';
 import { pickProfileImage, type ProfileImageSource } from '@utils/profileImagePicker';
 
 const waitForIdle = () =>
@@ -40,24 +41,17 @@ const waitForIdle = () =>
     });
 
 const ProfileScreen = () => {
-    const { colors, isDark, setThemeMode } = useTheme();
+    const { colors, isDark, themeMode, setThemeMode } = useTheme();
     const { signOut, user, updateProfile } = useAuth();
     const { language, setLanguage, supportedLanguages } = useTranslationContext();
     const navigation = useNavigation<AppStackNavigationProp<'Profile'>>();
     const [showLanguageSheet, setShowLanguageSheet] = useState(false);
     const [showPhotoSheet, setShowPhotoSheet] = useState(false);
+    const [showThemeSheet, setShowThemeSheet] = useState(false);
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
     const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
     const [isUpdatingTheme, setIsUpdatingTheme] = useState(false);
     const [profileError, setProfileError] = useState<{ title: string; message: string } | null>(null);
-
-    useEffect(() => {
-        const userTheme = user?.settings?.theme;
-
-        if (userTheme === 'light' || userTheme === 'dark') {
-            setThemeMode(userTheme);
-        }
-    }, [setThemeMode, user?.settings?.theme]);
 
     const availableLanguages = LANGUAGES.filter((item) =>
         supportedLanguages.includes(item.id as (typeof supportedLanguages)[number]),
@@ -65,6 +59,9 @@ const ProfileScreen = () => {
 
     const selectedLanguageName =
         availableLanguages.find((item) => item.id === (user?.language || language))?.name ?? 'English';
+
+    const selectedThemeName =
+        themeMode === 'light' ? 'Light' : themeMode === 'dark' ? 'Dark' : 'System';
 
     const handleSelectLanguage = async (languageId: string) => {
         try {
@@ -86,10 +83,7 @@ const ProfileScreen = () => {
     const handlePickProfilePhoto = async (source: ProfileImageSource) => {
         setShowPhotoSheet(false);
         await waitForIdle();
-        console.log('Picking profile photo from source:', source);
         const image = await pickProfileImage(source);
-        console.log('Picked image:', image);
-
         if (!image) {
             return;
         }
@@ -108,15 +102,12 @@ const ProfileScreen = () => {
         }
     };
 
-    const handleSelectTheme = async (nextIsDark: boolean) => {
-        const nextTheme = nextIsDark ? 'dark' : 'light';
+    const handleSelectTheme = async (nextTheme: ThemeMode) => {
+        setThemeMode(nextTheme);
 
         try {
             setIsUpdatingTheme(true);
-            await Promise.all([
-                updateProfile({ settings: { theme: nextTheme } }),
-                Promise.resolve(setThemeMode(nextTheme)),
-            ]);
+            await updateProfile({ settings: { theme: nextTheme } });
         } catch {
             setProfileError({
                 title: 'Theme update failed',
@@ -201,21 +192,12 @@ const ProfileScreen = () => {
                         onPress={() => setShowLanguageSheet(true)}
                     />
                     <ProfileMenuItem
-                        icon={isDark ? 'moon' : 'sun'}
-                        label="Dark Mode"
+                        icon={themeMode === 'dark' ? 'moon' : themeMode === 'light' ? 'sun' : 'smartphone'}
+                        label="Theme"
+                        value={isUpdatingTheme ? 'Updating...' : selectedThemeName}
                         colors={colors}
                         isLast
-                        rightElement={
-                            <Switch
-                                value={isDark}
-                                onValueChange={(value) => {
-                                    handleSelectTheme(value).catch(() => undefined);
-                                }}
-                                disabled={isUpdatingTheme}
-                                trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
-                                thumbColor={isDark ? colors.primary : '#FFF'}
-                            />
-                        }
+                        onPress={() => setShowThemeSheet(true)}
                     />
                 </ProfileMenuGroup>
 
@@ -251,6 +233,15 @@ const ProfileScreen = () => {
                     handlePickProfilePhoto('gallery').catch((e) => console.log('Gallery error:', e));
                 }}
                 isBusy={isUpdatingAvatar}
+                colors={colors}
+            />
+
+            <ThemeSelectionModal
+                visible={showThemeSheet}
+                onClose={() => setShowThemeSheet(false)}
+                onSelectTheme={handleSelectTheme}
+                currentThemeMode={themeMode}
+                isBusy={isUpdatingTheme}
                 colors={colors}
             />
         </SafeAreaView>

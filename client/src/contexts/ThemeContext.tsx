@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
+import { useAuthStore } from '../store/authStore';
 import { palette } from '../theme/theme';
-import { AppTheme } from '../types/theme';
+import { AppTheme, ThemeMode } from '../types/theme';
 
 
 const lightTheme: AppTheme = {
@@ -39,53 +40,63 @@ const darkTheme: AppTheme = {
 };
 
 type ThemeContextValue = AppTheme & {
+    themeMode: ThemeMode;
     toggleTheme: () => void;
-    setThemeMode: (mode: string) => void;
+    setThemeMode: (mode: ThemeMode) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
     ...lightTheme,
+    themeMode: 'system',
     toggleTheme: () => {},
     setThemeMode: () => {},
 });
 
+const resolveThemeByMode = (mode: ThemeMode, colorScheme: ReturnType<typeof useColorScheme>): AppTheme => {
+    if (mode === 'dark') {
+        return darkTheme;
+    }
+
+    if (mode === 'light') {
+        return lightTheme;
+    }
+
+    return colorScheme === 'dark' ? darkTheme : lightTheme;
+};
+
+const normalizeThemeMode = (value: string | null | undefined): ThemeMode | null => {
+    if (value === 'light' || value === 'dark' || value === 'system') {
+        return value;
+    }
+
+    return null;
+};
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const colorScheme = useColorScheme();
-    const [theme, setTheme] = useState<AppTheme>(colorScheme === 'dark' ? darkTheme : lightTheme);
-    const [isOverridden, setIsOverridden] = useState(false);
+    const userThemeSetting = useAuthStore((state) => state.user?.settings?.theme);
+    const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+    const [theme, setTheme] = useState<AppTheme>(resolveThemeByMode('system', colorScheme));
 
     useEffect(() => {
-        if (!isOverridden) {
-            setTheme(colorScheme === 'dark' ? darkTheme : lightTheme);
-        }
-    }, [colorScheme, isOverridden]);
+        const nextMode = normalizeThemeMode(userThemeSetting) ?? 'system';
+        setThemeModeState((prevMode) => (prevMode === nextMode ? prevMode : nextMode));
+    }, [userThemeSetting]);
+
+    useEffect(() => {
+        setTheme(resolveThemeByMode(themeMode, colorScheme));
+    }, [colorScheme, themeMode]);
 
     const toggleTheme = () => {
-        setIsOverridden(true);
-        setTheme((prevTheme) => (prevTheme.isDark ? lightTheme : darkTheme));
+        setThemeModeState((prevMode) => (prevMode === 'dark' ? 'light' : 'dark'));
     };
 
-    const setThemeMode = (mode: string) => {
-        if (mode !== 'light' && mode !== 'dark') {
-            return;
-        }
-
-        setIsOverridden(true);
-        setTheme((prevTheme) => {
-            if (mode === 'dark' && !prevTheme.isDark) {
-                return darkTheme;
-            }
-
-            if (mode === 'light' && prevTheme.isDark) {
-                return lightTheme;
-            }
-
-            return prevTheme;
-        });
+    const setThemeMode = (mode: ThemeMode) => {
+        setThemeModeState(mode);
     };
 
     return (
-        <ThemeContext.Provider value={{ ...theme, toggleTheme, setThemeMode }}>
+        <ThemeContext.Provider value={{ ...theme, themeMode, toggleTheme, setThemeMode }}>
             {children}
         </ThemeContext.Provider>
     );
