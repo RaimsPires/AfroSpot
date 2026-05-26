@@ -17,7 +17,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import ImagePicker, { type Image as PickerImage } from 'react-native-image-crop-picker';
+import { pickAndCropFromLibrary, SHOP_CROP_PRESETS, type ShopImageFile } from '@utils/hybridImagePicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'BusinessKYC'>;
@@ -71,64 +71,50 @@ export const BusinessKYCScreen = ({ navigation }: Props) => {
         ],
     );
 
-    const setUpload = (slot: keyof UploadState, image: PickerImage) => {
+    const setUpload = (slot: keyof UploadState, image: ShopImageFile) => {
         setUploads((prev) => ({
             ...prev,
             [slot]: {
-                fileName: image.filename || `${slot}.jpg`,
+                fileName: image.fileName || `${slot}.jpg`,
                 path: image.path,
             },
         }));
     };
 
-    const pickBannerImage = () => {
-        ImagePicker.openPicker({
-            mediaType: 'photo',
-            width: 1200,
-            height: 400,
-            cropping: true,
-            compressImageQuality: 0.8,
-        })
-            .then((image) => setUpload('banner', image))
-            .catch((err: unknown) => {
-                const code = (err as { code?: string })?.code;
-                if (code !== 'E_PICKER_CANCELLED') {
-                    Alert.alert('Upload failed', 'Could not select banner image.');
-                }
-            });
+    const pickBannerImage = async () => {
+        const image = await pickAndCropFromLibrary(
+            SHOP_CROP_PRESETS.banner,
+            'Upload failed',
+            'Could not select banner image.',
+        );
+
+        if (image) {
+            setUpload('banner', image);
+        }
     };
 
-    const pickProfileImage = () => {
-        ImagePicker.openPicker({
-            mediaType: 'photo',
-            width: 300,
-            height: 300,
-            cropping: true,
-            cropperCircleOverlay: true,
-            compressImageQuality: 0.8,
-        })
-            .then((image) => setUpload('profile', image))
-            .catch((err: unknown) => {
-                const code = (err as { code?: string })?.code;
-                if (code !== 'E_PICKER_CANCELLED') {
-                    Alert.alert('Upload failed', 'Could not select profile image.');
-                }
-            });
+    const pickProfileImage = async () => {
+        const image = await pickAndCropFromLibrary(
+            SHOP_CROP_PRESETS.profile,
+            'Upload failed',
+            'Could not select profile image.',
+        );
+
+        if (image) {
+            setUpload('profile', image);
+        }
     };
 
-    const pickDocumentImage = () => {
-        ImagePicker.openPicker({
-            mediaType: 'photo',
-            cropping: false,
-            compressImageQuality: 0.8,
-        })
-            .then((image) => setUpload('document', image))
-            .catch((err: unknown) => {
-                const code = (err as { code?: string })?.code;
-                if (code !== 'E_PICKER_CANCELLED') {
-                    Alert.alert('Upload failed', 'Could not select document image.');
-                }
-            });
+    const pickDocumentImage = async () => {
+        const image = await pickAndCropFromLibrary(
+            null,
+            'Upload failed',
+            'Could not select document image.',
+        );
+
+        if (image) {
+            setUpload('document', image);
+        }
     };
 
     const handleSubmit = async () => {

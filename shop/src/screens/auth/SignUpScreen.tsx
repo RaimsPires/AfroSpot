@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import {
-    Alert,
     Image,
     Keyboard,
     KeyboardAvoidingView,
@@ -19,7 +18,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
+import { pickAndCropFromLibrary, SHOP_CROP_PRESETS } from '@utils/hybridImagePicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SignUpNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -47,20 +46,18 @@ export const SignUpScreen = () => {
         !password.trim() ||
         password !== confirmPassword;
 
-    const handlePickImage = () => {
-        ImagePicker.openPicker({
-            width: 300,
-            height: 300,
-            cropping: true,
-            cropperCircleOverlay: true,
-            compressImageQuality: 0.8,
-        }).then(image => {
-            setProfileImage(image.path);
-        }).catch(err => {
-            if (err.code !== 'E_PICKER_CANCELLED') {
-                Alert.alert('Error', 'Could not select image');
-            }
-        });
+    const handlePickImage = async () => {
+        const selectedImage = await pickAndCropFromLibrary(
+            SHOP_CROP_PRESETS.profile,
+            'Error',
+            'Could not select image',
+        );
+
+        if (!selectedImage) {
+            return;
+        }
+
+        setProfileImage(selectedImage.path);
     };
 
     const renderCountryButton = (country: Country) => (

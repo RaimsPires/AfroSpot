@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
 from users.models import UserAddress
 from users.serializers.user_addresses_serilizer import (
@@ -15,6 +16,10 @@ from users.serializers.user_addresses_serilizer import (
 class UserAddressCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=UserAddressCreateSerializer,
+        responses={status.HTTP_201_CREATED: UserAddressSerializer},
+    )
     @transaction.atomic
     def post(self, request):
         serializer = UserAddressCreateSerializer(data=request.data)
@@ -34,6 +39,10 @@ class UserAddressCreateView(APIView):
 class UserAddressSetPrimaryView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=None,
+        responses={status.HTTP_200_OK: UserAddressSerializer},
+    )
     @transaction.atomic
     def patch(self, request, address_id):
         address = get_object_or_404(UserAddress, id=address_id, user=request.user)
@@ -49,6 +58,10 @@ class UserAddressSetPrimaryView(APIView):
 class UserAddressUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=UserAddressCreateSerializer,
+        responses={status.HTTP_200_OK: UserAddressSerializer},
+    )
     @transaction.atomic
     def patch(self, request, address_id):
         address = get_object_or_404(UserAddress, id=address_id, user=request.user)

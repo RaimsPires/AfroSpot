@@ -40,11 +40,13 @@ const darkTheme: AppTheme = {
 
 type ThemeContextValue = AppTheme & {
     toggleTheme: () => void;
+    setThemeMode: (mode: string) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
     ...lightTheme,
     toggleTheme: () => {},
+    setThemeMode: () => {},
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -63,8 +65,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setTheme((prevTheme) => (prevTheme.isDark ? lightTheme : darkTheme));
     };
 
+    const setThemeMode = (mode: string) => {
+        if (mode !== 'light' && mode !== 'dark') {
+            return;
+        }
+
+        setIsOverridden(true);
+        setTheme((prevTheme) => {
+            if (mode === 'dark' && !prevTheme.isDark) {
+                return darkTheme;
+            }
+
+            if (mode === 'light' && prevTheme.isDark) {
+                return lightTheme;
+            }
+
+            return prevTheme;
+        });
+    };
+
     return (
-        <ThemeContext.Provider value={{ ...theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ ...theme, toggleTheme, setThemeMode }}>
             {children}
         </ThemeContext.Provider>
     );

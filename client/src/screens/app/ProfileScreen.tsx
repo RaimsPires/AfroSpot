@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ScrollView,
     StatusBar,
@@ -17,16 +17,30 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LanguageBottomSheet from '@components/profile/LanguageBottomSheet';
-import ProfilePhotoActionSheet from '@components/profile/ProfilePhotoActionSheet';
 import { LANGUAGES } from '@components/profile/mockData';
 import ProfileHeader from '@components/profile/ProfileHeader';
 import ProfileMenuGroup from '@components/profile/ProfileMenuGroup';
 import ProfileMenuItem from '@components/profile/ProfileMenuItem';
+import ProfilePhotoActionSheet from '@components/profile/ProfilePhotoActionSheet';
 import ProfileUserInfo from '@components/profile/ProfileUserInfo';
 import { pickProfileImage, type ProfileImageSource } from '@utils/profileImagePicker';
 
+const waitForIdle = () =>
+    new Promise<void>((resolve) => {
+        const requestIdle = (globalThis as typeof globalThis & {
+            requestIdleCallback?: (callback: () => void) => number;
+        }).requestIdleCallback;
+
+        if (typeof requestIdle === 'function') {
+            requestIdle(() => resolve());
+            return;
+        }
+
+        setTimeout(resolve, 0);
+    });
+
 const ProfileScreen = () => {
-    const { colors, isDark, toggleTheme } = useTheme();
+    const { colors, isDark, setThemeMode } = useTheme();
     const { signOut, user, updateProfile } = useAuth();
     const { language, setLanguage, supportedLanguages } = useTranslationContext();
     const navigation = useNavigation<AppStackNavigationProp<'Profile'>>();
@@ -34,7 +48,16 @@ const ProfileScreen = () => {
     const [showPhotoSheet, setShowPhotoSheet] = useState(false);
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
     const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
+    const [isUpdatingTheme, setIsUpdatingTheme] = useState(false);
     const [profileError, setProfileError] = useState<{ title: string; message: string } | null>(null);
+
+    useEffect(() => {
+        const userTheme = user?.settings?.theme;
+
+        if (userTheme === 'light' || userTheme === 'dark') {
+            setThemeMode(userTheme);
+        }
+    }, [setThemeMode, user?.settings?.theme]);
 
     const availableLanguages = LANGUAGES.filter((item) =>
         supportedLanguages.includes(item.id as (typeof supportedLanguages)[number]),
@@ -62,8 +85,10 @@ const ProfileScreen = () => {
 
     const handlePickProfilePhoto = async (source: ProfileImageSource) => {
         setShowPhotoSheet(false);
-
+        await waitForIdle();
+        console.log('Picking profile photo from source:', source);
         const image = await pickProfileImage(source);
+        console.log('Picked image:', image);
 
         if (!image) {
             return;
@@ -83,31 +108,48 @@ const ProfileScreen = () => {
         }
     };
 
+    const handleSelectTheme = async (nextIsDark: boolean) => {
+        const nextTheme = nextIsDark ? 'dark' : 'light';
+
+        try {
+            setIsUpdatingTheme(true);
+            await Promise.all([
+                updateProfile({ settings: { theme: nextTheme } }),
+                Promise.resolve(setThemeMode(nextTheme)),
+            ]);
+        } catch {
+            setProfileError({
+                title: 'Theme update failed',
+                message: 'Could not update your theme right now. Please try again.',
+            });
+        } finally {
+            setIsUpdatingTheme(false);
+        }
+    };
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
             <ProfileHeader colors={colors} />
 
+            {profileError ? (
+                <AppAlert
+                    title={profileError.title}
+                    message={profileError.message}
+                    variant="error"
+                    dismissible
+                    onClose={() => setProfileError(null)}
+                    containerStyle={styles.avatarErrorAlert}
+                />
+            ) : null}
+
+            <ProfileUserInfo
+                onEditAvatarPress={() => setShowPhotoSheet(true)}
+                isUploadingAvatar={isUpdatingAvatar}
+            />
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
-                {profileError ? (
-                    <AppAlert
-                        title={profileError.title}
-                        message={profileError.message}
-                        variant="error"
-                        dismissible
-                        onClose={() => setProfileError(null)}
-                        containerStyle={styles.avatarErrorAlert}
-                    />
-                ) : null}
-
-                <ProfileUserInfo
-                    colors={colors}
-                    user={user}
-                    onEditAvatarPress={() => setShowPhotoSheet(true)}
-                    isUploadingAvatar={isUpdatingAvatar}
-                />
 
                 {/* Account Menu Group */}
                 <ProfileMenuGroup label="ACCOUNT" colors={colors}>
@@ -166,7 +208,10 @@ const ProfileScreen = () => {
                         rightElement={
                             <Switch
                                 value={isDark}
-                                onValueChange={toggleTheme}
+                                onValueChange={(value) => {
+                                    handleSelectTheme(value).catch(() => undefined);
+                                }}
+                                disabled={isUpdatingTheme}
                                 trackColor={{ false: '#D1D5DB', true: colors.primary + '80' }}
                                 thumbColor={isDark ? colors.primary : '#FFF'}
                             />
@@ -200,10 +245,10 @@ const ProfileScreen = () => {
                 visible={showPhotoSheet}
                 onClose={() => setShowPhotoSheet(false)}
                 onCameraPress={() => {
-                    handlePickProfilePhoto('camera').catch(() => undefined);
+                    handlePickProfilePhoto('camera').catch((e) => console.log('Camera error:', e));
                 }}
                 onGalleryPress={() => {
-                    handlePickProfilePhoto('gallery').catch(() => undefined);
+                    handlePickProfilePhoto('gallery').catch((e) => console.log('Gallery error:', e));
                 }}
                 isBusy={isUpdatingAvatar}
                 colors={colors}

@@ -1079,11 +1079,6 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
-"@exodus/react-native-splash-screen@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@exodus/react-native-splash-screen/-/react-native-splash-screen-6.0.2.tgz#1858fafde0c5e3fc889876cf6909552cd32d3670"
-  integrity sha512-8QuIxI6f7ftIAC92GiZc5YRHHK15hwYVP1j7maOq3srpIK9g8O62NYnxDI/99vTvPBWz0Uc8TpnKLX4fpKcx0Q==
-
 "@expo/react-native-action-sheet@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@expo/react-native-action-sheet/-/react-native-action-sheet-4.1.1.tgz#a94a11088b8f146ac86b3ae710deef609a922d82"
@@ -6002,6 +5997,11 @@ react-native-image-crop-picker@^0.51.1:
   version "0.51.1"
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.51.1.tgz#1e42865454030c5194e693a9e7691bf5afe460f5"
   integrity sha512-GIFRyXJgv1dPceKd/hraK9q9V38v45rSg2ONR6RiSePcOJemkHpc/PMU86pq6lWPilDYHSxbZmea2pNMk85ayw==
+
+react-native-image-picker@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-8.2.1.tgz#1ac7826563cbaa5d5298d9f2acc53c69805e5393"
+  integrity sha512-FBeGYJGFDjMdGCcyubDJgBAPCQ4L1D3hwLXyUU91jY9ahOZMTbluceVvRmrEKqnDPFJ0gF1NVhJ0nr1nROFLdg==
 
 react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"

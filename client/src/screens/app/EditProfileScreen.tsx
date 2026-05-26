@@ -26,6 +26,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FALLBACK_AVATAR = 'https://i.pravatar.cc/150?img=47';
 
+const waitForIdle = () =>
+    new Promise<void>((resolve) => {
+        const requestIdle = (globalThis as typeof globalThis & {
+            requestIdleCallback?: (callback: () => void) => number;
+        }).requestIdleCallback;
+
+        if (typeof requestIdle === 'function') {
+            requestIdle(() => resolve());
+            return;
+        }
+
+        setTimeout(resolve, 0);
+    });
+
 function parseApiDate(value?: string | null): Date | null {
     if (!value) {
         return null;
@@ -87,6 +101,7 @@ const EditProfileScreen = () => {
 
     const handlePickProfilePhoto = async (source: ProfileImageSource) => {
         setShowPhotoSheet(false);
+        await waitForIdle();
 
         const selectedImage = await pickProfileImage(source);
 

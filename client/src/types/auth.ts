@@ -35,6 +35,8 @@ export type AuthUser = {
     is_staff: boolean,
     is_active: boolean,
     date_joined: string,
+    created_at: string,
+    updated_at: string,
     settings: UserSettings | null,
     addresses: UserAddress[]
 };

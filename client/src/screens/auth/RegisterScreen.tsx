@@ -1,7 +1,6 @@
 import CountryPicker, { CountryCode } from '@avaiyakapil/react-native-country-picker';
 import React, { useState } from 'react';
 import {
-    Alert,
     Image,
     ScrollView,
     StatusBar,
@@ -10,7 +9,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
 
 // Using your specific imports
 import { AppIcon, DatePickerField, Input } from '@components/ui';
@@ -19,6 +17,7 @@ import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/AuthStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { pickProfileImage } from '@utils/profileImagePicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
@@ -34,20 +33,14 @@ const RegisterScreen = () => {
     const [residenceCountryCode, setResidenceCountryCode] = useState<CountryCode>('NG');
     const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
-    const handlePickImage = () => {
-        ImagePicker.openPicker({
-            width: 300,
-            height: 300,
-            cropping: true,
-            cropperCircleOverlay: true,
-            compressImageQuality: 0.8,
-        }).then(image => {
-            setProfileImage(image.path);
-        }).catch(err => {
-            if (err.code !== 'E_PICKER_CANCELLED') {
-                Alert.alert('Error', 'Could not select image');
-            }
-        });
+    const handlePickImage = async () => {
+        const selectedImage = await pickProfileImage('gallery');
+
+        if (!selectedImage) {
+            return;
+        }
+
+        setProfileImage(selectedImage.uri);
     };
 
     return (

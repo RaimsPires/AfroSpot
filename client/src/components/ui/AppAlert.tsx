@@ -158,7 +158,7 @@ const AppAlert: React.FC<AppAlertProps> = ({
 
 const styles = StyleSheet.create({
     root: {
-        width: '100%',
+        width: '90%',
         borderWidth: 1,
         borderRadius: 14,
     },

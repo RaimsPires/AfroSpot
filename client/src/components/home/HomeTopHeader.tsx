@@ -12,8 +12,6 @@ const HomeTopHeader = () => {
     const navigation = useNavigation<AppStackNavigationProp<'Home'>>();
     const { user } = useAuth();
     const hasActiveAddress = Boolean(user?.active_address);
-    console.log(user?.profile_picture);
-    console.log(user);
 
     return (
         <View style={styles.header}>

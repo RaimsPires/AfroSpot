@@ -25,10 +25,6 @@ class UserAddress(BaseModel):
         verbose_name = 'User Address'
         verbose_name_plural = 'User Addresses'
         db_table = 'user_addresses'
-        
-    @property
-    def address_name(self):
-        return f"{self.address}, {self.city}"
     
     def __str__(self):
-        return f"{self.address}, {self.city}, {self.state}, {self.zip_code}, {self.country}"
+            return f"{self.address}, {self.city}"
