@@ -1,5 +1,5 @@
-import { apiClient } from '@services/apiClient';
 import { createUserAddress, setPrimaryUserAddress, updateUserAddress } from '@services/addressService';
+import { apiClient } from '@services/apiClient';
 import { localeStorage } from '@services/localeStorage';
 import { patchUserProfile } from '@services/profileService';
 import {
@@ -10,8 +10,9 @@ import {
     PasswordChangePayload,
     PasswordResetConfirmPayload,
     PasswordResetRequestPayload,
-    UpdateUserProfilePayload,
+    RegisterPayload,
     UpdateUserAddressPayload,
+    UpdateUserProfilePayload,
     UserAddress,
 } from '@type/auth';
 import { STORAGE_KEYS } from '@utils/storage_constances';
@@ -23,7 +24,8 @@ type AuthState = {
     loading?: boolean;
     isAuthBootstrapping: boolean;
     signIn: (payload: AuthPayload) => Promise<void>;
-    signUp: (payload: AuthPayload) => Promise<void>;
+    signUp: (payload: RegisterPayload | FormData) => Promise<void>;
+    checkEmailVerified: (email: string, password: string) => Promise<boolean>;
     signOut: () => Promise<void>;
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
@@ -166,17 +168,51 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     signUp: async (signup_data) => {
         try {
-            const response = await apiClient.post<LoginRequestResponse>('/auth/register/', signup_data);
-            await persistAuthSession(response.data);
-            set({
-                isAuthenticated: true,
-                user: response.data.user,
-            });
+            set({ loading: true });
+            const isFormData = signup_data instanceof FormData;
+            await apiClient.post(
+                '/auth/registration/',
+                signup_data,
+                isFormData
+                    ? { headers: { Accept: 'application/json', 'Content-Type': 'multipart/form-data' } }
+                    : undefined,
+            );
+            // Registration sends a verification email — no session tokens are returned yet.
         } catch (error) {
-            console.error('Error during sign-up:', error);
             throw error;
         } finally {
             set({ loading: false });
+        }
+    },
+
+    checkEmailVerified: async (email, password) => {
+        try {
+            const response = await apiClient.post<LoginRequestResponse>('/auth/login/', {
+                login_id: email,
+                password,
+            });
+            // Login succeeded → email is verified, persist the session
+            await persistAuthSession(response.data);
+            set({ isAuthenticated: true, user: response.data.user });
+            return true;
+        } catch (error: any) {
+            // 400/401 with an "email not confirmed" message means not yet verified
+            const data = error?.response?.data;
+            const message: string =
+                data?.non_field_errors?.[0] ||
+                data?.detail ||
+                data?.message ||
+                '';
+            if (
+                message.toLowerCase().includes('e-mail') ||
+                message.toLowerCase().includes('email') ||
+                message.toLowerCase().includes('confirm') ||
+                message.toLowerCase().includes('verif')
+            ) {
+                return false;
+            }
+            // Unexpected error (network, server) — re-throw so callers can handle it
+            throw error;
         }
     },
 

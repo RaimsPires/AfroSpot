@@ -18,6 +18,7 @@ type AuthContextValue = {
     signIn: (payload: AuthPayload) => Promise<void>;
     signOut: () => Promise<void>;
     signUp: (payload: any) => Promise<void>;
+    checkEmailVerified: (email: string, password: string) => Promise<boolean>;
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
@@ -38,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const changePassword = useAuthStore((state) => state.changePassword);
     const updateProfile = useAuthStore((state) => state.updateProfile);
     const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+    const checkEmailVerified = useAuthStore((state) => state.checkEmailVerified);
     const loading = useAuthStore((state) => state.loading);
     const isAuthBootstrapping = useAuthStore((state) => state.isAuthBootstrapping);
     const bootstrapAuth = useAuthStore((state) => state.bootstrapAuth);
@@ -57,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             signIn,
             signOut,
             signUp,
+            checkEmailVerified,
             forgotPassword,
             resetPassword,
             changePassword,
@@ -70,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             signIn,
             signOut,
             signUp,
+            checkEmailVerified,
             forgotPassword,
             resetPassword,
             changePassword,

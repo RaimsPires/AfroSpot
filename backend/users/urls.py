@@ -1,6 +1,7 @@
 from django.urls import path, include
 
 from users.views import (
+    CheckEmailView,
     PasswordResetLandingView,
     UserAddressCreateView,
     UserAddressSetPrimaryView,
@@ -9,6 +10,7 @@ from users.views import (
 
 urlpatterns = [
     path('password-reset/', PasswordResetLandingView.as_view(), name='password_reset_landing'),
+    path('auth/check-email/', CheckEmailView.as_view(), name='auth_check_email'),
     path('auth/addresses/', UserAddressCreateView.as_view(), name='user_address_create'),
     path(
         'auth/addresses/<uuid:address_id>/',

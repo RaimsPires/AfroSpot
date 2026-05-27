@@ -64,6 +64,7 @@ const LogInScreen = () => {
 
                 {loginError && (
                     <AppAlert
+                    visible={!!loginError}
                         title="Login failed"
                         message={loginError}
                         variant="error"

@@ -118,3 +118,24 @@ export type LoginRequestResponse = {
     refresh_expiration: string,
     user: AuthUser
 };
+
+export type RegisterPayload = {
+    email: string;
+    password1: string;
+    password2: string;
+    first_name: string;
+    last_name: string;
+    dob?: string;
+    country?: string;
+    phone_number?: string;
+    profile_picture?: UploadableImage | null;
+    language?: string;
+};
+
+export type RegistrationResponse = {
+    detail: string;
+};
+
+export type EmailCheckResponse = {
+    available: boolean;
+};

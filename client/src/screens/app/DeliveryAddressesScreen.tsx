@@ -1,59 +1,40 @@
-import React, { useMemo, useState } from 'react';
+import { GetCountries, GetCity, GetState } from 'react-country-state-city';
+import type {
+    City,
+    Country,
+    State,
+} from 'react-country-state-city/dist/cjs/types';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Alert,
     FlatList,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
 
 import { AppIcon } from '@components/ui';
-import AppButton from '@components/ui/Button';
 import { useTheme } from '@contexts/ThemeContext';
-import { useNavigation } from '@react-navigation/native';
 import { AppStackNavigationProp } from '@navigation/types';
+import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@store/authStore';
 import { UserAddress } from '@type/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
-const LABEL_TO_ADDRESS_TYPE = {
-    Home: 'home',
-    Work: 'work',
-    Other: 'other',
-} as const;
-
-function getAddressTypeLabel(type: UserAddress['address_type']): 'Home' | 'Work' | 'Other' {
-    if (type === 'home') {
-        return 'Home';
-    }
-
-    if (type === 'work') {
-        return 'Work';
-    }
-
-    return 'Other';
-}
-
-function getAddressIcon(type: UserAddress['address_type']) {
-    if (type === 'home') {
-        return 'home';
-    }
-
-    if (type === 'work') {
-        return 'briefcase';
-    }
-
-    return 'map-pin';
-}
+import AddressCard from './components/deliveryAddresses/AddressCard';
+import AddressDetailsModal from './components/deliveryAddresses/AddressDetailsModal';
+import AddressFormSheet from './components/deliveryAddresses/AddressFormSheet';
+import {
+    AddressLabel,
+    findCountryOptionByValue,
+    findStateOptionByValue,
+    LABEL_TO_ADDRESS_TYPE,
+    LocationOption,
+} from './components/deliveryAddresses/addressUtils';
+import LocationPickerModal from './components/deliveryAddresses/LocationPickerModal';
 
 const DeliveryAddressesScreen = () => {
     const navigation = useNavigation<AppStackNavigationProp<'DeliveryAddresses'>>();
@@ -81,15 +62,189 @@ const DeliveryAddressesScreen = () => {
     const [isSettingPrimary, setIsSettingPrimary] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // New Address Form State
-    const [newLabel, setNewLabel] = useState<keyof typeof LABEL_TO_ADDRESS_TYPE>('Home');
+    const [newLabel, setNewLabel] = useState<AddressLabel>('Home');
     const [newName, setNewName] = useState('');
     const [newStreet, setNewStreet] = useState('');
     const [newCity, setNewCity] = useState('');
     const [newState, setNewState] = useState('');
     const [newZipCode, setNewZipCode] = useState('');
     const [newCountry, setNewCountry] = useState('');
+    const [newCountryIsoCode, setNewCountryIsoCode] = useState<string | null>(null);
+    const [newStateIsoCode, setNewStateIsoCode] = useState<string | null>(null);
     const [newIsPrimary, setNewIsPrimary] = useState(false);
+    const [activePicker, setActivePicker] = useState<'country' | 'state' | 'city' | null>(null);
+    const [countryOptions, setCountryOptions] = useState<LocationOption[]>([]);
+    const [stateOptions, setStateOptions] = useState<LocationOption[]>([]);
+    const [cityOptions, setCityOptions] = useState<LocationOption[]>([]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        GetCountries()
+            .then((countries) => {
+                if (!isMounted) {
+                    return;
+                }
+
+                const mappedCountries = countries
+                    .map((country: Country) => ({
+                        id: country.id,
+                        label: country.name,
+                        value: country.name,
+                        isoCode: country.iso2,
+                    }))
+                    .sort((a: LocationOption, b: LocationOption) => a.label.localeCompare(b.label));
+
+                setCountryOptions(mappedCountries);
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setCountryOptions([]);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        const selectedCountry = countryOptions.find((country) => country.isoCode === newCountryIsoCode);
+
+        if (!selectedCountry?.id) {
+            setStateOptions([]);
+            setCityOptions([]);
+            return;
+        }
+
+        let isMounted = true;
+
+        GetState(selectedCountry.id)
+            .then((states) => {
+                if (!isMounted) {
+                    return;
+                }
+
+                const mappedStates = states
+                    .map((stateItem: State) => ({
+                        id: stateItem.id,
+                        label: stateItem.name,
+                        value: stateItem.name,
+                        isoCode: stateItem.state_code,
+                    }))
+                    .sort((a: LocationOption, b: LocationOption) => a.label.localeCompare(b.label));
+
+                setStateOptions(mappedStates);
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setStateOptions([]);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [countryOptions, newCountryIsoCode]);
+
+    useEffect(() => {
+        const selectedCountry = countryOptions.find((country) => country.isoCode === newCountryIsoCode);
+        const selectedState = stateOptions.find((stateItem) => stateItem.isoCode === newStateIsoCode);
+
+        if (!selectedCountry?.id || !selectedState?.id) {
+            setCityOptions([]);
+            return;
+        }
+
+        let isMounted = true;
+
+        GetCity(selectedCountry.id, selectedState.id)
+            .then((cities) => {
+                if (!isMounted) {
+                    return;
+                }
+
+                const mappedCities = cities
+                    .map((cityItem: City) => ({
+                        id: cityItem.id,
+                        label: cityItem.name,
+                        value: cityItem.name,
+                    }))
+                    .sort((a: LocationOption, b: LocationOption) => a.label.localeCompare(b.label));
+
+                setCityOptions(mappedCities);
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setCityOptions([]);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [countryOptions, newCountryIsoCode, newStateIsoCode, stateOptions]);
+
+    useEffect(() => {
+        if (newCountryIsoCode || !newCountry) {
+            return;
+        }
+
+        const matchedCountry = findCountryOptionByValue(countryOptions, newCountry);
+
+        if (matchedCountry?.isoCode) {
+            setNewCountry(matchedCountry.label);
+            setNewCountryIsoCode(matchedCountry.isoCode);
+        }
+    }, [countryOptions, newCountry, newCountryIsoCode]);
+
+    useEffect(() => {
+        if (newStateIsoCode || !newState || stateOptions.length === 0) {
+            return;
+        }
+
+        const matchedState = findStateOptionByValue(stateOptions, newState);
+
+        if (matchedState?.isoCode) {
+            setNewState(matchedState.label);
+            setNewStateIsoCode(matchedState.isoCode);
+        }
+    }, [newState, newStateIsoCode, stateOptions]);
+
+    const isStateDisabled = !newCountryIsoCode || stateOptions.length === 0;
+    const isCityDisabled = !newStateIsoCode || cityOptions.length === 0;
+
+    const pickerTitle = useMemo(() => {
+        if (activePicker === 'country') {
+            return 'Select Country';
+        }
+
+        if (activePicker === 'state') {
+            return 'Select State';
+        }
+
+        if (activePicker === 'city') {
+            return 'Select City';
+        }
+
+        return '';
+    }, [activePicker]);
+
+    const activePickerOptions = useMemo(() => {
+        if (activePicker === 'country') {
+            return countryOptions;
+        }
+
+        if (activePicker === 'state') {
+            return stateOptions;
+        }
+
+        if (activePicker === 'city') {
+            return cityOptions;
+        }
+
+        return [];
+    }, [activePicker, cityOptions, countryOptions, stateOptions]);
 
     const displayName = useMemo(() => {
         if (!user) {
@@ -126,18 +281,69 @@ const DeliveryAddressesScreen = () => {
         setNewState('');
         setNewZipCode('');
         setNewCountry('');
+        setNewCountryIsoCode(null);
+        setNewStateIsoCode(null);
         setNewIsPrimary(false);
+        setActivePicker(null);
+        setCityOptions([]);
     };
 
     const populateForm = (address: UserAddress) => {
-        setNewLabel(getAddressTypeLabel(address.address_type));
+        const matchedCountry = findCountryOptionByValue(countryOptions, address.country);
+        const matchedState = findStateOptionByValue(stateOptions, address.state);
+
+        setNewLabel(address.address_type === 'home' ? 'Home' : address.address_type === 'work' ? 'Work' : 'Other');
         setNewName(displayName);
         setNewStreet(address.address);
         setNewCity(address.city);
-        setNewState(address.state);
+        setNewState(matchedState?.label ?? address.state);
         setNewZipCode(address.zip_code);
-        setNewCountry(address.country);
+        setNewCountry(matchedCountry?.label ?? address.country);
+        setNewCountryIsoCode(matchedCountry?.isoCode ?? null);
+        setNewStateIsoCode(matchedState?.isoCode ?? null);
         setNewIsPrimary(address.is_active);
+        setActivePicker(null);
+    };
+
+    const closePickerModal = () => {
+        setActivePicker(null);
+    };
+
+    const handleCountrySelection = (option: LocationOption) => {
+        setNewCountry(option.label);
+        setNewCountryIsoCode(option.isoCode ?? null);
+        setNewState('');
+        setNewStateIsoCode(null);
+        setNewCity('');
+        closePickerModal();
+    };
+
+    const handleStateSelection = (option: LocationOption) => {
+        setNewState(option.label);
+        setNewStateIsoCode(option.isoCode ?? null);
+        setNewCity('');
+        closePickerModal();
+    };
+
+    const handleCitySelection = (option: LocationOption) => {
+        setNewCity(option.label);
+        closePickerModal();
+    };
+
+    const handlePickerSelection = (option: LocationOption) => {
+        if (activePicker === 'country') {
+            handleCountrySelection(option);
+            return;
+        }
+
+        if (activePicker === 'state') {
+            handleStateSelection(option);
+            return;
+        }
+
+        if (activePicker === 'city') {
+            handleCitySelection(option);
+        }
     };
 
     const closeAddressSheet = () => {
@@ -208,65 +414,11 @@ const DeliveryAddressesScreen = () => {
         }
     };
 
-    const renderAddressCard = ({ item }: { item: UserAddress }) => (
-        <View style={[styles.addressCard, { backgroundColor: colors.surface, borderColor: item.is_active ? colors.primary : colors.border }]}>
-            <View style={styles.cardHeader}>
-                <View style={styles.labelRow}>
-                    <View style={[styles.iconBg, { backgroundColor: colors.primary + '15' }]}>
-                        <AppIcon library="Feather" name={getAddressIcon(item.address_type)} size={16} color={colors.primary} />
-                    </View>
-                    <Text style={[styles.labelText, { color: colors.text }]}>{getAddressTypeLabel(item.address_type)}</Text>
-                    {item.is_active && (
-                        <View style={[styles.primaryBadge, { backgroundColor: colors.primary }]}>
-                            <Text style={styles.primaryBadgeText}>PRIMARY</Text>
-                        </View>
-                    )}
-                </View>
-                <View style={styles.actionIcons}>
-                    <TouchableOpacity style={styles.iconBtnSmall} onPress={() => openEditAddressSheet(item)}>
-                        <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
-                    </TouchableOpacity>
-                    {!item.is_active && (
-                        <TouchableOpacity style={styles.iconBtnSmall} disabled>
-                            <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-
-            <TouchableOpacity
-                style={styles.cardBody}
-                onPress={() => setSelectedAddressId(item.id)}
-                activeOpacity={0.8}
-            >
-                <Text style={[styles.nameText, { color: colors.text }]}>{displayName}</Text>
-                <Text style={[styles.addressText, { color: colors.textSecondary }]}>{item.address}</Text>
-                <Text style={[styles.addressText, { color: colors.textSecondary }]}>
-                    {`${item.city}, ${item.state} ${item.zip_code}`}
-                </Text>
-                <Text style={[styles.addressText, { color: colors.textSecondary }]}>{item.country}</Text>
-            </TouchableOpacity>
-
-            {!item.is_active && (
-                <TouchableOpacity
-                    style={[styles.setPrimaryBtn, { borderTopColor: colors.border }]}
-                    onPress={() => handleSetPrimary(item.id)}
-                    disabled={isSettingPrimary === item.id}
-                >
-                    <Text style={[styles.setPrimaryText, { color: colors.primary }]}>
-                        {isSettingPrimary === item.id ? 'Updating...' : 'Set as Primary'}
-                    </Text>
-                </TouchableOpacity>
-            )}
-        </View>
-    );
-
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-            {/* 1. Header */}
-            <View style={[styles.header, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.background }]}> 
                 <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
@@ -275,17 +427,14 @@ const DeliveryAddressesScreen = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
-                {/* 2. Add New Button */}
                 <TouchableOpacity
-                    style={[styles.addBtnLarge, { borderColor: colors.primary, backgroundColor: colors.primary + '05' }]}
+                    style={[styles.addBtnLarge, { borderColor: colors.primary, backgroundColor: `${colors.primary}05` }]}
                     onPress={openAddAddressSheet}
                 >
                     <AppIcon library="Feather" name="plus-circle" size={20} color={colors.primary} />
                     <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>Add New Address</Text>
                 </TouchableOpacity>
 
-                {/* 3. List of Addresses */}
                 <Text style={[styles.sectionHeader, { color: colors.text }]}>Saved Addresses</Text>
                 {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
@@ -300,235 +449,83 @@ const DeliveryAddressesScreen = () => {
                 ) : (
                     <FlatList
                         data={addresses}
-                        renderItem={renderAddressCard}
+                        renderItem={({ item }) => (
+                            <AddressCard
+                                item={item}
+                                colors={colors}
+                                displayName={displayName}
+                                isSettingPrimary={isSettingPrimary === item.id}
+                                onEdit={openEditAddressSheet}
+                                onSelect={setSelectedAddressId}
+                                onSetPrimary={handleSetPrimary}
+                            />
+                        )}
                         keyExtractor={(item) => item.id}
                         scrollEnabled={false}
                         contentContainerStyle={styles.listContainer}
                     />
                 )}
-
             </ScrollView>
 
-            {/* 4. Add Address Bottom Sheet */}
-            <Modal
+            <AddressFormSheet
                 visible={showAddressSheet}
-                transparent
-                animationType="slide"
-                statusBarTranslucent
-                onRequestClose={closeAddressSheet}
-            >
-                <Pressable style={styles.sheetOverlay} onPress={closeAddressSheet}>
-                    <KeyboardAvoidingView
-                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                        keyboardVerticalOffset={Platform.OS === 'ios' ? 16 : 0}
-                        style={styles.keyboardView}
-                    >
-                    <Pressable
-                        style={[styles.sheetContainer, { backgroundColor: colors.surface }]}
-                        onPress={(e) => e.stopPropagation()}
-                    >
-                        <ScrollView
-                            keyboardShouldPersistTaps="handled"
-                            showsVerticalScrollIndicator={false}
-                            contentContainerStyle={styles.sheetScrollContent}
-                        >
-                        <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
+                colors={colors}
+                isEditingAddress={isEditingAddress}
+                isSubmitting={isSubmitting}
+                displayName={displayName}
+                newLabel={newLabel}
+                newName={newName}
+                newStreet={newStreet}
+                newCountry={newCountry}
+                newState={newState}
+                newCity={newCity}
+                newZipCode={newZipCode}
+                newCountryIsoCode={newCountryIsoCode}
+                newStateIsoCode={newStateIsoCode}
+                newIsPrimary={newIsPrimary}
+                isStateDisabled={isStateDisabled}
+                isCityDisabled={isCityDisabled}
+                onClose={closeAddressSheet}
+                onSubmit={submitAddress}
+                onOpenCountryPicker={() => setActivePicker('country')}
+                onOpenStatePicker={() => {
+                    if (!isStateDisabled) {
+                        setActivePicker('state');
+                    }
+                }}
+                onOpenCityPicker={() => {
+                    if (!isCityDisabled) {
+                        setActivePicker('city');
+                    }
+                }}
+                onSetNewLabel={setNewLabel}
+                onSetNewName={setNewName}
+                onSetNewStreet={setNewStreet}
+                onSetNewZipCode={setNewZipCode}
+                onTogglePrimary={() => setNewIsPrimary((value) => !value)}
+            />
 
-                        <Text style={[styles.formTitle, { color: colors.text }]}>{isEditingAddress ? 'Edit Address' : 'New Address'}</Text>
+            <LocationPickerModal
+                activePicker={activePicker}
+                title={pickerTitle}
+                options={activePickerOptions}
+                colors={colors}
+                onClose={closePickerModal}
+                onSelect={handlePickerSelection}
+            />
 
-                        <View style={styles.typeSelector}>
-                            {['Home', 'Work', 'Other'].map((l) => (
-                                <TouchableOpacity
-                                    key={l}
-                                    onPress={() => setNewLabel(l as keyof typeof LABEL_TO_ADDRESS_TYPE)}
-                                    style={[styles.typePill, { backgroundColor: newLabel === l ? colors.primary : colors.background, borderColor: colors.border }]}
-                                >
-                                    <Text style={[styles.typePillText, newLabel === l ? styles.typePillTextSelected : styles.typePillTextUnselected]}>{l}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RECEIVER NAME</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder={displayName}
-                                placeholderTextColor={colors.textSecondary}
-                                value={newName}
-                                onChangeText={setNewName}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>STREET ADDRESS</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder="e.g. 124 Atlantic Ave"
-                                placeholderTextColor={colors.textSecondary}
-                                value={newStreet}
-                                onChangeText={setNewStreet}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>CITY</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder="e.g. Brooklyn"
-                                placeholderTextColor={colors.textSecondary}
-                                value={newCity}
-                                onChangeText={setNewCity}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>STATE</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder="e.g. NY"
-                                placeholderTextColor={colors.textSecondary}
-                                value={newState}
-                                onChangeText={setNewState}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>ZIP CODE</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder="e.g. 11201"
-                                placeholderTextColor={colors.textSecondary}
-                                value={newZipCode}
-                                onChangeText={setNewZipCode}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>COUNTRY</Text>
-                            <TextInput
-                                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                placeholder="e.g. USA"
-                                placeholderTextColor={colors.textSecondary}
-                                value={newCountry}
-                                onChangeText={setNewCountry}
-                            />
-                        </View>
-
-                        <TouchableOpacity
-                            style={styles.makePrimaryRow}
-                            onPress={() => setNewIsPrimary((value) => !value)}
-                        >
-                            <View
-                                style={[
-                                    styles.primaryToggle,
-                                    {
-                                        borderColor: newIsPrimary ? colors.primary : colors.border,
-                                        backgroundColor: newIsPrimary ? colors.primary : colors.background,
-                                    },
-                                ]}
-                            >
-                                {newIsPrimary ? (
-                                    <AppIcon library="Feather" name="check" size={14} color="#FFF" />
-                                ) : null}
-                            </View>
-                            <Text style={[styles.makePrimaryText, { color: colors.text }]}>Set as primary address</Text>
-                        </TouchableOpacity>
-
-                        <View style={styles.formActions}>
-                            <TouchableOpacity style={styles.cancelBtn} onPress={closeAddressSheet}>
-                                <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Cancel</Text>
-                            </TouchableOpacity>
-                            <View style={styles.flexOne}>
-                                <AppButton
-                                    title={isSubmitting ? (isEditingAddress ? 'Updating...' : 'Saving...') : (isEditingAddress ? 'Update Address' : 'Save Address')}
-                                    onPress={submitAddress}
-                                    disabled={isSubmitting}
-                                />
-                            </View>
-                        </View>
-                        </ScrollView>
-                    </Pressable>
-                    </KeyboardAvoidingView>
-                </Pressable>
-            </Modal>
-
-            {/* 5. Address Details Modal */}
-            <Modal
-                visible={!!selectedAddress}
-                transparent
-                animationType="fade"
-                statusBarTranslucent
-                onRequestClose={() => setSelectedAddressId(null)}
-            >
-                <Pressable style={styles.detailsOverlay} onPress={() => setSelectedAddressId(null)}>
-                    <Pressable
-                        style={[styles.detailsContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                        onPress={(e) => e.stopPropagation()}
-                    >
-                        {selectedAddress ? (
-                            <>
-                                <View style={styles.detailsHeader}>
-                                    <View style={[styles.iconBg, { backgroundColor: colors.primary + '15' }]}> 
-                                        <AppIcon library="Feather" name={getAddressIcon(selectedAddress.address_type)} size={16} color={colors.primary} />
-                                    </View>
-                                    <View style={styles.detailsHeaderTextWrap}>
-                                        <Text style={[styles.detailsTitle, { color: colors.text }]}>Address Details</Text>
-                                        <Text style={[styles.detailsSubtitle, { color: colors.textSecondary }]}>{getAddressTypeLabel(selectedAddress.address_type)}</Text>
-                                    </View>
-                                    {selectedAddress.is_active ? (
-                                        <View style={[styles.primaryBadge, { backgroundColor: colors.primary }]}> 
-                                            <Text style={styles.primaryBadgeText}>PRIMARY</Text>
-                                        </View>
-                                    ) : null}
-                                </View>
-
-                                <View style={styles.detailsBody}>
-                                    <Text style={[styles.detailsName, { color: colors.text }]}>{displayName}</Text>
-                                    <Text style={[styles.detailsLine, { color: colors.textSecondary }]}>{selectedAddress.address}</Text>
-                                    <Text style={[styles.detailsLine, { color: colors.textSecondary }]}>{`${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.zip_code}`}</Text>
-                                    <Text style={[styles.detailsLine, { color: colors.textSecondary }]}>{selectedAddress.country}</Text>
-                                </View>
-
-                                <View style={styles.detailsActions}>
-                                    <TouchableOpacity
-                                        style={[styles.detailsEditBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
-                                        onPress={() => openEditAddressSheet(selectedAddress)}
-                                    >
-                                        <Text style={[styles.detailsEditBtnText, { color: colors.text }]}>Edit Address</Text>
-                                    </TouchableOpacity>
-
-                                    {!selectedAddress.is_active ? (
-                                        <TouchableOpacity
-                                            style={[styles.detailsPrimaryBtn, { borderColor: colors.primary }]}
-                                            onPress={() => handleSetPrimary(selectedAddress.id)}
-                                            disabled={isSettingPrimary === selectedAddress.id}
-                                        >
-                                            <Text style={[styles.detailsPrimaryBtnText, { color: colors.primary }]}> 
-                                                {isSettingPrimary === selectedAddress.id ? 'Updating...' : 'Set as Primary'}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ) : (
-                                        <Text style={[styles.detailsPrimaryHint, { color: colors.textSecondary }]}>This address is your active primary address.</Text>
-                                    )}
-
-                                    <TouchableOpacity
-                                        style={[styles.detailsCloseBtn, { backgroundColor: colors.background, borderColor: colors.border }]}
-                                        onPress={() => setSelectedAddressId(null)}
-                                    >
-                                        <Text style={[styles.detailsCloseBtnText, { color: colors.text }]}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        ) : null}
-                    </Pressable>
-                </Pressable>
-            </Modal>
-
+            <AddressDetailsModal
+                address={selectedAddress}
+                colors={colors}
+                displayName={displayName}
+                isSettingPrimary={isSettingPrimary === selectedAddress?.id}
+                onClose={() => setSelectedAddressId(null)}
+                onEdit={openEditAddressSheet}
+                onSetPrimary={handleSetPrimary}
+            />
         </SafeAreaView>
     );
 };
-
-// --- Styles ---
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -536,83 +533,13 @@ const styles = StyleSheet.create({
     headerSpacer: { width: 40 },
     headerTitle: { fontSize: 18, fontWeight: '800' },
     iconBtn: { padding: 8 },
-
     scrollContent: { paddingHorizontal: 20, paddingBottom: 40, paddingTop: 10 },
     sectionHeader: { fontSize: 16, fontWeight: '800', marginTop: 30, marginBottom: 15 },
-
-    // Add Button Large
     addBtnLarge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 56, borderRadius: 16, borderWidth: 2, borderStyle: 'dashed', gap: 10 },
     addBtnLargeText: { fontSize: 15, fontWeight: '700' },
-
-    // Form Styles
-    sheetOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
-    keyboardView: { flex: 1, justifyContent: 'flex-end' },
-    sheetContainer: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '88%' },
-    sheetScrollContent: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 36 },
-    sheetHandle: { alignSelf: 'center', width: 48, height: 4, borderRadius: 4, marginBottom: 20 },
-    formTitle: { fontSize: 18, fontWeight: '800', marginBottom: 20 },
-    typeSelector: { flexDirection: 'row', gap: 10, marginBottom: 20 },
-    typePill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, borderWidth: 1 },
-    typePillText: { fontSize: 13, fontWeight: '700' },
-    typePillTextSelected: { color: '#FFF' },
-    typePillTextUnselected: { color: '#6B7280' },
-    inputGroup: { marginBottom: 15 },
-    inputLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 1, marginBottom: 6 },
-    input: { height: 48, borderWidth: 1, borderRadius: 12, paddingHorizontal: 15, fontSize: 14 },
-    makePrimaryRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 },
-    primaryToggle: {
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    makePrimaryText: { fontSize: 14, fontWeight: '600' },
-    formActions: { flexDirection: 'row', alignItems: 'center', gap: 15, marginTop: 10 },
-    cancelBtn: { paddingHorizontal: 10 },
-    cancelBtnText: { fontSize: 14, fontWeight: '700' },
-    flexOne: { flex: 1 },
-
-    // Address Card
     listContainer: { gap: 16 },
-    addressCard: { borderRadius: 18, borderWidth: 1, padding: 16, elevation: 1 },
-    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    iconBg: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-    labelText: { fontSize: 14, fontWeight: '800' },
-    primaryBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-    primaryBadgeText: { color: '#FFF', fontSize: 9, fontWeight: '900' },
-    actionIcons: { flexDirection: 'row', gap: 10 },
-    iconBtnSmall: { padding: 4 },
-
-    cardBody: { marginBottom: 16 },
-    nameText: { fontSize: 15, fontWeight: '700', marginBottom: 4 },
-    addressText: { fontSize: 13, lineHeight: 18 },
     emptyStateText: { fontSize: 14, lineHeight: 20, marginTop: 4 },
     errorText: { fontSize: 13, marginBottom: 12, color: '#EF4444' },
-
-    setPrimaryBtn: { borderTopWidth: 1, paddingTop: 12, alignItems: 'center' },
-    setPrimaryText: { fontSize: 13, fontWeight: '700' },
-
-    // Address Details Modal
-    detailsOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
-    detailsContainer: { width: '100%', borderRadius: 18, borderWidth: 1, padding: 18 },
-    detailsHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 },
-    detailsHeaderTextWrap: { flex: 1 },
-    detailsTitle: { fontSize: 17, fontWeight: '800' },
-    detailsSubtitle: { fontSize: 13, marginTop: 2 },
-    detailsBody: { marginBottom: 18 },
-    detailsName: { fontSize: 15, fontWeight: '700', marginBottom: 6 },
-    detailsLine: { fontSize: 14, lineHeight: 20 },
-    detailsActions: { gap: 10 },
-    detailsEditBtn: { borderWidth: 1, borderRadius: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
-    detailsEditBtnText: { fontSize: 14, fontWeight: '700' },
-    detailsPrimaryBtn: { borderWidth: 1, borderRadius: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
-    detailsPrimaryBtnText: { fontSize: 14, fontWeight: '700' },
-    detailsPrimaryHint: { fontSize: 13, lineHeight: 18 },
-    detailsCloseBtn: { borderWidth: 1, borderRadius: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
-    detailsCloseBtnText: { fontSize: 14, fontWeight: '700' },
 });
 
 export default DeliveryAddressesScreen;

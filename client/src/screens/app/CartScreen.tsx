@@ -43,7 +43,7 @@ const INITIAL_CART = [
     },
 ];
 
-const CartScreen = ({navigation}) => {
+const CartScreen = ({navigation}:any)    => {
     const { colors, isDark } = useTheme();
     const [cartItems, setCartItems] = useState(INITIAL_CART);
 

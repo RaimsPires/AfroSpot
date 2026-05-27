@@ -21,8 +21,8 @@ import ProfileHeader from '@components/profile/ProfileHeader';
 import ProfileMenuGroup from '@components/profile/ProfileMenuGroup';
 import ProfileMenuItem from '@components/profile/ProfileMenuItem';
 import ProfilePhotoActionSheet from '@components/profile/ProfilePhotoActionSheet';
-import ThemeSelectionModal from '@components/profile/ThemeSelectionModal';
 import ProfileUserInfo from '@components/profile/ProfileUserInfo';
+import ThemeSelectionModal from '@components/profile/ThemeSelectionModal';
 import type { ThemeMode } from '@type/theme';
 import { pickProfileImage, type ProfileImageSource } from '@utils/profileImagePicker';
 
@@ -124,22 +124,23 @@ const ProfileScreen = () => {
 
             <ProfileHeader colors={colors} />
 
-            {profileError ? (
-                <AppAlert
-                    title={profileError.title}
-                    message={profileError.message}
-                    variant="error"
-                    dismissible
-                    onClose={() => setProfileError(null)}
-                    containerStyle={styles.avatarErrorAlert}
-                />
-            ) : null}
-
-            <ProfileUserInfo
-                onEditAvatarPress={() => setShowPhotoSheet(true)}
-                isUploadingAvatar={isUpdatingAvatar}
-            />
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                {profileError ? (
+                    <AppAlert
+                        visible={!!profileError}
+                        title={profileError.title}
+                        message={profileError.message}
+                        variant="error"
+                        dismissible
+                        onClose={() => setProfileError(null)}
+                        containerStyle={styles.avatarErrorAlert}
+                    />
+                ) : null}
+
+                <ProfileUserInfo
+                    onEditAvatarPress={() => setShowPhotoSheet(true)}
+                    isUploadingAvatar={isUpdatingAvatar}
+                />
 
 
                 {/* Account Menu Group */}
