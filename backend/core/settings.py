@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     
     # local apps
     'users.apps.UsersConfig',
+    'spots.apps.SpotsConfig',
 ]
 
 MIDDLEWARE = [

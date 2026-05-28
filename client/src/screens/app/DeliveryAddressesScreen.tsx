@@ -1,10 +1,10 @@
-import { GetCountries, GetCity, GetState } from 'react-country-state-city';
+import React, { useEffect, useMemo, useState } from 'react';
+import { GetCity, GetCountries, GetState } from 'react-country-state-city';
 import type {
     City,
     Country,
     State,
 } from 'react-country-state-city/dist/cjs/types';
-import React, { useEffect, useMemo, useState } from 'react';
 import {
     Alert,
     FlatList,
@@ -487,7 +487,9 @@ const DeliveryAddressesScreen = () => {
                 isCityDisabled={isCityDisabled}
                 onClose={closeAddressSheet}
                 onSubmit={submitAddress}
-                onOpenCountryPicker={() => setActivePicker('country')}
+                onOpenCountryPicker={() => {
+                    console.log('Opening country picker');
+                    setActivePicker('country')}}
                 onOpenStatePicker={() => {
                     if (!isStateDisabled) {
                         setActivePicker('state');

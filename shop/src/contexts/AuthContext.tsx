@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(true);
         if (nextUser) {
             setUser((prev) => ({
-                id: prev?.id ?? nextUser.id ?? 'shop-user',
+                id: prev?.id ?? nextUser.id ?? 'spot-user',
                 email: nextUser.email ?? prev?.email ?? '',
                 first_name: nextUser.first_name ?? prev?.first_name,
                 last_name: nextUser.last_name ?? prev?.last_name,

@@ -49,7 +49,7 @@
 		<array>
 			<dict>
 				<key>CFBundleURLName</key>
-				<string>com.afrospot.shop</string>
+				<string>com.afrospot.spot</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>afrospotshop</string>

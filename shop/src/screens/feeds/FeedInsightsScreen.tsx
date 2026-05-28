@@ -33,7 +33,7 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
             {
                 id: '1',
                 user: 'jamal_99',
-                text: 'Where is the shop located?',
+                text: 'Where is the spot located?',
                 time: '2h',
                 likes: 12,
                 avatar: 'https://i.pravatar.cc/150?img=33',

@@ -14,7 +14,7 @@ export type FeedComment = {
 };
 
 const MOCK_COMMENTS: FeedComment[] = [
-  { id: '1', user: 'jamal_99', text: 'Where is the shop located?', time: '2h', likes: 12, avatar: 'https://i.pravatar.cc/150?img=33' },
+  { id: '1', user: 'jamal_99', text: 'Where is the spot located?', time: '2h', likes: 12, avatar: 'https://i.pravatar.cc/150?img=33' },
   { id: '2', user: 'samantha_b', text: 'Cleanest fade I have seen in a minute 🔥', time: '5h', likes: 45, avatar: 'https://i.pravatar.cc/150?img=5' },
 ];
 

@@ -7,14 +7,14 @@ import { ManageStaffScreen } from '@screens/app/ManageStaffScreen';
 import { MerchantSupportScreen } from '@screens/app/MerchantSupportScreen';
 import { PayoutsEarningsScreen } from '@screens/app/PayoutsEarningsScreen';
 import { TaxInvoiceScreen } from '@screens/app/TaxInvoiceScreen';
-import CreatePromoScreen from '@screens/products/CreatePromoScreen';
-import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
+import { BoostFeedScreen } from '@screens/feeds/BoostFeedScreen';
 import { CreateFeedScreen } from '@screens/feeds/CreateFeedScreen';
 import { FeedInsightsScreen } from '@screens/feeds/FeedInsightsScreen';
 import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
 import { StoreFeedsScreen } from '@screens/feeds/StoreFeedsScreen';
-import { BoostFeedScreen } from '@screens/feeds/BoostFeedScreen';
-import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
+import CreatePromoScreen from '@screens/products/CreatePromoScreen';
+import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
+import ManageReviewsScreen from '@screens/spot/ManageReviewsScreen';
 
 
 const Stack = createNativeStackNavigator();

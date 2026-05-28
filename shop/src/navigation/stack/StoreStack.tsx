@@ -3,10 +3,10 @@ import BusinessStoreScreen from '@screens/app/BusinessStoreScreen';
 
 import CreatePromoScreen from '@screens/products/CreatePromoScreen';
 import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
-import ManageProductsScreen from '@screens/shop/ManageProductsScreen';
-import ManageProfileScreen from '@screens/shop/ManageProfileScreen';
-import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
-import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
+import ManageProductsScreen from '@screens/spot/ManageProductsScreen';
+import ManageProfileScreen from '@screens/spot/ManageProfileScreen';
+import ManageReviewsScreen from '@screens/spot/ManageReviewsScreen';
+import ManageServicesScreen from '@screens/spot/ManageServicesScreen';
 
 
 const Stack = createNativeStackNavigator();

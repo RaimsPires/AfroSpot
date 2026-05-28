@@ -113,7 +113,7 @@ const NotificationsScreen = () => {
                         iconBg="#FEF3C7"
                         title="Artisans of Accra Now Open"
                         time="2d ago"
-                        description="A new authentic handicraft shop just opened 2 miles away from your current location."
+                        description="A new authentic handicraft spot just opened 2 miles away from your current location."
                         colors={colors}
                         onPress={() =>
                             navigation.navigate('BusinessDetail', {

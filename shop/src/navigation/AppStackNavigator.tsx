@@ -23,12 +23,12 @@ import { OrderFulfillmentScreen } from '@screens/orders/OrderFulfillmentScreen';
 import OrderSuccessScreen from '@screens/orders/OrderSuccessScreen';
 import CreatePromoScreen from '@screens/products/CreatePromoScreen';
 import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
-import ManageProductsScreen from '@screens/shop/ManageProductsScreen';
-import ManageProfileScreen from '@screens/shop/ManageProfileScreen';
-import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
-import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
-import ProductCatalogScreen from '@screens/shop/ProductCatalogScreen';
-import ProductDetailScreen from '@screens/shop/ProductDetailScreen';
+import ManageProductsScreen from '@screens/spot/ManageProductsScreen';
+import ManageProfileScreen from '@screens/spot/ManageProfileScreen';
+import ManageReviewsScreen from '@screens/spot/ManageReviewsScreen';
+import ManageServicesScreen from '@screens/spot/ManageServicesScreen';
+import ProductCatalogScreen from '@screens/spot/ProductCatalogScreen';
+import ProductDetailScreen from '@screens/spot/ProductDetailScreen';
 import React from 'react';
 
 import { BusinessNotificationsScreen } from '@screens/app/BusinessNotificationsScreen';

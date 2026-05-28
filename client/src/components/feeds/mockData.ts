@@ -35,7 +35,7 @@ export const FEED_POSTS: FeedPostItem[] = [
         username: 'heritage_art',
         userAvatar: 'https://i.pravatar.cc/150?img=5',
         isVerified: true,
-        caption: 'New authentic Kente cloth just arrived at the shop. Handwoven perfection.',
+        caption: 'New authentic Kente cloth just arrived at the spot. Handwoven perfection.',
         tags: ['#Kente', '#AfricanFashion', '#Artisan'],
         businessName: 'Heritage Weaves • Shop',
         likes: '15.1K',

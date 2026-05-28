@@ -90,6 +90,7 @@ const AddressFormSheet = ({
             visible={visible}
             transparent
             animationType="slide"
+            presentationStyle="overFullScreen"
             statusBarTranslucent
             onRequestClose={onClose}
         >
@@ -152,7 +153,7 @@ const AddressFormSheet = ({
 
                             <View style={styles.inputGroup}>
                                 <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>COUNTRY</Text>
-                                <Pressable
+                                <TouchableOpacity
                                     onPress={onOpenCountryPicker}
                                     style={[
                                         styles.selectField,
@@ -171,7 +172,7 @@ const AddressFormSheet = ({
                                         {newCountry || 'Select country'}
                                     </Text>
                                     <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
-                                </Pressable>
+                                </TouchableOpacity>
                             </View>
 
                             <View style={styles.inputGroup}>

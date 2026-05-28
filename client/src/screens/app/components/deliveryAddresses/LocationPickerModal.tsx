@@ -32,6 +32,7 @@ const LocationPickerModal = ({
             visible={activePicker !== null}
             transparent
             animationType="fade"
+            presentationStyle="overFullScreen"
             statusBarTranslucent
             onRequestClose={onClose}
         >
