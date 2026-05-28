@@ -75,3 +75,24 @@ class UserAddressUpdateView(APIView):
 
         updated_address = serializer.save(is_active=requested_primary)
         return Response(UserAddressSerializer(updated_address).data, status=status.HTTP_200_OK)
+
+
+class UserAddressDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=None,
+        responses={status.HTTP_204_NO_CONTENT: None},
+    )
+    @transaction.atomic
+    def delete(self, request, address_id):
+        address = get_object_or_404(UserAddress, id=address_id, user=request.user)
+
+        if address.is_active:
+            return Response(
+                {'error': 'Cannot delete your primary address. Set another address as primary first.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        address.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

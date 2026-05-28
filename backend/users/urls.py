@@ -4,6 +4,7 @@ from users.views import (
     CheckEmailView,
     PasswordResetLandingView,
     UserAddressCreateView,
+    UserAddressDeleteView,
     UserAddressSetPrimaryView,
     UserAddressUpdateView,
 )
@@ -16,6 +17,11 @@ urlpatterns = [
         'auth/addresses/<uuid:address_id>/',
         UserAddressUpdateView.as_view(),
         name='user_address_update',
+    ),
+    path(
+        'auth/addresses/<uuid:address_id>/delete/',
+        UserAddressDeleteView.as_view(),
+        name='user_address_delete',
     ),
     path(
         'auth/addresses/<uuid:address_id>/set-primary/',

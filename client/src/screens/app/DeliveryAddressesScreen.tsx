@@ -6,6 +6,7 @@ import type {
     State,
 } from 'react-country-state-city/dist/cjs/types';
 import {
+    ActivityIndicator,
     Alert,
     FlatList,
     ScrollView,
@@ -16,12 +17,13 @@ import {
     View,
 } from 'react-native';
 
-import { AppIcon } from '@components/ui';
+import { AppIcon, ConfirmationModal } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@store/authStore';
 import { UserAddress } from '@type/auth';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AddressCard from './components/deliveryAddresses/AddressCard';
@@ -34,16 +36,17 @@ import {
     LABEL_TO_ADDRESS_TYPE,
     LocationOption,
 } from './components/deliveryAddresses/addressUtils';
-import LocationPickerModal from './components/deliveryAddresses/LocationPickerModal';
 
 const DeliveryAddressesScreen = () => {
     const navigation = useNavigation<AppStackNavigationProp<'DeliveryAddresses'>>();
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const user = useAuthStore((state) => state.user);
     const loading = useAuthStore((state) => state.loading);
     const addAddress = useAuthStore((state) => state.addAddress);
     const updateAddress = useAuthStore((state) => state.updateAddress);
     const setPrimaryAddress = useAuthStore((state) => state.setPrimaryAddress);
+    const deleteAddress = useAuthStore((state) => state.deleteAddress);
 
     const addresses = useMemo(() => {
         return [...(user?.addresses ?? [])].sort((a, b) => {
@@ -61,6 +64,8 @@ const DeliveryAddressesScreen = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingPrimary, setIsSettingPrimary] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [pendingDeleteAddress, setPendingDeleteAddress] = useState<UserAddress | null>(null);
+    const [isDeletingAddress, setIsDeletingAddress] = useState(false);
 
     const [newLabel, setNewLabel] = useState<AddressLabel>('Home');
     const [newName, setNewName] = useState('');
@@ -149,7 +154,13 @@ const DeliveryAddressesScreen = () => {
 
     useEffect(() => {
         const selectedCountry = countryOptions.find((country) => country.isoCode === newCountryIsoCode);
-        const selectedState = stateOptions.find((stateItem) => stateItem.isoCode === newStateIsoCode);
+        const selectedState = stateOptions.find((stateItem) => {
+            if (newStateIsoCode) {
+                return stateItem.isoCode === newStateIsoCode;
+            }
+
+            return stateItem.label === newState;
+        });
 
         if (!selectedCountry?.id || !selectedState?.id) {
             setCityOptions([]);
@@ -183,7 +194,7 @@ const DeliveryAddressesScreen = () => {
         return () => {
             isMounted = false;
         };
-    }, [countryOptions, newCountryIsoCode, newStateIsoCode, stateOptions]);
+    }, [countryOptions, newCountryIsoCode, newState, newStateIsoCode, stateOptions]);
 
     useEffect(() => {
         if (newCountryIsoCode || !newCountry) {
@@ -212,23 +223,23 @@ const DeliveryAddressesScreen = () => {
     }, [newState, newStateIsoCode, stateOptions]);
 
     const isStateDisabled = !newCountryIsoCode || stateOptions.length === 0;
-    const isCityDisabled = !newStateIsoCode || cityOptions.length === 0;
+    const isCityDisabled = !newState.trim() || cityOptions.length === 0;
 
     const pickerTitle = useMemo(() => {
         if (activePicker === 'country') {
-            return 'Select Country';
+            return t('deliveryAddresses.pickers.selectCountry');
         }
 
         if (activePicker === 'state') {
-            return 'Select State';
+            return t('deliveryAddresses.pickers.selectState');
         }
 
         if (activePicker === 'city') {
-            return 'Select City';
+            return t('deliveryAddresses.pickers.selectCity');
         }
 
         return '';
-    }, [activePicker]);
+    }, [activePicker, t]);
 
     const activePickerOptions = useMemo(() => {
         if (activePicker === 'country') {
@@ -248,12 +259,12 @@ const DeliveryAddressesScreen = () => {
 
     const displayName = useMemo(() => {
         if (!user) {
-            return 'Account User';
+            return t('deliveryAddresses.fallbackUserName');
         }
 
         const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
         return fullName || user.email;
-    }, [user]);
+    }, [t, user]);
 
     const selectedAddress = useMemo(() => {
         if (!selectedAddressId) {
@@ -369,7 +380,7 @@ const DeliveryAddressesScreen = () => {
 
     const submitAddress = async () => {
         if (!newStreet.trim() || !newCity.trim() || !newState.trim() || !newZipCode.trim() || !newCountry.trim()) {
-            setErrorMessage('Please fill in all required address fields.');
+            setErrorMessage(t('deliveryAddresses.errors.requiredFields'));
             return;
         }
 
@@ -395,8 +406,8 @@ const DeliveryAddressesScreen = () => {
             closeAddressSheet();
         } catch {
             setErrorMessage(editingAddressId
-                ? 'Unable to update address right now. Please try again.'
-                : 'Unable to save address right now. Please try again.');
+                ? t('deliveryAddresses.errors.updateFailed')
+                : t('deliveryAddresses.errors.saveFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -408,9 +419,40 @@ const DeliveryAddressesScreen = () => {
             setIsSettingPrimary(addressId);
             await setPrimaryAddress(addressId);
         } catch {
-            Alert.alert('Update failed', 'Could not set this address as primary. Please try again.');
+            Alert.alert(
+                t('deliveryAddresses.alerts.updateFailedTitle'),
+                t('deliveryAddresses.alerts.setPrimaryFailedMessage'),
+            );
         } finally {
             setIsSettingPrimary(null);
+        }
+    };
+
+    const handleRequestDelete = (address: UserAddress) => {
+        setPendingDeleteAddress(address);
+    };
+
+    const handleCancelDelete = () => {
+        setPendingDeleteAddress(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!pendingDeleteAddress) {
+            return;
+        }
+
+        try {
+            setIsDeletingAddress(true);
+            await deleteAddress(pendingDeleteAddress.id);
+            setPendingDeleteAddress(null);
+            setSelectedAddressId(null);
+        } catch {
+            Alert.alert(
+                t('deliveryAddresses.alerts.deleteFailedTitle'),
+                t('deliveryAddresses.alerts.deleteFailedMessage'),
+            );
+        } finally {
+            setIsDeletingAddress(false);
         }
     };
 
@@ -418,11 +460,17 @@ const DeliveryAddressesScreen = () => {
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
+            {isDeletingAddress ? (
+                <View style={styles.fullscreenLoader}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            ) : null}
+
             <View style={[styles.header, { backgroundColor: colors.background }]}> 
                 <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>Delivery Addresses</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('deliveryAddresses.title')}</Text>
                 <View style={styles.headerSpacer} />
             </View>
 
@@ -432,20 +480,20 @@ const DeliveryAddressesScreen = () => {
                     onPress={openAddAddressSheet}
                 >
                     <AppIcon library="Feather" name="plus-circle" size={20} color={colors.primary} />
-                    <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>Add New Address</Text>
+                    <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>{t('deliveryAddresses.actions.addNewAddress')}</Text>
                 </TouchableOpacity>
 
-                <Text style={[styles.sectionHeader, { color: colors.text }]}>Saved Addresses</Text>
+                <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('deliveryAddresses.savedAddresses')}</Text>
                 {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 ) : null}
 
                 {loading && addresses.length === 0 ? (
-                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>Loading your addresses...</Text>
+                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('deliveryAddresses.loading')}</Text>
                 ) : null}
 
                 {!loading && addresses.length === 0 ? (
-                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>No saved address yet. Add your first delivery address.</Text>
+                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('deliveryAddresses.emptyState')}</Text>
                 ) : (
                     <FlatList
                         data={addresses}
@@ -458,6 +506,7 @@ const DeliveryAddressesScreen = () => {
                                 onEdit={openEditAddressSheet}
                                 onSelect={setSelectedAddressId}
                                 onSetPrimary={handleSetPrimary}
+                                onDelete={handleRequestDelete}
                             />
                         )}
                         keyExtractor={(item) => item.id}
@@ -472,6 +521,9 @@ const DeliveryAddressesScreen = () => {
                 colors={colors}
                 isEditingAddress={isEditingAddress}
                 isSubmitting={isSubmitting}
+                activePicker={activePicker}
+                pickerTitle={pickerTitle}
+                pickerOptions={activePickerOptions}
                 displayName={displayName}
                 newLabel={newLabel}
                 newName={newName}
@@ -481,15 +533,16 @@ const DeliveryAddressesScreen = () => {
                 newCity={newCity}
                 newZipCode={newZipCode}
                 newCountryIsoCode={newCountryIsoCode}
-                newStateIsoCode={newStateIsoCode}
                 newIsPrimary={newIsPrimary}
                 isStateDisabled={isStateDisabled}
                 isCityDisabled={isCityDisabled}
                 onClose={closeAddressSheet}
                 onSubmit={submitAddress}
+                onClosePicker={closePickerModal}
+                onSelectPickerOption={handlePickerSelection}
                 onOpenCountryPicker={() => {
-                    console.log('Opening country picker');
-                    setActivePicker('country')}}
+                    setActivePicker('country');
+                }}
                 onOpenStatePicker={() => {
                     if (!isStateDisabled) {
                         setActivePicker('state');
@@ -507,15 +560,6 @@ const DeliveryAddressesScreen = () => {
                 onTogglePrimary={() => setNewIsPrimary((value) => !value)}
             />
 
-            <LocationPickerModal
-                activePicker={activePicker}
-                title={pickerTitle}
-                options={activePickerOptions}
-                colors={colors}
-                onClose={closePickerModal}
-                onSelect={handlePickerSelection}
-            />
-
             <AddressDetailsModal
                 address={selectedAddress}
                 colors={colors}
@@ -524,6 +568,20 @@ const DeliveryAddressesScreen = () => {
                 onClose={() => setSelectedAddressId(null)}
                 onEdit={openEditAddressSheet}
                 onSetPrimary={handleSetPrimary}
+                onDelete={handleRequestDelete}
+            />
+
+            <ConfirmationModal
+                visible={Boolean(pendingDeleteAddress)}
+                title={t('deliveryAddresses.deleteConfirm.title')}
+                message={t('deliveryAddresses.deleteConfirm.message')}
+                confirmLabel={t('deliveryAddresses.deleteConfirm.confirmLabel')}
+                cancelLabel={t('deliveryAddresses.deleteConfirm.cancelLabel')}
+                variant="danger"
+                isLoading={isDeletingAddress}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                colors={colors}
             />
         </SafeAreaView>
     );
@@ -531,6 +589,7 @@ const DeliveryAddressesScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    fullscreenLoader: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 999 },
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
     headerSpacer: { width: 40 },
     headerTitle: { fontSize: 18, fontWeight: '800' },

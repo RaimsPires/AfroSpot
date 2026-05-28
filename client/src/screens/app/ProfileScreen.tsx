@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
+    BackHandler,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { AppAlert, AppIcon } from '@components/ui';
@@ -12,7 +15,7 @@ import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import { useTranslationContext } from '@contexts/TranslationContext';
 import type { AppStackNavigationProp } from '@navigation/types';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, usePreventRemove } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LanguageBottomSheet from '@components/profile/LanguageBottomSheet';
@@ -49,6 +52,7 @@ const ProfileScreen = () => {
     const [showPhotoSheet, setShowPhotoSheet] = useState(false);
     const [showThemeSheet, setShowThemeSheet] = useState(false);
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
+    const [isPickingPhoto, setIsPickingPhoto] = useState(false);
     const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
     const [isUpdatingTheme, setIsUpdatingTheme] = useState(false);
     const [profileError, setProfileError] = useState<{ title: string; message: string } | null>(null);
@@ -62,6 +66,28 @@ const ProfileScreen = () => {
 
     const selectedThemeName =
         themeMode === 'light' ? 'Light' : themeMode === 'dark' ? 'Dark' : 'System';
+
+    usePreventRemove(isPickingPhoto, () => {
+        // Intentionally empty: this hook blocks the remove action while loading.
+    });
+
+    useEffect(() => {
+        navigation.setOptions({
+            gestureEnabled: !isPickingPhoto,
+        });
+    }, [navigation, isPickingPhoto]);
+
+    useEffect(() => {
+        if (!isPickingPhoto) {
+            return undefined;
+        }
+
+        const backSubscription = BackHandler.addEventListener('hardwareBackPress', () => true);
+
+        return () => {
+            backSubscription.remove();
+        };
+    }, [isPickingPhoto]);
 
     const handleSelectLanguage = async (languageId: string) => {
         try {
@@ -83,7 +109,13 @@ const ProfileScreen = () => {
     const handlePickProfilePhoto = async (source: ProfileImageSource) => {
         setShowPhotoSheet(false);
         await waitForIdle();
-        const image = await pickProfileImage(source);
+        setIsPickingPhoto(true);
+        let image: Awaited<ReturnType<typeof pickProfileImage>> = null;
+        try {
+            image = await pickProfileImage(source);
+        } finally {
+            setIsPickingPhoto(false);
+        }
         if (!image) {
             return;
         }
@@ -121,6 +153,12 @@ const ProfileScreen = () => {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+            {isPickingPhoto && (
+                <View style={styles.pickingOverlay} pointerEvents="auto">
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            )}
 
             <ProfileHeader colors={colors} />
 
@@ -252,6 +290,13 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollContent: { paddingBottom: 60 },
+    pickingOverlay: {
+        ...StyleSheet.absoluteFill,
+        zIndex: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.35)',
+    },
     avatarErrorAlert: { marginHorizontal: 20, marginTop: 14, marginBottom: -4 },
     logoutBtn: {
         flexDirection: 'row',

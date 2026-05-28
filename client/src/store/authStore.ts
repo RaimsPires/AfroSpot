@@ -1,4 +1,4 @@
-import { createUserAddress, setPrimaryUserAddress, updateUserAddress } from '@services/addressService';
+import { createUserAddress, deleteUserAddress, setPrimaryUserAddress, updateUserAddress } from '@services/addressService';
 import { apiClient } from '@services/apiClient';
 import { localeStorage } from '@services/localeStorage';
 import { patchUserProfile } from '@services/profileService';
@@ -34,6 +34,7 @@ type AuthState = {
     addAddress: (payload: CreateUserAddressPayload) => Promise<UserAddress>;
     updateAddress: (addressId: string, payload: UpdateUserAddressPayload) => Promise<UserAddress>;
     setPrimaryAddress: (addressId: string) => Promise<UserAddress>;
+    deleteAddress: (addressId: string) => Promise<void>;
     bootstrapAuth: () => Promise<void>;
     setAuthenticated: (value: boolean) => void;
 };
@@ -153,6 +154,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         try {
             set({ loading: true });
             const response = await apiClient.post<LoginRequestResponse>('/auth/login/', login_data);
+            console.log(response.data);
+            
             await persistAuthSession(response.data);
             set({
                 isAuthenticated: true,
@@ -436,4 +439,43 @@ export const useAuthStore = create<AuthState>((set) => ({
             isAuthenticated: value,
             user: value ? state.user : null,
         })),
+
+    deleteAddress: async (addressId) => {
+        try {
+            set({ loading: true });
+            await deleteUserAddress(addressId);
+
+            let updatedUser: AuthUser | null = null;
+            set((state) => {
+                if (!state.user) {
+                    return state;
+                }
+
+                const filteredAddresses = state.user.addresses.filter(
+                    (address) => address.id !== addressId,
+                );
+
+                updatedUser = {
+                    ...state.user,
+                    addresses: filteredAddresses,
+                };
+
+                updatedUser.active_address = getActiveAddressLabel(updatedUser.addresses);
+
+                return {
+                    ...state,
+                    user: updatedUser,
+                };
+            });
+
+            if (updatedUser) {
+                await persistUserProfile(updatedUser);
+            }
+        } catch (error) {
+            console.error('Error while deleting user address:', error);
+            throw error;
+        } finally {
+            set({ loading: false });
+        }
+    },
 }));
