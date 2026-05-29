@@ -14,7 +14,7 @@ import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
 import { StoreFeedsScreen } from '@screens/feeds/StoreFeedsScreen';
 import CreatePromoScreen from '@screens/products/CreatePromoScreen';
 import ManagePromotionsScreen from '@screens/products/ManagePromotionsScreen';
-import ManageReviewsScreen from '@screens/spot/ManageReviewsScreen';
+import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
 
 
 const Stack = createNativeStackNavigator();

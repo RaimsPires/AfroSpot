@@ -2,12 +2,12 @@ import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import ManageBookingsScreen from '@screens/spot/BookingManagementScreen';
-import BusinessDashboardScreen from '@screens/spot/BusinessDashboardScreen';
 
 import React from 'react';
 
 import SettingsScreen from '@screens/app/SettingsScreen';
+import ManageBookingsScreen from '@screens/shop/BookingManagementScreen';
+import BusinessDashboardScreen from '@screens/shop/BusinessDashboardScreen';
 import MessagesStack from './stack/MessagesStack';
 import type { BusinessTabParamList } from './types';
 
