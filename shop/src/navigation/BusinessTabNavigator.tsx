@@ -8,7 +8,7 @@ import React from 'react';
 import SettingsScreen from '@screens/app/SettingsScreen';
 import ManageBookingsScreen from '@screens/shop/BookingManagementScreen';
 import BusinessDashboardScreen from '@screens/shop/BusinessDashboardScreen';
-import MessagesStack from './stack/MessagesStack';
+import MessagesStack from './MessagesStack';
 import type { BusinessTabParamList } from './types';
 
 const Tabs = createBottomTabNavigator<BusinessTabParamList>();

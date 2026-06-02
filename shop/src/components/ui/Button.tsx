@@ -10,6 +10,7 @@ import {
     ViewStyle
 } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
+import { palette } from '../../theme/theme';
 import AppIcon from './AppIcon';
 
 type ButtonVariant = 'solid' | 'outline' | 'ghost';
@@ -77,7 +78,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         switch (variant) {
             case 'outline': return { bg: 'transparent', text: baseColor, border: baseColor };
             case 'ghost': return { bg: 'transparent', text: baseColor, border: 'transparent' };
-            default: return { bg: baseColor, text: isDark && color === 'secondary' ? colors.textInverse : colors.textInverse, border: baseColor };
+            default: return { bg: baseColor, text: isDark && color === 'secondary' ? palette.black : palette.white, border: baseColor };
         }
     };
 

@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AccountChoiceScreen } from '@screens/auth/AccountChoiceScreen';
-import { AuthScreen } from '@screens/auth/AuthScreen';
 import { BusinessKYCScreen } from '@screens/auth/BusinessKYCScreen';
 import { BusinessKYCSuccessScreen } from '@screens/auth/BusinessKYCSuccessScreen';
+import AuthScreen from '@screens/auth/LoginScreen';
 import { SignUpScreen } from '@screens/auth/SignUpScreen';
 import ForgotPasswordScreen from '@screens/auth/password-recovery/ForgotPasswordScreen';
 import PasswordResetSuccessScreen from '@screens/auth/password-recovery/PasswordResetSuccessScreen';

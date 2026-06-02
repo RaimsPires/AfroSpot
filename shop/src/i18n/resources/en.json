@@ -27,23 +27,22 @@
     "auth": {
         "title": "Authentication",
         "login": {
-            "title": "Welcome Back",
-            "subtitle": "Discover and support African businesses",
-            "email": "EMAIL ADDRESS",
-            "emailPlaceholder": "name@example.com",
-            "phone": "PHONE NUMBER",
-            "phonePlaceholder": "e.g. +234 812 345 6789",
-            "password": "PASSWORD",
-            "passwordPlaceholder": "••••••••",
-            "loginButton": "Log In",
-            "forgotPassword": "Forgot?",
+            "title": "Sign In",
+            "subtitle": "Welcome back to Afrospot",
+            "email": "Email Address",
+            "emailPlaceholder": "Enter your email",
+            "password": "Password",
+            "passwordPlaceholder": "Enter your password",
+            "loginButton": "Sign In",
+            "forgotPassword": "Forgot Password?",
             "noAccount": "Don't have an account?",
-            "signUpLink": "Create Account",
+            "signUpLink": "Create one",
             "rememberMe": "Remember me",
             "loginSuccess": "Logged in successfully",
             "loginError": "Invalid email or password",
             "emailNotVerified": "Please verify your email to continue",
-            "invalidCredentials": "Invalid credentials"
+            "invalidCredentials": "Invalid credentials",
+            "accountCreationSuccess": "Account created successfully"
         },
         "register": {
             "title": "Create Account",
@@ -60,7 +59,7 @@
             "confirmPasswordPlaceholder": "Confirm your password",
             "dateOfBirth": "Date of Birth",
             "countryOfResidence": "Country of Residence",
-            "phone": "Phone",
+            "phone": "Phone Number",
             "phonePlaceholder": "Your phone number",
             "createAccount": "Create Account",
             "createAccountButton": "Sign Up",
@@ -148,10 +147,20 @@
         "session": {
             "expired": "Your session has expired. Please login again.",
             "loading": "Initializing authentication..."
+        },
+        "businessKYC": {
+            "title": "Business Registration",
+            "subtitle": "Complete your business information",
+            "step": "Step {{current}} of {{total}}",
+            "nextStep": "Continue to Business KYC",
+            "selectAccountType": "Select Account Type",
+            "businessAccount": "Business Account",
+            "personalAccount": "Personal Account"
         }
     },
     "addresses": {
-        "title": "Delivery Addresses",
+        "title": "Addresses",
+        "deliveryAddresses": "Delivery Addresses",
         "savedAddresses": "Saved Addresses",
         "loading": "Loading your addresses...",
         "emptyState": "No saved address yet. Add your first delivery address.",

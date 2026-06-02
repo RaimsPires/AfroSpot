@@ -1,113 +1,86 @@
-import { apiClient } from '@services/apiClient';
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 
-export type AuthUser = {
-    id: string;
-    email: string;
-    first_name?: string;
-    last_name?: string;
-};
-
-type PasswordResetRequestPayload = {
-    email: string;
-};
-
-type PasswordResetConfirmPayload = {
-    uid: string;
-    token: string;
-    new_password1: string;
-    new_password2: string;
-};
-
-type PasswordChangePayload = {
-    old_password: string;
-    new_password1: string;
-    new_password2: string;
-};
+import { useAuthStore } from '@store/authStore';
+import {
+    AuthPayload,
+    AuthUser,
+    PasswordChangePayload,
+    PasswordResetConfirmPayload,
+    PasswordResetRequestPayload,
+    UpdateUserProfilePayload,
+} from '@type/auth';
 
 type AuthContextValue = {
     isAuthenticated: boolean;
     user: AuthUser | null;
-    loading: boolean;
-    signIn: (user?: Partial<AuthUser>) => Promise<void>;
-    signOut: () => void;
+    loading?: boolean;
+    isAuthBootstrapping: boolean;
+    signIn: (payload: AuthPayload) => Promise<void>;
+    signOut: () => Promise<void>;
+    signUp: (payload: any) => Promise<void>;
+    checkEmailVerified: (email: string, password: string) => Promise<boolean>;
     forgotPassword: (payload: PasswordResetRequestPayload) => Promise<void>;
     resetPassword: (payload: PasswordResetConfirmPayload) => Promise<void>;
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
+    updateProfile: (payload: UpdateUserProfilePayload) => Promise<AuthUser>;
     setAuthenticated: (value: boolean) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<AuthUser | null>(null);
-    const [loading, setLoading] = useState(false);
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const user = useAuthStore((state) => state.user);
+    const signIn = useAuthStore((state) => state.signIn);
+    const signOut = useAuthStore((state) => state.signOut);
+    const signUp = useAuthStore((state) => state.signUp);
+    const forgotPassword = useAuthStore((state) => state.forgotPassword);
+    const resetPassword = useAuthStore((state) => state.resetPassword);
+    const changePassword = useAuthStore((state) => state.changePassword);
+    const updateProfile = useAuthStore((state) => state.updateProfile);
+    const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+    const checkEmailVerified = useAuthStore((state) => state.checkEmailVerified);
+    const loading = useAuthStore((state) => state.loading);
+    const isAuthBootstrapping = useAuthStore((state) => state.isAuthBootstrapping);
+    const bootstrapAuth = useAuthStore((state) => state.bootstrapAuth);
 
-    const signIn = async (nextUser?: Partial<AuthUser>) => {
-        setIsAuthenticated(true);
-        if (nextUser) {
-            setUser((prev) => ({
-                id: prev?.id ?? nextUser.id ?? 'spot-user',
-                email: nextUser.email ?? prev?.email ?? '',
-                first_name: nextUser.first_name ?? prev?.first_name,
-                last_name: nextUser.last_name ?? prev?.last_name,
-            }));
-        }
-    };
-
-    const signOut = () => {
-        setIsAuthenticated(false);
-        setUser(null);
-    };
-
-    const setAuthenticated = (value: boolean) => {
-        setIsAuthenticated(value);
-        if (!value) {
-            setUser(null);
-        }
-    };
-
-    const forgotPassword = async ({ email }: PasswordResetRequestPayload) => {
-        try {
-            setLoading(true);
-            await apiClient.post('/auth/password/reset/', { email: email.trim().toLowerCase() });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const resetPassword = async (payload: PasswordResetConfirmPayload) => {
-        try {
-            setLoading(true);
-            await apiClient.post('/auth/password/reset/confirm/', payload);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const changePassword = async (payload: PasswordChangePayload) => {
-        try {
-            setLoading(true);
-            await apiClient.post('/auth/password/change/', payload);
-        } finally {
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        bootstrapAuth().catch((error) => {
+            console.error('[Auth] Bootstrap failed:', error);
+        });
+    }, [bootstrapAuth]);
 
     const value = useMemo(
         () => ({
             isAuthenticated,
             user,
             loading,
+            isAuthBootstrapping,
             signIn,
             signOut,
+            signUp,
+            checkEmailVerified,
             forgotPassword,
             resetPassword,
             changePassword,
+            updateProfile,
             setAuthenticated,
         }),
-        [isAuthenticated, loading, user],
+        [
+            isAuthenticated,
+            isAuthBootstrapping,
+            setAuthenticated,
+            signIn,
+            signOut,
+            signUp,
+            checkEmailVerified,
+            forgotPassword,
+            resetPassword,
+            changePassword,
+            updateProfile,
+            user,
+            loading,
+        ],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

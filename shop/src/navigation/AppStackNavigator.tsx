@@ -48,8 +48,8 @@ import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
 import ProductCatalogScreen from '@screens/shop/ProductCatalogScreen';
 import ProductDetailScreen from '@screens/shop/ProductDetailScreen';
 import BusinessTabNavigator from './BusinessTabNavigator';
-import ProfileStack from './stack/ProfileStack';
-import StoreStack from './stack/StoreStack';
+import ProfileStack from './ProfileStack';
+import StoreStack from './StoreStack';
 import type { AppStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();

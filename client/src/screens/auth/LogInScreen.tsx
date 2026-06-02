@@ -28,8 +28,8 @@ const LogInScreen = () => {
     const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
     const [loginError, setLoginError] = useState<string | null>(null);
     const [email, setEmail] = useState('admin@admin.com');
-    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('1234');
+    const [phone, setPhone] = useState('');
 
     const handleLogin = () => {
         const credential = loginMethod === 'email' ? email.trim() : phone.trim();
