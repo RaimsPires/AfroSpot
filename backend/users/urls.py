@@ -6,9 +6,11 @@ from users.views import (
     UserAddressCreateView,
     UserAddressSetPrimaryView,
     UserAddressUpdateView,
+    VerifyCredentialsView
 )
 
 urlpatterns = [
+    path('auth/verify-credentials/', VerifyCredentialsView.as_view(), name='verify_credentials'),
     path('password-reset/', PasswordResetLandingView.as_view(), name='password_reset_landing'),
     path('auth/check-email/', CheckEmailView.as_view(), name='auth_check_email'),
     path('auth/addresses/', UserAddressCreateView.as_view(), name='user_address_create'),
