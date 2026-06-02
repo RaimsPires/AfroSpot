@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '@contexts/ThemeContext';
+import { useTranslation } from '@contexts/TranslationContext';
 import AppIcon from './AppIcon';
 
 export interface DatePickerFieldProps {
@@ -40,6 +41,8 @@ const DatePickerField = ({
     const { colors, spacing, isDark } = useTheme();
     const [open, setOpen] = useState(false);
     const [activeDate, setActiveDate] = useState(value ?? new Date());
+
+    const {language} = useTranslation();
 
     const displayValue = useMemo(() => (value ? formatDate(value) : ''), [value]);
 
@@ -97,6 +100,7 @@ const DatePickerField = ({
                             <DatePicker
                                 date={activeDate}
                                 mode="date"
+                                locale={language}
                                 minimumDate={minimumDate}
                                 maximumDate={maximumDate}
                                 onDateChange={setActiveDate}

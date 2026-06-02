@@ -204,12 +204,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     signOut: async () => {
         try {
             await apiClient.post('/auth/logout/');
+            set({ loading: true });
         } catch (error) {
             console.error('Error during sign-out:', error);
             // Ignore network errors — clear local session regardless
         } finally {
             await clearAuthSession();
-            set({ isAuthenticated: false, user: null });
+            set({ isAuthenticated: false, user: null ,loading: false });
         }
     },
 
