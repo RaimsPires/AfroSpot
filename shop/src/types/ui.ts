@@ -1,5 +1,5 @@
+import { Icon } from "@components/ui/AppIcon";
 import { StyleProp, TextInputProps, TextStyle, ViewStyle } from "react-native";
-import { Icon } from "../components/ui/AppIcon";
 
 export type IconLibrary = keyof typeof Icon;
 

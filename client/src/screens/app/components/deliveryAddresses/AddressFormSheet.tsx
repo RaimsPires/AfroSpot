@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    FlatList,
     KeyboardAvoidingView,
     Modal,
     Platform,
@@ -14,8 +15,9 @@ import {
 
 import { AppIcon } from '@components/ui';
 import AppButton from '@components/ui/Button';
+import { useTranslation } from 'react-i18next';
 
-import { AddressLabel, LABEL_TO_ADDRESS_TYPE } from './addressUtils';
+import { AddressLabel, LABEL_TO_ADDRESS_TYPE, LocationOption } from './addressUtils';
 
 type FormColors = {
     surface: string;
@@ -31,6 +33,9 @@ type AddressFormSheetProps = {
     colors: FormColors;
     isEditingAddress: boolean;
     isSubmitting: boolean;
+    activePicker: 'country' | 'state' | 'city' | null;
+    pickerTitle: string;
+    pickerOptions: LocationOption[];
     displayName: string;
     newLabel: AddressLabel;
     newName: string;
@@ -40,7 +45,6 @@ type AddressFormSheetProps = {
     newCity: string;
     newZipCode: string;
     newCountryIsoCode: string | null;
-    newStateIsoCode: string | null;
     newIsPrimary: boolean;
     isStateDisabled: boolean;
     isCityDisabled: boolean;
@@ -49,6 +53,8 @@ type AddressFormSheetProps = {
     onOpenCountryPicker: () => void;
     onOpenStatePicker: () => void;
     onOpenCityPicker: () => void;
+    onClosePicker: () => void;
+    onSelectPickerOption: (option: LocationOption) => void;
     onSetNewLabel: (label: AddressLabel) => void;
     onSetNewName: (value: string) => void;
     onSetNewStreet: (value: string) => void;
@@ -61,6 +67,9 @@ const AddressFormSheet = ({
     colors,
     isEditingAddress,
     isSubmitting,
+    activePicker,
+    pickerTitle,
+    pickerOptions,
     displayName,
     newLabel,
     newName,
@@ -70,7 +79,6 @@ const AddressFormSheet = ({
     newCity,
     newZipCode,
     newCountryIsoCode,
-    newStateIsoCode,
     newIsPrimary,
     isStateDisabled,
     isCityDisabled,
@@ -79,19 +87,29 @@ const AddressFormSheet = ({
     onOpenCountryPicker,
     onOpenStatePicker,
     onOpenCityPicker,
+    onClosePicker,
+    onSelectPickerOption,
     onSetNewLabel,
     onSetNewName,
     onSetNewStreet,
     onSetNewZipCode,
     onTogglePrimary,
 }: AddressFormSheetProps) => {
+    const { t } = useTranslation();
+
+    const isPickerActive = activePicker !== null;
+    const isFormValid = Boolean(
+        newStreet.trim() && newCity.trim() && newState.trim() && newZipCode.trim() && newCountry.trim(),
+    );
+
     return (
         <Modal
             visible={visible}
             transparent
             animationType="slide"
+            presentationStyle="overFullScreen"
             statusBarTranslucent
-            onRequestClose={onClose}
+            onRequestClose={isPickerActive ? onClosePicker : onClose}
         >
             <Pressable style={styles.sheetOverlay} onPress={onClose}>
                 <KeyboardAvoidingView
@@ -103,171 +121,209 @@ const AddressFormSheet = ({
                         style={[styles.sheetContainer, { backgroundColor: colors.surface }]}
                         onPress={(event) => event.stopPropagation()}
                     >
-                        <ScrollView
-                            keyboardShouldPersistTaps="handled"
-                            showsVerticalScrollIndicator={false}
-                            contentContainerStyle={styles.sheetScrollContent}
-                        >
-                            <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
+                        <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
 
-                            <Text style={[styles.formTitle, { color: colors.text }]}>{isEditingAddress ? 'Edit Address' : 'New Address'}</Text>
-
-                            <View style={styles.typeSelector}>
-                                {Object.keys(LABEL_TO_ADDRESS_TYPE).map((label) => {
-                                    const typedLabel = label as AddressLabel;
-
-                                    return (
-                                        <TouchableOpacity
-                                            key={typedLabel}
-                                            onPress={() => onSetNewLabel(typedLabel)}
-                                            style={[styles.typePill, { backgroundColor: newLabel === typedLabel ? colors.primary : colors.background, borderColor: colors.border }]}
-                                        >
-                                            <Text style={[styles.typePillText, newLabel === typedLabel ? styles.typePillTextSelected : styles.typePillTextUnselected]}>{typedLabel}</Text>
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RECEIVER NAME</Text>
-                                <TextInput
-                                    style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                    placeholder={displayName}
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={newName}
-                                    onChangeText={onSetNewName}
-                                />
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>STREET ADDRESS</Text>
-                                <TextInput
-                                    style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                    placeholder="e.g. 124 Atlantic Ave"
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={newStreet}
-                                    onChangeText={onSetNewStreet}
-                                />
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>COUNTRY</Text>
-                                <Pressable
-                                    onPress={onOpenCountryPicker}
-                                    style={[
-                                        styles.selectField,
-                                        {
-                                            borderColor: colors.border,
-                                            backgroundColor: colors.background,
-                                        },
-                                    ]}
+                        {isPickerActive ? (
+                            <View style={styles.pickerHeader}>
+                                <TouchableOpacity
+                                    style={styles.pickerBackButton}
+                                    onPress={onClosePicker}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.selectFieldText,
-                                            { color: newCountry ? colors.text : colors.textSecondary },
-                                        ]}
-                                    >
-                                        {newCountry || 'Select country'}
-                                    </Text>
-                                    <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
-                                </Pressable>
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>STATE</Text>
-                                <Pressable
-                                    onPress={onOpenStatePicker}
-                                    style={[
-                                        styles.selectField,
-                                        {
-                                            borderColor: colors.border,
-                                            backgroundColor: isStateDisabled ? colors.surface : colors.background,
-                                        },
-                                        isStateDisabled ? styles.selectFieldDisabled : null,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.selectFieldText,
-                                            { color: newState ? colors.text : colors.textSecondary },
-                                        ]}
-                                    >
-                                        {newState || (newCountryIsoCode ? 'Select state' : 'Select country first')}
-                                    </Text>
-                                    <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
-                                </Pressable>
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>CITY</Text>
-                                <Pressable
-                                    onPress={onOpenCityPicker}
-                                    style={[
-                                        styles.selectField,
-                                        {
-                                            borderColor: colors.border,
-                                            backgroundColor: isCityDisabled ? colors.surface : colors.background,
-                                        },
-                                        isCityDisabled ? styles.selectFieldDisabled : null,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.selectFieldText,
-                                            { color: newCity ? colors.text : colors.textSecondary },
-                                        ]}
-                                    >
-                                        {newCity || (newStateIsoCode ? 'Select city' : 'Select state first')}
-                                    </Text>
-                                    <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
-                                </Pressable>
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>ZIP CODE</Text>
-                                <TextInput
-                                    style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                    placeholder="e.g. 11201"
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={newZipCode}
-                                    onChangeText={onSetNewZipCode}
-                                />
-                            </View>
-
-                            <TouchableOpacity
-                                style={styles.makePrimaryRow}
-                                onPress={onTogglePrimary}
-                            >
-                                <View
-                                    style={[
-                                        styles.primaryToggle,
-                                        {
-                                            borderColor: newIsPrimary ? colors.primary : colors.border,
-                                            backgroundColor: newIsPrimary ? colors.primary : colors.background,
-                                        },
-                                    ]}
-                                >
-                                    {newIsPrimary ? (
-                                        <AppIcon library="Feather" name="check" size={14} color="#FFF" />
-                                    ) : null}
-                                </View>
-                                <Text style={[styles.makePrimaryText, { color: colors.text }]}>Set as primary address</Text>
-                            </TouchableOpacity>
-
-                            <View style={styles.formActions}>
-                                <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-                                    <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Cancel</Text>
+                                    <AppIcon library="Feather" name="chevron-left" size={20} color={colors.text} />
                                 </TouchableOpacity>
-                                <View style={styles.flexOne}>
-                                    <AppButton
-                                        title={isSubmitting ? (isEditingAddress ? 'Updating...' : 'Saving...') : (isEditingAddress ? 'Update Address' : 'Save Address')}
-                                        onPress={onSubmit}
-                                        disabled={isSubmitting}
+                                <Text style={[styles.pickerTitle, { color: colors.text }]}>{pickerTitle}</Text>
+                                <View style={styles.pickerHeaderSpacer} />
+                            </View>
+                        ) : (
+                            <Text style={[styles.formTitle, { color: colors.text }]}>
+                                {isEditingAddress ? t('deliveryAddresses.form.editTitle') : t('deliveryAddresses.form.newTitle')}
+                            </Text>
+                        )}
+
+                        {isPickerActive ? (
+                            <FlatList
+                                data={pickerOptions}
+                                keyExtractor={(item) => `${item.value}-${item.isoCode ?? 'none'}`}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={[styles.pickerOptionRow, { borderBottomColor: colors.border }]}
+                                        onPress={() => onSelectPickerOption(item)}
+                                    >
+                                        <Text style={[styles.pickerOptionText, { color: colors.text }]}>{item.label}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                ListEmptyComponent={(
+                                    <Text style={[styles.pickerEmptyText, { color: colors.textSecondary }]}>{t('deliveryAddresses.pickers.noOptions')}</Text>
+                                )}
+                                keyboardShouldPersistTaps="handled"
+                            />
+                        ) : (
+                            <ScrollView
+                                keyboardShouldPersistTaps="handled"
+                                showsVerticalScrollIndicator={false}
+                                contentContainerStyle={styles.sheetScrollContent}
+                            >
+                                <View style={styles.typeSelector}>
+                                    {Object.keys(LABEL_TO_ADDRESS_TYPE).map((label) => {
+                                        const typedLabel = label as AddressLabel;
+
+                                        return (
+                                            <TouchableOpacity
+                                                key={typedLabel}
+                                                onPress={() => onSetNewLabel(typedLabel)}
+                                                style={[styles.typePill, { backgroundColor: newLabel === typedLabel ? colors.primary : colors.background, borderColor: colors.border }]}
+                                            >
+                                                <Text style={[styles.typePillText, newLabel === typedLabel ? styles.typePillTextSelected : styles.typePillTextUnselected]}>
+                                                    {t(`deliveryAddresses.labels.${typedLabel.toLowerCase()}`)}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.form.receiverNameLabel')}</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                                        placeholder={displayName}
+                                        placeholderTextColor={colors.textSecondary}
+                                        value={newName}
+                                        onChangeText={onSetNewName}
                                     />
                                 </View>
-                            </View>
-                        </ScrollView>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.form.streetAddressLabel')}</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                                        placeholder={t('deliveryAddresses.form.streetPlaceholder')}
+                                        placeholderTextColor={colors.textSecondary}
+                                        value={newStreet}
+                                        onChangeText={onSetNewStreet}
+                                    />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.country')}</Text>
+                                    <TouchableOpacity
+                                        onPress={onOpenCountryPicker}
+                                        style={[
+                                            styles.selectField,
+                                            {
+                                                borderColor: colors.border,
+                                                backgroundColor: colors.background,
+                                            },
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.selectFieldText,
+                                                { color: newCountry ? colors.text : colors.textSecondary },
+                                            ]}
+                                        >
+                                            {newCountry || t('deliveryAddresses.pickers.selectCountry')}
+                                        </Text>
+                                        <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.state')}</Text>
+                                    <Pressable
+                                        onPress={onOpenStatePicker}
+                                        style={[
+                                            styles.selectField,
+                                            {
+                                                borderColor: colors.border,
+                                                backgroundColor: isStateDisabled ? colors.surface : colors.background,
+                                            },
+                                            isStateDisabled ? styles.selectFieldDisabled : null,
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.selectFieldText,
+                                                { color: newState ? colors.text : colors.textSecondary },
+                                            ]}
+                                        >
+                                            {newState || (newCountryIsoCode ? t('deliveryAddresses.pickers.selectState') : t('deliveryAddresses.pickers.selectCountryFirst'))}
+                                        </Text>
+                                        <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.city')}</Text>
+                                    <Pressable
+                                        onPress={onOpenCityPicker}
+                                        style={[
+                                            styles.selectField,
+                                            {
+                                                borderColor: colors.border,
+                                                backgroundColor: isCityDisabled ? colors.surface : colors.background,
+                                            },
+                                            isCityDisabled ? styles.selectFieldDisabled : null,
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.selectFieldText,
+                                                { color: newCity ? colors.text : colors.textSecondary },
+                                            ]}
+                                        >
+                                            {newCity || (newState ? t('deliveryAddresses.pickers.selectCity') : t('deliveryAddresses.pickers.selectStateFirst'))}
+                                        </Text>
+                                        <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.zipCode')}</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                                        placeholder={t('deliveryAddresses.form.zipPlaceholder')}
+                                        placeholderTextColor={colors.textSecondary}
+                                        value={newZipCode}
+                                        onChangeText={onSetNewZipCode}
+                                    />
+                                </View>
+
+                                <TouchableOpacity
+                                    style={styles.makePrimaryRow}
+                                    onPress={onTogglePrimary}
+                                >
+                                    <View
+                                        style={[
+                                            styles.primaryToggle,
+                                            {
+                                                borderColor: newIsPrimary ? colors.primary : colors.border,
+                                                backgroundColor: newIsPrimary ? colors.primary : colors.background,
+                                            },
+                                        ]}
+                                    >
+                                        {newIsPrimary ? (
+                                            <AppIcon library="Feather" name="check" size={14} color="#FFF" />
+                                        ) : null}
+                                    </View>
+                                    <Text style={[styles.makePrimaryText, { color: colors.text }]}>{t('deliveryAddresses.actions.setAsPrimaryAddress')}</Text>
+                                </TouchableOpacity>
+
+                                <View style={styles.formActions}>
+                                    <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
+                                        <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t('common.actions.cancel')}</Text>
+                                    </TouchableOpacity>
+                                    <View style={styles.flexOne}>
+                                        <AppButton
+                                            title={isSubmitting
+                                                ? (isEditingAddress ? t('deliveryAddresses.actions.updating') : t('deliveryAddresses.actions.saving'))
+                                                : (isEditingAddress ? t('deliveryAddresses.actions.updateAddress') : t('deliveryAddresses.actions.saveAddress'))}
+                                            onPress={onSubmit}
+                                            disabled={!isFormValid || isSubmitting}
+                                        />
+                                    </View>
+                                </View>
+                            </ScrollView>
+                        )}
                     </Pressable>
                 </KeyboardAvoidingView>
             </Pressable>
@@ -279,9 +335,13 @@ const styles = StyleSheet.create({
     sheetOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
     keyboardView: { flex: 1, justifyContent: 'flex-end' },
     sheetContainer: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '88%' },
-    sheetScrollContent: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 36 },
+    sheetScrollContent: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 36 },
     sheetHandle: { alignSelf: 'center', width: 48, height: 4, borderRadius: 4, marginBottom: 20 },
-    formTitle: { fontSize: 18, fontWeight: '800', marginBottom: 20 },
+    pickerHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginBottom: 10 },
+    pickerBackButton: { width: 32, height: 32, alignItems: 'flex-start', justifyContent: 'center' },
+    pickerTitle: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800' },
+    pickerHeaderSpacer: { width: 32 },
+    formTitle: { fontSize: 18, fontWeight: '800', marginBottom: 20, paddingHorizontal: 16, paddingVertical: 8, },
     typeSelector: { flexDirection: 'row', gap: 10, marginBottom: 20 },
     typePill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, borderWidth: 1 },
     typePillText: { fontSize: 13, fontWeight: '700' },
@@ -319,6 +379,20 @@ const styles = StyleSheet.create({
     formActions: { flexDirection: 'row', alignItems: 'center', gap: 15, marginTop: 10 },
     cancelBtn: { paddingHorizontal: 10 },
     cancelBtnText: { fontSize: 14, fontWeight: '700' },
+    pickerOptionRow: {
+        paddingHorizontal: 20,
+        paddingVertical: 14,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    },
+    pickerOptionText: {
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    pickerEmptyText: {
+        fontSize: 13,
+        paddingHorizontal: 20,
+        paddingVertical: 20,
+    },
     flexOne: { flex: 1 },
 });
 

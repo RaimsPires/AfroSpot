@@ -21,5 +21,77 @@
             "confirmPassword": "Confirmer le mot de passe",
             "createAccount": "Creer un compte"
         }
+    },
+    "deliveryAddresses": {
+        "title": "Adresses de livraison",
+        "savedAddresses": "Adresses enregistrees",
+        "loading": "Chargement de vos adresses...",
+        "emptyState": "Aucune adresse enregistree pour le moment. Ajoutez votre premiere adresse de livraison.",
+        "fallbackUserName": "Utilisateur du compte",
+        "badges": {
+            "primary": "PRINCIPALE"
+        },
+        "labels": {
+            "home": "Domicile",
+            "work": "Travail",
+            "other": "Autre"
+        },
+        "fields": {
+            "name": "Nom",
+            "street": "Rue",
+            "city": "Ville",
+            "state": "Etat",
+            "zipCode": "Code postal",
+            "country": "Pays"
+        },
+        "actions": {
+            "addNewAddress": "Ajouter une nouvelle adresse",
+            "setAsPrimary": "Definir comme principale",
+            "setAsPrimaryAddress": "Definir comme adresse principale",
+            "editAddress": "Modifier l'adresse",
+            "deleteAddress": "Supprimer l'adresse",
+            "close": "Fermer",
+            "saving": "Enregistrement...",
+            "updating": "Mise a jour...",
+            "saveAddress": "Enregistrer l'adresse",
+            "updateAddress": "Mettre a jour l'adresse"
+        },
+        "details": {
+            "title": "Details de l'adresse",
+            "primaryHint": "Cette adresse est votre adresse principale active."
+        },
+        "form": {
+            "newTitle": "Nouvelle adresse",
+            "editTitle": "Modifier l'adresse",
+            "receiverNameLabel": "NOM DU DESTINATAIRE",
+            "streetAddressLabel": "ADRESSE",
+            "streetPlaceholder": "ex. 124 Atlantic Ave",
+            "zipPlaceholder": "ex. 11201"
+        },
+        "pickers": {
+            "selectCountry": "Selectionner un pays",
+            "selectState": "Selectionner un etat",
+            "selectCity": "Selectionner une ville",
+            "selectCountryFirst": "Selectionnez d'abord un pays",
+            "selectStateFirst": "Selectionnez d'abord un etat",
+            "noOptions": "Aucune option disponible."
+        },
+        "errors": {
+            "requiredFields": "Veuillez remplir tous les champs d'adresse obligatoires.",
+            "updateFailed": "Impossible de mettre a jour l'adresse pour le moment. Veuillez reessayer.",
+            "saveFailed": "Impossible d'enregistrer l'adresse pour le moment. Veuillez reessayer."
+        },
+        "alerts": {
+            "updateFailedTitle": "Echec de la mise a jour",
+            "setPrimaryFailedMessage": "Impossible de definir cette adresse comme principale. Veuillez reessayer.",
+            "deleteFailedTitle": "Echec de la suppression",
+            "deleteFailedMessage": "Impossible de supprimer cette adresse. Veuillez reessayer."
+        },
+        "deleteConfirm": {
+            "title": "Supprimer l'adresse",
+            "message": "Etes-vous sur de vouloir supprimer cette adresse ? Cette action est irreversible.",
+            "confirmLabel": "Supprimer",
+            "cancelLabel": "Annuler"
+        }
     }
 }

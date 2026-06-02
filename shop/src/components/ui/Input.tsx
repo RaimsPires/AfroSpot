@@ -1,7 +1,6 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import {
     Pressable,
-    StyleProp,
     StyleSheet,
     Text,
     TextInput,
@@ -18,11 +17,11 @@ interface InputProps extends React.ComponentPropsWithoutRef<typeof TextInput> {
     label?: string;
     helperText?: string;
     error?: string;
-    containerStyle?: StyleProp<ViewStyle>;
-    inputWrapperStyle?: StyleProp<ViewStyle>;
-    inputStyle?: StyleProp<TextStyle>;
-    labelStyle?: StyleProp<TextStyle>;
-    helperStyle?: StyleProp<TextStyle>;
+    containerStyle?: ViewStyle;
+    inputWrapperStyle?: ViewStyle;
+    inputStyle?: TextStyle;
+    labelStyle?: TextStyle;
+    helperStyle?: TextStyle;
     leftIcon?: { library: any; name: string; size?: number; color?: string };
     rightIcon?: { library: any; name: string; size?: number; color?: string };
     leftElement?: React.ReactNode;

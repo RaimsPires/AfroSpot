@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
 import { UserAddress } from '@type/auth';
+import { useTranslation } from 'react-i18next';
 
 import { getAddressIcon, getAddressTypeLabel } from './addressUtils';
 
@@ -22,6 +23,7 @@ type AddressCardProps = {
     onEdit: (address: UserAddress) => void;
     onSelect: (addressId: string) => void;
     onSetPrimary: (addressId: string) => void;
+    onDelete: (address: UserAddress) => void;
 };
 
 const AddressCard = ({
@@ -32,7 +34,10 @@ const AddressCard = ({
     onEdit,
     onSelect,
     onSetPrimary,
+    onDelete,
 }: AddressCardProps) => {
+    const { t } = useTranslation();
+
     return (
         <View style={[styles.addressCard, { backgroundColor: colors.surface, borderColor: item.is_active ? colors.primary : colors.border }]}>
             <View style={styles.cardHeader}>
@@ -40,10 +45,10 @@ const AddressCard = ({
                     <View style={[styles.iconBg, { backgroundColor: `${colors.primary}15` }]}>
                         <AppIcon library="Feather" name={getAddressIcon(item.address_type)} size={16} color={colors.primary} />
                     </View>
-                    <Text style={[styles.labelText, { color: colors.text }]}>{getAddressTypeLabel(item.address_type)}</Text>
+                    <Text style={[styles.labelText, { color: colors.text }]}>{t(`deliveryAddresses.labels.${getAddressTypeLabel(item.address_type).toLowerCase()}`)}</Text>
                     {item.is_active ? (
                         <View style={[styles.primaryBadge, { backgroundColor: colors.primary }]}> 
-                            <Text style={styles.primaryBadgeText}>PRIMARY</Text>
+                            <Text style={styles.primaryBadgeText}>{t('deliveryAddresses.badges.primary')}</Text>
                         </View>
                     ) : null}
                 </View>
@@ -52,7 +57,7 @@ const AddressCard = ({
                         <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
                     </TouchableOpacity>
                     {!item.is_active ? (
-                        <TouchableOpacity style={styles.iconBtnSmall} disabled>
+                        <TouchableOpacity style={styles.iconBtnSmall} onPress={() => onDelete(item)}>
                             <AppIcon library="Feather" name="trash-2" size={16} color="#EF4444" />
                         </TouchableOpacity>
                     ) : null}
@@ -79,7 +84,7 @@ const AddressCard = ({
                     disabled={isSettingPrimary}
                 >
                     <Text style={[styles.setPrimaryText, { color: colors.primary }]}> 
-                        {isSettingPrimary ? 'Updating...' : 'Set as Primary'}
+                        {isSettingPrimary ? t('deliveryAddresses.actions.updating') : t('deliveryAddresses.actions.setAsPrimary')}
                     </Text>
                 </TouchableOpacity>
             ) : null}

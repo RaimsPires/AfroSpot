@@ -1,0 +1,234 @@
+{
+    "common": {
+        "appName": "Afrospot",
+        "actions": {
+            "cancel": "Cancel",
+            "done": "Done",
+            "save": "Save",
+            "continue": "Continue",
+            "submit": "Submit",
+            "login": "Login",
+            "logout": "Logout",
+            "back": "Back",
+            "next": "Next"
+        },
+        "errors": {
+            "required": "This field is required",
+            "invalidEmail": "Please enter a valid email",
+            "passwordTooShort": "Password must be at least 8 characters",
+            "passwordsDoNotMatch": "Passwords do not match",
+            "networkError": "Network error. Please check your connection.",
+            "serverError": "Server error. Please try again later.",
+            "unknownError": "An unexpected error occurred"
+        },
+        "loading": "Loading...",
+        "success": "Success"
+    },
+    "auth": {
+        "title": "Authentication",
+        "login": {
+            "title": "Sign In",
+            "subtitle": "Welcome back to Afrospot",
+            "email": "Email Address",
+            "emailPlaceholder": "Enter your email",
+            "password": "Password",
+            "passwordPlaceholder": "Enter your password",
+            "loginButton": "Sign In",
+            "forgotPassword": "Forgot Password?",
+            "noAccount": "Don't have an account?",
+            "signUpLink": "Create one",
+            "rememberMe": "Remember me",
+            "loginSuccess": "Logged in successfully",
+            "loginError": "Invalid email or password",
+            "emailNotVerified": "Please verify your email to continue",
+            "invalidCredentials": "Invalid credentials",
+            "accountCreationSuccess": "Account created successfully"
+        },
+        "register": {
+            "title": "Create Account",
+            "subtitle": "Join Afrospot today",
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Your first name",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Your last name",
+            "email": "Email Address",
+            "emailPlaceholder": "your@email.com",
+            "password": "Password",
+            "passwordPlaceholder": "At least 8 characters",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm your password",
+            "dateOfBirth": "Date of Birth",
+            "countryOfResidence": "Country of Residence",
+            "phone": "Phone Number",
+            "phonePlaceholder": "Your phone number",
+            "createAccount": "Create Account",
+            "createAccountButton": "Sign Up",
+            "haveAccount": "Already have an account?",
+            "signInLink": "Sign in here",
+            "agreedToTerms": "I agree to the",
+            "termsOfService": "Terms of Service",
+            "privacyPolicy": "Privacy Policy",
+            "registrationSuccess": "Account created successfully. Please verify your email.",
+            "registrationError": "Failed to create account",
+            "emailExists": "This email is already registered",
+            "verifyEmail": "Verify your email to complete registration"
+        },
+        "forgotPassword": {
+            "title": "Forgot Password?",
+            "subtitle": "Enter your email to reset your password",
+            "email": "Email Address",
+            "emailPlaceholder": "Enter your email",
+            "sendReset": "Send Reset Link",
+            "backToLogin": "Back to Sign In",
+            "emailSent": "Password reset email sent successfully",
+            "emailSentMessage": "Check your email for instructions to reset your password",
+            "emailNotFound": "Email address not found",
+            "error": "Failed to send reset email"
+        },
+        "resetPassword": {
+            "title": "Reset Password",
+            "subtitle": "Create a new password for your account",
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter new password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm new password",
+            "resetButton": "Reset Password",
+            "resetSuccess": "Password reset successfully",
+            "resetError": "Failed to reset password",
+            "invalidToken": "Password reset link has expired",
+            "backToLogin": "Back to Sign In"
+        },
+        "changePassword": {
+            "title": "Change Password",
+            "subtitle": "Update your password",
+            "currentPassword": "Current Password",
+            "currentPasswordPlaceholder": "Enter your current password",
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter new password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm new password",
+            "changeButton": "Change Password",
+            "changeSuccess": "Password changed successfully",
+            "changeError": "Failed to change password",
+            "incorrectPassword": "Current password is incorrect"
+        },
+        "emailVerification": {
+            "title": "Verify Email",
+            "subtitle": "A verification link has been sent to your email",
+            "resendEmail": "Resend Email",
+            "resendSuccess": "Verification email resent",
+            "resendError": "Failed to resend verification email",
+            "verificationPending": "Checking your email...",
+            "verificationSuccess": "Email verified successfully",
+            "verificationError": "Failed to verify email"
+        },
+        "profile": {
+            "title": "Profile",
+            "editProfile": "Edit Profile",
+            "personalInfo": "Personal Information",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "email": "Email Address",
+            "phone": "Phone Number",
+            "dateOfBirth": "Date of Birth",
+            "profilePicture": "Profile Picture",
+            "language": "Language",
+            "updateSuccess": "Profile updated successfully",
+            "updateError": "Failed to update profile",
+            "saving": "Saving...",
+            "uploadingImage": "Uploading image..."
+        },
+        "logout": {
+            "title": "Logout",
+            "message": "Are you sure you want to logout?",
+            "confirm": "Logout",
+            "cancel": "Cancel"
+        },
+        "session": {
+            "expired": "Your session has expired. Please login again.",
+            "loading": "Initializing authentication..."
+        },
+        "businessKYC": {
+            "title": "Business Registration",
+            "subtitle": "Complete your business information",
+            "step": "Step {{current}} of {{total}}",
+            "nextStep": "Continue to Business KYC",
+            "selectAccountType": "Select Account Type",
+            "businessAccount": "Business Account",
+            "personalAccount": "Personal Account"
+        }
+    },
+    "addresses": {
+        "title": "Addresses",
+        "deliveryAddresses": "Delivery Addresses",
+        "savedAddresses": "Saved Addresses",
+        "loading": "Loading your addresses...",
+        "emptyState": "No saved address yet. Add your first delivery address.",
+        "fallbackUserName": "Account User",
+        "badges": {
+            "primary": "PRIMARY"
+        },
+        "labels": {
+            "home": "Home",
+            "work": "Work",
+            "other": "Other"
+        },
+        "fields": {
+            "name": "Name",
+            "street": "Street",
+            "city": "City",
+            "state": "State",
+            "zipCode": "ZIP Code",
+            "country": "Country"
+        },
+        "actions": {
+            "addNewAddress": "Add New Address",
+            "setAsPrimary": "Set as Primary",
+            "setAsPrimaryAddress": "Set as primary address",
+            "editAddress": "Edit Address",
+            "deleteAddress": "Delete Address",
+            "close": "Close",
+            "saving": "Saving...",
+            "updating": "Updating...",
+            "saveAddress": "Save Address",
+            "updateAddress": "Update Address"
+        },
+        "details": {
+            "title": "Address Details",
+            "primaryHint": "This address is your active primary address."
+        },
+        "form": {
+            "newTitle": "New Address",
+            "editTitle": "Edit Address",
+            "receiverNameLabel": "RECEIVER NAME",
+            "streetAddressLabel": "STREET ADDRESS",
+            "streetPlaceholder": "e.g. 124 Atlantic Ave",
+            "zipPlaceholder": "e.g. 11201"
+        },
+        "pickers": {
+            "selectCountry": "Select country",
+            "selectState": "Select state",
+            "selectCity": "Select city",
+            "selectCountryFirst": "Select country first",
+            "selectStateFirst": "Select state first",
+            "noOptions": "No options available."
+        },
+        "errors": {
+            "requiredFields": "Please fill in all required address fields.",
+            "updateFailed": "Unable to update address right now. Please try again.",
+            "saveFailed": "Unable to save address right now. Please try again."
+        },
+        "alerts": {
+            "updateFailedTitle": "Update failed",
+            "setPrimaryFailedMessage": "Could not set this address as primary. Please try again.",
+            "deleteFailedTitle": "Delete failed",
+            "deleteFailedMessage": "Could not delete this address. Please try again."
+        },
+        "deleteConfirm": {
+            "title": "Delete Address",
+            "message": "Are you sure you want to delete this address? This action cannot be undone.",
+            "confirmLabel": "Delete",
+            "cancelLabel": "Cancel"
+        }
+    }
+}

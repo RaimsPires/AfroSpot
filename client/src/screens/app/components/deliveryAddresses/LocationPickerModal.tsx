@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { LocationOption } from './addressUtils';
 
@@ -27,11 +28,14 @@ const LocationPickerModal = ({
     onClose,
     onSelect,
 }: LocationPickerModalProps) => {
+    const { t } = useTranslation();
+
     return (
         <Modal
             visible={activePicker !== null}
             transparent
             animationType="fade"
+            presentationStyle="overFullScreen"
             statusBarTranslucent
             onRequestClose={onClose}
         >
@@ -53,7 +57,7 @@ const LocationPickerModal = ({
                             </TouchableOpacity>
                         )}
                         ListEmptyComponent={(
-                            <Text style={[styles.pickerEmptyText, { color: colors.textSecondary }]}>No options available.</Text>
+                            <Text style={[styles.pickerEmptyText, { color: colors.textSecondary }]}>{t('deliveryAddresses.pickers.noOptions')}</Text>
                         )}
                         keyboardShouldPersistTaps="handled"
                     />

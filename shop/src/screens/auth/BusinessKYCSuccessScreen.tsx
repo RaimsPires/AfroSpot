@@ -25,7 +25,7 @@ export const BusinessKYCSuccessScreen = ({ navigation }: Props) => {
                     <AppIcon library="Feather" name="check" size={48} color={colors.textInverse} />
                 </View>
                 <Text style={[styles.title, { color: colors.text }]}>Business registered</Text>
-                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Your business profile was submitted successfully. You can now start managing your shop on AfroSpot.</Text>
+                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Your business profile was submitted successfully. You can now start managing your spot on AfroSpot.</Text>
 
                 <Button title="Continue to Shop" onPress={handleContinue} />
             </View>

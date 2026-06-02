@@ -1,9 +1,10 @@
 import CountryPicker, { CountryCode, type Country } from '@avaiyakapil/react-native-country-picker';
-import { AppIcon, Button, Input } from '@components/ui';
+import { AppIcon, Button, DatePickerField, Input } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { pickAndCropFromLibrary, SHOP_CROP_PRESETS } from '@utils/hybridImagePicker';
 import React, { useState } from 'react';
 import {
     Image,
@@ -18,7 +19,6 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import { pickAndCropFromLibrary, SHOP_CROP_PRESETS } from '@utils/hybridImagePicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SignUpNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -37,6 +37,9 @@ export const SignUpScreen = () => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [fieldErrors, setFieldErrors] = useState<Partial<Record<string, string>>>({});
+    const [dateOfBirth, setDateOfBirth] = useState<Date | null>(new Date(1990, 0, 1));
 
     const isDisabled =
         !firstName.trim() ||
@@ -95,142 +98,179 @@ export const SignUpScreen = () => {
                             <View style={styles.welcomeSection}>
                                 <Text style={[styles.stepText, { color: colors.primary }]}>Step 1 of 3</Text>
                                 <Text style={[styles.title, { color: colors.text }]}>Join AfroSpot</Text>
-                                <Text style={[styles.subtitle, { color: colors.textSecondary }]}> 
+                                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
                                     Create your AfroSpot account, then register your business.
                                 </Text>
                             </View>
 
-                {/* Profile Photo Picker */}
-                <View style={styles.photoSection}>
-                    <TouchableOpacity onPress={handlePickImage} activeOpacity={0.8} style={styles.avatarContainer}>
-                        {profileImage ? (
-                            <Image source={{ uri: profileImage }} style={styles.avatar} />
-                        ) : (
-                            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.surface }]}>
-                                <AppIcon library="Feather" name="user" size={40} color={colors.textSecondary} />
+                            {/* Profile Photo Picker */}
+                            <View style={styles.photoSection}>
+                                <TouchableOpacity onPress={handlePickImage} activeOpacity={0.8} style={styles.avatarContainer}>
+                                    {profileImage ? (
+                                        <Image source={{ uri: profileImage }} style={styles.avatar} />
+                                    ) : (
+                                        <View style={[styles.avatarPlaceholder, { backgroundColor: colors.surface }]}>
+                                            <AppIcon library="Feather" name="user" size={40} color={colors.textSecondary} />
+                                        </View>
+                                    )}
+                                    <View style={[styles.cameraBtn, { backgroundColor: colors.primary }]}>
+                                        <AppIcon library="Feather" name="camera" size={16} color="#FFF" />
+                                    </View>
+                                </TouchableOpacity>
+                                <Text style={[styles.photoLabel, { color: colors.text }]}>Add Profile Photo</Text>
+                                <Text style={[styles.photoSub, { color: colors.textSecondary }]}>
+                                    Optional — helps businesses recognise you.
+                                </Text>
                             </View>
-                        )}
-                        <View style={[styles.cameraBtn, { backgroundColor: colors.primary }]}>
-                            <AppIcon library="Feather" name="camera" size={16} color="#FFF" />
-                        </View>
-                    </TouchableOpacity>
-                    <Text style={[styles.photoLabel, { color: colors.text }]}>Add Profile Photo</Text>
-                    <Text style={[styles.photoSub, { color: colors.textSecondary }]}>
-                        Optional — helps businesses recognise you.
-                    </Text>
-                </View>
 
-                {/* Form */}
-                <View style={styles.form}>
-                    {/* First + Last name row */}
-                    <View style={styles.row}>
-                        <View style={{ flex: 1 }}>
-                            <Input
-                                label="First Name"
-                                placeholder="John"
-                                value={firstName}
-                                onChangeText={setFirstName}
-                            />
-                        </View>
-                        <View style={{ width: spacing(2) }} />
-                        <View style={{ flex: 1 }}>
-                            <Input
-                                label="Last Name"
-                                placeholder="Doe"
-                                value={lastName}
-                                onChangeText={setLastName}
-                            />
-                        </View>
-                    </View>
+                            {/* Form */}
+                            <View style={styles.form}>
+                                {/* First + Last name row */}
+                                <View style={styles.row}>
+                                    <View style={{ flex: 1 }}>
+                                        <Input
+                                            label="First Name"
+                                            placeholder="John"
+                                            value={firstName}
+                                            onChangeText={setFirstName}
+                                        />
+                                    </View>
+                                    <View style={{ width: spacing(2) }} />
+                                    <View style={{ flex: 1 }}>
+                                        <Input
+                                            label="Last Name"
+                                            placeholder="Doe"
+                                            value={lastName}
+                                            onChangeText={setLastName}
+                                        />
+                                    </View>
+                                </View>
+                                <View>
+                                    <DatePickerField
+                                        label="Date of Birth"
+                                        value={dateOfBirth}
+                                        onChange={(d) => {
+                                            setDateOfBirth(d);
+                                            if (fieldErrors.dob) { setFieldErrors((e) => ({ ...e, dob: undefined })); }
+                                        }}
+                                        placeholder="Select your date of birth"
+                                        maximumDate={new Date()}
+                                        minimumDate={new Date(1900, 0, 1)}
+                                        helperText="Used to personalize your profile and verify your age."
+                                    />
+                                    {fieldErrors.dob && (
+                                        <Text style={[styles.fieldError, { color: colors.error ?? '#ef4444' }]}>
+                                            {fieldErrors.dob}
+                                        </Text>
+                                    )}
+                                </View>
 
-                    <View>
-                        <Text style={[styles.labelFix, { color: colors.text }]}>Country</Text>
-                        <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}> 
-                            <CountryPicker
-                                countryCode={selectedCountryCode}
-                                showCallingCode={false}
-                                showCountryName
-                                showFlag
-                                containerStyle={styles.countryPickerButton}
-                                renderSelectedCountry={renderCountryButton}
-                                onSelect={(code) => {
-                                    setSelectedCountryCode(code);
-                                }}
-                            />
-                        </View>
-                    </View>
-
-                    <Input
-                        label="Email Address"
-                        placeholder="john@example.com"
-                        leftIcon={{ library: 'Feather', name: 'mail' }}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-
-                    {/* Phone row with country picker */}
-                    <View style={styles.phoneRow}>
-                        <View style={{ width: 110 }}>
-                            <Text style={[styles.labelFix, { color: colors.text }]}>Phone</Text>
-                            <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                                <CountryPicker
-                                    countryCode={countryCode}
-                                    showCountryName={false}
-                                    showCallingCode
-                                    showFlag
-                                    containerStyle={styles.countryPickerButton}
-                                    onSelect={(code) => {
-                                        setCountryCode(code);
-                                    }}
+                                <Input
+                                    label="Email Address"
+                                    placeholder="john@example.com"
+                                    leftIcon={{ library: 'Feather', name: 'mail' }}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    value={email}
+                                    onChangeText={setEmail}
                                 />
+
+                                <View>
+                                    <Text style={[styles.labelFix, { color: colors.text }]}>Country</Text>
+                                    <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                        <CountryPicker
+                                            theme={isDark ? 'dark' : 'light'}
+                                            countryCode={selectedCountryCode}
+                                            showCallingCode={false}
+                                            showCountryName
+                                            showFlag
+                                            colors={{
+                                                grayLight: colors.border,
+                                                grayBackground: colors.background,
+                                                white: colors.border,
+                                                gray: colors.textSecondary,
+                                                dark: colors.text,
+                                            }}
+                                            iconColor={colors.text}
+                                            // containerStyle={styles.countryPickerButton}
+                                            renderSelectedCountry={renderCountryButton}
+                                            onSelect={(code) => {
+                                                setSelectedCountryCode(code);
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+
+                                {/* Phone row with country picker */}
+                                <View style={styles.phoneRow}>
+                                    <View style={{ width: 110 }}>
+                                        <Text style={[styles.labelFix, { color: colors.text }]}>Phone</Text>
+                                        <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                            <CountryPicker
+                                                theme={isDark ? 'dark' : 'light'}
+                                                countryCode={countryCode}
+                                                showCountryName={false}
+                                                showCallingCode
+                                                showFlag
+                                                colors={{
+                                                    grayLight: colors.border,
+                                                    grayBackground: colors.background,
+                                                    white: colors.border,
+                                                    gray: colors.textSecondary,
+                                                    dark: colors.text,
+                                                }}
+                                                iconColor={colors.text}
+                                                // containerStyle={styles.countryPickerButton}
+                                                onSelect={(code) => {
+                                                    setCountryCode(code);
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ width: spacing(1.5) }} />
+                                    <View style={{ flex: 1 }}>
+                                        <Input
+                                            label=" "
+                                            placeholder="812 345 6789"
+                                            keyboardType="phone-pad"
+                                            value={phone}
+                                            onChangeText={setPhone}
+                                        />
+                                    </View>
+                                </View>
+
+                                <Input
+                                    label="Password"
+                                    placeholder="••••••••••••"
+                                    secureTextEntry
+                                    leftIcon={{ library: 'Feather', name: 'lock' }}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                />
+
+                                <Input
+                                    label="Confirm Password"
+                                    placeholder="••••••••••••"
+                                    secureTextEntry
+                                    leftIcon={{ library: 'Feather', name: 'shield' }}
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                />
+
+                                <Button
+                                    title="Create Account"
+                                    disabled={isDisabled}
+                                    onPress={() => navigation.navigate('BusinessKYC')}
+                                    style={{ marginTop: spacing(1) }}
+                                />
+
+                                <TouchableOpacity style={styles.footerLink} onPress={() => navigation.navigate('Auth')}>
+                                    <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+                                        Already have an account?{' '}
+                                        <Text style={{ color: colors.primary, fontWeight: 'bold' }}>Sign In</Text>
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={{ width: spacing(1.5) }} />
-                        <View style={{ flex: 1 }}>
-                            <Input
-                                label=" "
-                                placeholder="812 345 6789"
-                                keyboardType="phone-pad"
-                                value={phone}
-                                onChangeText={setPhone}
-                            />
-                        </View>
-                    </View>
-
-                    <Input
-                        label="Password"
-                        placeholder="••••••••••••"
-                        secureTextEntry
-                        leftIcon={{ library: 'Feather', name: 'lock' }}
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-
-                    <Input
-                        label="Confirm Password"
-                        placeholder="••••••••••••"
-                        secureTextEntry
-                        leftIcon={{ library: 'Feather', name: 'shield' }}
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                    />
-
-                    <Button
-                        title="Create Account"
-                        disabled={isDisabled}
-                        onPress={() => navigation.navigate('BusinessKYC')}
-                        style={{ marginTop: spacing(1) }}
-                    />
-
-                    <TouchableOpacity style={styles.footerLink} onPress={() => navigation.navigate('Auth')}>
-                        <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                            Already have an account?{' '}
-                            <Text style={{ color: colors.primary, fontWeight: 'bold' }}>Sign In</Text>
-                        </Text>
-                    </TouchableOpacity>
-                </View>
                         </ScrollView>
                     </View>
                 </TouchableWithoutFeedback>
@@ -288,6 +328,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
     },
+    fieldError: { fontSize: 12, marginTop: 4, paddingHorizontal: 4 },
     footerLink: { marginTop: 20, alignItems: 'center' },
     footerText: { fontSize: 15 },
 });

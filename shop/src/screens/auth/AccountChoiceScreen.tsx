@@ -4,8 +4,8 @@ import type { AuthStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AccountChoiceNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'AccountChoice'>;
 
@@ -18,7 +18,7 @@ export const AccountChoiceScreen = () => {
             <View style={styles.content}>
                 <View style={styles.headerSection}>
                     <Text style={[styles.stepText, { color: colors.primary }]}>Step 1 of 3</Text>
-                    <Text style={[styles.title, { color: colors.text }]}>Set up your shop account</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>Set up your spot account</Text>
                     <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Use an existing AfroSpot account or create a new one to start business registration.</Text>
                 </View>
 

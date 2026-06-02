@@ -15,3 +15,7 @@ export async function updateUserAddress(addressId: string, payload: UpdateUserAd
     const response = await apiClient.patch<UserAddress>(`/auth/addresses/${addressId}/`, payload);
     return response.data;
 }
+
+export async function deleteUserAddress(addressId: string): Promise<void> {
+    await apiClient.delete(`/auth/addresses/${addressId}/delete/`);
+}

@@ -76,7 +76,7 @@ const BookingDetailScreen = () => {
                 <View style={styles.qrSection}>
                     <View style={[styles.qrContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                         <Image source={{ uri: BOOKING_DATA.qrCode }} style={styles.qrImage} />
-                        <Text style={[styles.qrHint, { color: colors.textSecondary }]}>Show this code at the shop for check-in</Text>
+                        <Text style={[styles.qrHint, { color: colors.textSecondary }]}>Show this code at the spot for check-in</Text>
                     </View>
                 </View>
 

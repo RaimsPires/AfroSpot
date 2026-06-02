@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '10.17.17.129',
     '10.52.82.10',
+    '192.168.100.24',
     
 ]
 
@@ -77,6 +78,7 @@ INSTALLED_APPS = [
     
     # local apps
     'users.apps.UsersConfig',
+    'spots.apps.SpotsConfig',
 ]
 
 MIDDLEWARE = [
@@ -234,7 +236,7 @@ AUTH_KIT = {
     # CORE AUTHENTICATION SETTINGS
     # ===================================================================
     'AUTH_TYPE': 'jwt',                    # 'jwt', 'token', or 'custom'
-    'USE_AUTH_COOKIE': True,               # Enable cookie-based authentication
+    'USE_AUTH_COOKIE': False,               # Enable cookie-based authentication
     'SESSION_LOGIN': False,                # Enable Django session login
     'ALLOW_LOGIN_REDIRECT': False,         # Allow login redirects
 
@@ -242,7 +244,7 @@ AUTH_KIT = {
     # COOKIE CONFIGURATION
     # ===================================================================
     'AUTH_COOKIE_SECURE': False,           # Require HTTPS for cookies
-    'AUTH_COOKIE_HTTPONLY': True,          # Prevent JavaScript access
+    'AUTH_COOKIE_HTTPONLY': False,          # Prevent JavaScript access
     'AUTH_COOKIE_SAMESITE': 'Lax',         # 'Lax', 'Strict', or 'None'
     'AUTH_COOKIE_DOMAIN': None,            # Cookie domain
 

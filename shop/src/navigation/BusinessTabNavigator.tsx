@@ -2,13 +2,13 @@ import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import ManageBookingsScreen from '@screens/shop/BookingManagementScreen';
-import BusinessDashboardScreen from '@screens/shop/BusinessDashboardScreen';
 
 import React from 'react';
 
 import SettingsScreen from '@screens/app/SettingsScreen';
-import MessagesStack from './stack/MessagesStack';
+import ManageBookingsScreen from '@screens/shop/BookingManagementScreen';
+import BusinessDashboardScreen from '@screens/shop/BusinessDashboardScreen';
+import MessagesStack from './MessagesStack';
 import type { BusinessTabParamList } from './types';
 
 const Tabs = createBottomTabNavigator<BusinessTabParamList>();

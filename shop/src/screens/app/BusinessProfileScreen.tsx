@@ -2,19 +2,27 @@ import React from 'react';
 import {
     ScrollView,
     StatusBar,
-    Text,
-    TouchableOpacity,
+    Text
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import AppButton from '@components/ui/Button';
+import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
 import { MenuItem, MenuSection, ProfileHeader, ScreenHeader, styles } from '../../components/business-profile';
 
-export const BusinessProfileScreen = ({navigation}:any) => {
+export const BusinessProfileScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
+    const { signOut, loading } = useAuth();
 
     const handleSignOut = () => {
-        navigation.getParent()?.getParent()?.replace('AuthFlow');
+        try {
+            signOut();
+        } catch (error) {
+            console.error('Error signing out:', error);
+        } finally {
+            navigation.getParent()?.getParent()?.replace('AuthFlow');
+        }
     };
 
     return (
@@ -45,13 +53,13 @@ export const BusinessProfileScreen = ({navigation}:any) => {
                     <MenuItem icon="file-text" label="Taxes & Invoices" colors={colors} isLast handlePress={() => navigation.navigate('TaxInvoice')} />
                 </MenuSection>
 
-                <TouchableOpacity
-                    style={[styles.signOutButton, { borderColor: colors.error }]}
+                <AppButton
+                    loading={loading}
+                    variant='outline'
                     onPress={handleSignOut}
-                    activeOpacity={0.8}
-                >
-                    <Text style={[styles.signOutText, { color: colors.error }]}>Sign Out</Text>
-                </TouchableOpacity>
+                    color='danger'
+                    title='Sign Out'
+                />
 
                 <Text style={[styles.appVersion, { color: colors.textSecondary }]}>AfroSpot Business v1.0.0</Text>
             </ScrollView>

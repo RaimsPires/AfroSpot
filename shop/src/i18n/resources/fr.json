@@ -1,0 +1,234 @@
+{
+    "common": {
+        "appName": "Afrospot",
+        "actions": {
+            "cancel": "Annuler",
+            "done": "Terminer",
+            "save": "Enregistrer",
+            "continue": "Continuer",
+            "submit": "Soumettre",
+            "login": "Connexion",
+            "logout": "Déconnexion",
+            "back": "Retour",
+            "next": "Suivant"
+        },
+        "errors": {
+            "required": "Ce champ est obligatoire",
+            "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+            "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères",
+            "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+            "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+            "serverError": "Erreur du serveur. Veuillez réessayer plus tard.",
+            "unknownError": "Une erreur inattendue s'est produite"
+        },
+        "loading": "Chargement...",
+        "success": "Succès"
+    },
+    "auth": {
+        "title": "Authentification",
+        "login": {
+            "title": "Se connecter",
+            "subtitle": "Bienvenue à Afrospot",
+            "email": "Adresse e-mail",
+            "emailPlaceholder": "Entrez votre e-mail",
+            "password": "Mot de passe",
+            "passwordPlaceholder": "Entrez votre mot de passe",
+            "loginButton": "Se connecter",
+            "forgotPassword": "Mot de passe oublié ?",
+            "noAccount": "Vous n'avez pas de compte ?",
+            "signUpLink": "Créez-en un",
+            "rememberMe": "Se souvenir de moi",
+            "loginSuccess": "Connecté avec succès",
+            "loginError": "E-mail ou mot de passe invalide",
+            "emailNotVerified": "Veuillez vérifier votre e-mail pour continuer",
+            "invalidCredentials": "Identifiants invalides",
+            "accountCreationSuccess": "Compte créé avec succès"
+        },
+        "register": {
+            "title": "Créer un compte",
+            "subtitle": "Rejoignez Afrospot aujourd'hui",
+            "firstName": "Prénom",
+            "firstNamePlaceholder": "Votre prénom",
+            "lastName": "Nom",
+            "lastNamePlaceholder": "Votre nom",
+            "email": "Adresse e-mail",
+            "emailPlaceholder": "votre@email.com",
+            "password": "Mot de passe",
+            "passwordPlaceholder": "Au moins 8 caractères",
+            "confirmPassword": "Confirmer le mot de passe",
+            "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+            "dateOfBirth": "Date de naissance",
+            "countryOfResidence": "Pays de résidence",
+            "phone": "Numéro de téléphone",
+            "phonePlaceholder": "Votre numéro de téléphone",
+            "createAccount": "Créer un compte",
+            "createAccountButton": "S'inscrire",
+            "haveAccount": "Vous avez déjà un compte ?",
+            "signInLink": "Connectez-vous ici",
+            "agreedToTerms": "Je suis d'accord avec les",
+            "termsOfService": "Conditions d'utilisation",
+            "privacyPolicy": "Politique de confidentialité",
+            "registrationSuccess": "Compte créé avec succès. Veuillez vérifier votre e-mail.",
+            "registrationError": "Échec de la création du compte",
+            "emailExists": "Cet e-mail est déjà enregistré",
+            "verifyEmail": "Vérifiez votre e-mail pour terminer l'inscription"
+        },
+        "forgotPassword": {
+            "title": "Mot de passe oublié ?",
+            "subtitle": "Entrez votre e-mail pour réinitialiser votre mot de passe",
+            "email": "Adresse e-mail",
+            "emailPlaceholder": "Entrez votre e-mail",
+            "sendReset": "Envoyer le lien de réinitialisation",
+            "backToLogin": "Retour à la connexion",
+            "emailSent": "E-mail de réinitialisation de mot de passe envoyé avec succès",
+            "emailSentMessage": "Consultez votre e-mail pour les instructions de réinitialisation du mot de passe",
+            "emailNotFound": "Adresse e-mail non trouvée",
+            "error": "Échec de l'envoi de l'e-mail de réinitialisation"
+        },
+        "resetPassword": {
+            "title": "Réinitialiser le mot de passe",
+            "subtitle": "Créez un nouveau mot de passe pour votre compte",
+            "newPassword": "Nouveau mot de passe",
+            "newPasswordPlaceholder": "Entrez le nouveau mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+            "resetButton": "Réinitialiser le mot de passe",
+            "resetSuccess": "Mot de passe réinitialisé avec succès",
+            "resetError": "Échec de la réinitialisation du mot de passe",
+            "invalidToken": "Le lien de réinitialisation du mot de passe a expiré",
+            "backToLogin": "Retour à la connexion"
+        },
+        "changePassword": {
+            "title": "Modifier le mot de passe",
+            "subtitle": "Mettez à jour votre mot de passe",
+            "currentPassword": "Mot de passe actuel",
+            "currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
+            "newPassword": "Nouveau mot de passe",
+            "newPasswordPlaceholder": "Entrez le nouveau mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+            "changeButton": "Modifier le mot de passe",
+            "changeSuccess": "Mot de passe modifié avec succès",
+            "changeError": "Échec de la modification du mot de passe",
+            "incorrectPassword": "Le mot de passe actuel est incorrect"
+        },
+        "emailVerification": {
+            "title": "Vérifier l'e-mail",
+            "subtitle": "Un lien de vérification a été envoyé à votre e-mail",
+            "resendEmail": "Renvoyer l'e-mail",
+            "resendSuccess": "E-mail de vérification renvoyé",
+            "resendError": "Échec de l'envoi de l'e-mail de vérification",
+            "verificationPending": "Vérification de votre e-mail...",
+            "verificationSuccess": "E-mail vérifié avec succès",
+            "verificationError": "Échec de la vérification de l'e-mail"
+        },
+        "profile": {
+            "title": "Profil",
+            "editProfile": "Modifier le profil",
+            "personalInfo": "Informations personnelles",
+            "firstName": "Prénom",
+            "lastName": "Nom",
+            "email": "Adresse e-mail",
+            "phone": "Numéro de téléphone",
+            "dateOfBirth": "Date de naissance",
+            "profilePicture": "Photo de profil",
+            "language": "Langue",
+            "updateSuccess": "Profil mis à jour avec succès",
+            "updateError": "Échec de la mise à jour du profil",
+            "saving": "Enregistrement...",
+            "uploadingImage": "Téléchargement de l'image..."
+        },
+        "logout": {
+            "title": "Déconnexion",
+            "message": "Êtes-vous sûr de vouloir vous déconnecter ?",
+            "confirm": "Déconnexion",
+            "cancel": "Annuler"
+        },
+        "session": {
+            "expired": "Votre session a expiré. Veuillez vous reconnecter.",
+            "loading": "Initialisation de l'authentification..."
+        },
+        "businessKYC": {
+            "title": "Inscription commerciale",
+            "subtitle": "Complétez vos informations commerciales",
+            "step": "Étape {{current}} sur {{total}}",
+            "nextStep": "Continuer vers la vérification commerciale",
+            "selectAccountType": "Sélectionner le type de compte",
+            "businessAccount": "Compte commercial",
+            "personalAccount": "Compte personnel"
+        }
+    },
+    "addresses": {
+        "title": "Adresses",
+        "deliveryAddresses": "Adresses de livraison",
+        "savedAddresses": "Adresses enregistrées",
+        "loading": "Chargement de vos adresses...",
+        "emptyState": "Aucune adresse enregistrée pour le moment. Ajoutez votre première adresse de livraison.",
+        "fallbackUserName": "Utilisateur du compte",
+        "badges": {
+            "primary": "PRINCIPALE"
+        },
+        "labels": {
+            "home": "Domicile",
+            "work": "Travail",
+            "other": "Autre"
+        },
+        "fields": {
+            "name": "Nom",
+            "street": "Rue",
+            "city": "Ville",
+            "state": "État",
+            "zipCode": "Code postal",
+            "country": "Pays"
+        },
+        "actions": {
+            "addNewAddress": "Ajouter une nouvelle adresse",
+            "setAsPrimary": "Définir comme principale",
+            "setAsPrimaryAddress": "Définir comme adresse principale",
+            "editAddress": "Modifier l'adresse",
+            "deleteAddress": "Supprimer l'adresse",
+            "close": "Fermer",
+            "saving": "Enregistrement...",
+            "updating": "Mise à jour...",
+            "saveAddress": "Enregistrer l'adresse",
+            "updateAddress": "Mettre à jour l'adresse"
+        },
+        "details": {
+            "title": "Détails de l'adresse",
+            "primaryHint": "Cette adresse est votre adresse principale active."
+        },
+        "form": {
+            "newTitle": "Nouvelle adresse",
+            "editTitle": "Modifier l'adresse",
+            "receiverNameLabel": "NOM DU DESTINATAIRE",
+            "streetAddressLabel": "ADRESSE",
+            "streetPlaceholder": "ex. 124 Atlantic Ave",
+            "zipPlaceholder": "ex. 11201"
+        },
+        "pickers": {
+            "selectCountry": "Sélectionner un pays",
+            "selectState": "Sélectionner un état",
+            "selectCity": "Sélectionner une ville",
+            "selectCountryFirst": "Sélectionnez d'abord un pays",
+            "selectStateFirst": "Sélectionnez d'abord un état",
+            "noOptions": "Aucune option disponible."
+        },
+        "errors": {
+            "requiredFields": "Veuillez remplir tous les champs d'adresse obligatoires.",
+            "updateFailed": "Impossible de mettre à jour l'adresse pour le moment. Veuillez réessayer.",
+            "saveFailed": "Impossible d'enregistrer l'adresse pour le moment. Veuillez réessayer."
+        },
+        "alerts": {
+            "updateFailedTitle": "Échec de la mise à jour",
+            "setPrimaryFailedMessage": "Impossible de définir cette adresse comme principale. Veuillez réessayer.",
+            "deleteFailedTitle": "Échec de la suppression",
+            "deleteFailedMessage": "Impossible de supprimer cette adresse. Veuillez réessayer."
+        },
+        "deleteConfirm": {
+            "title": "Supprimer l'adresse",
+            "message": "Êtes-vous sûr de vouloir supprimer cette adresse ? Cette action est irréversible.",
+            "confirmLabel": "Supprimer",
+            "cancelLabel": "Annuler"
+        }
+    }
+}
