@@ -3,7 +3,6 @@ import { AccountChoiceScreen } from '@screens/auth/AccountChoiceScreen';
 import { BusinessKYCScreen } from '@screens/auth/BusinessKYCScreen';
 import { BusinessKYCSuccessScreen } from '@screens/auth/BusinessKYCSuccessScreen';
 import AuthScreen from '@screens/auth/LoginScreen';
-import { SignUpScreen } from '@screens/auth/SignUpScreen';
 import ForgotPasswordScreen from '@screens/auth/password-recovery/ForgotPasswordScreen';
 import PasswordResetSuccessScreen from '@screens/auth/password-recovery/PasswordResetSuccessScreen';
 import ResetPasswordScreen from '@screens/auth/password-recovery/ResetPasswordScreen';
@@ -21,7 +20,8 @@ const AuthStackNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Auth">
             <Stack.Screen name="AccountChoice" component={AccountChoiceScreen} />
             <Stack.Screen name="Auth" component={AuthScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="SignUp" component={BusinessKYCScreen} />
+            {/* <Stack.Screen name="SignUp" component={SignUpScreen} /> */}
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="VerifyResetCode" component={VerifyResetCodeScreen} />
             <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
