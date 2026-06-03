@@ -26,6 +26,9 @@ const LIBRARY_OPTIONS: ImageLibraryOptions = {
 };
 
 function resolveAssetPath(asset: ImagePickerAsset): string | null {
+    // Prefer the originalPath when available (Android). Otherwise return
+    // the uri but strip a leading `file://` scheme because the native
+    // cropper expects a plain filesystem path on iOS.
     if (asset.originalPath) {
         return asset.originalPath;
     }
@@ -44,9 +47,10 @@ function inferFileName(path: string): string {
 }
 
 function normalizeFile(input: { path: string; filename?: string; mime?: string }): ShopImageFile {
+    const rawPath = input.path.replace(/^file:\/\//, '');
     return {
-        path: input.path,
-        fileName: input.filename || inferFileName(input.path),
+        path: `file://${rawPath}`,   // always file:// prefixed
+        fileName: input.filename || inferFileName(rawPath),
         mimeType: input.mime || 'image/jpeg',
     };
 }
@@ -94,17 +98,25 @@ export async function pickAndCropFromLibrary(
             return null;
         }
 
-        const cropped = await CropPicker.openCropper({
-            path: cropPath,
-            mediaType: 'photo',
-            width: cropOptions.width,
-            height: cropOptions.height,
-            cropperCircleOverlay: Boolean(cropOptions.circleOverlay),
-            compressImageQuality: 0.8,
-            forceJpg: true,
-        });
+        console.log('HybridImagePicker: opening cropper with path ->', cropPath);
+        try {
+            const cropped = await CropPicker.openCropper({
+                path: cropPath,
+                mediaType: 'photo',
+                width: cropOptions.width,
+                height: cropOptions.height,
+                cropperCircleOverlay: Boolean(cropOptions.circleOverlay),
+                compressImageQuality: 0.8,
+                forceJpg: true,
+            });
 
-        return normalizeFile(cropped);
+            console.log('HybridImagePicker: cropper returned ->', cropped?.path);
+            return normalizeFile(cropped as any);
+        } catch (err) {
+            console.error('HybridImagePicker: cropper failed', err);
+            Alert.alert(errorTitle, 'Image cropping failed.');
+            return null;
+        }
     } catch (error) {
         const code = (error as { code?: string }).code;
         if (code === 'E_PICKER_CANCELLED') {
@@ -118,6 +130,6 @@ export async function pickAndCropFromLibrary(
 }
 
 export const SHOP_CROP_PRESETS = {
-    banner: { width: 1200, height: 400 } as const,
-    profile: { width: 300, height: 300, circleOverlay: true } as const,
+    banner: { width: 1200, height: 400  } as const,
+    profile: { width: 300, height: 300} as const,
 };
