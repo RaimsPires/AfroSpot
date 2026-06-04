@@ -67,6 +67,11 @@ class Spot(BaseModel):
         blank=True, 
         null=True
     )
+    business_license = models.FileField(
+        upload_to=ImageUploadHandler('shops/licenses/'),
+        blank=True,
+        null=True
+    )
 
     # Status Flags
     is_active = models.BooleanField(default=True)
@@ -76,3 +81,9 @@ class Spot(BaseModel):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Spot"
+        verbose_name_plural = "Spots"
+        ordering = ['-created_at']
+        db_table = 'spots'

@@ -2,6 +2,7 @@
 export type UploadSlot = {
     fileName: string;
     path: string;
+    mimeType?: string;
 };
 
 export type UploadState = {

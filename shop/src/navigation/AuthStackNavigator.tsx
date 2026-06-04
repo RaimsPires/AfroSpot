@@ -11,6 +11,7 @@ import { UserOnboardingScreen } from '@screens/onboarding/UserOnboardingScreen';
 import { OrderFulfillmentScreen } from '@screens/orders/OrderFulfillmentScreen';
 import React from 'react';
 
+import SignUpScreen from '@screens/auth/SignUpScreen';
 import type { AuthStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -20,8 +21,7 @@ const AuthStackNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Auth">
             <Stack.Screen name="AccountChoice" component={AccountChoiceScreen} />
             <Stack.Screen name="Auth" component={AuthScreen} />
-            <Stack.Screen name="SignUp" component={BusinessKYCScreen} />
-            {/* <Stack.Screen name="SignUp" component={SignUpScreen} /> */}
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="VerifyResetCode" component={VerifyResetCodeScreen} />
             <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />

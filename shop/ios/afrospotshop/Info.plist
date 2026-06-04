@@ -8,7 +8,7 @@
 		<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 		<string>[REASON]</string>
 		<key>NSCameraUsageDescription</key>
-		<string>[REASON]</string>
+		<string>Camera access is needed to capture profile photos and documents for your business registration.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>[REASON]</string>
 		<key>NSLocationTemporaryUsageDescriptionDictionary</key>
@@ -19,9 +19,9 @@
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>[REASON]</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>[REASON]</string>
+		<string>Photo library access is needed to upload business profile images, banners, and documents.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>[REASON]</string>
+		<string>Photo library access is needed to save captured images.</string>
 
 
 		<key>UIAppFonts</key>

@@ -20,8 +20,9 @@ node_require('react-native-permissions/scripts/setup.rb')
 
 
 setup_permissions([
-  'Calendars',
+  'Calendar',
   'CalendarsWriteOnly',
+  'Camera',
   'LocationAccuracy',
   'LocationWhenInUse',
   'MediaLibrary',

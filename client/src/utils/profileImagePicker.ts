@@ -1,32 +1,21 @@
 import { Alert, Linking } from 'react-native';
 
+import CropPicker from 'react-native-image-crop-picker';
 import {
-    type Asset as ImagePickerAsset,
     launchCamera,
     launchImageLibrary,
     type CameraOptions,
     type ImageLibraryOptions,
+    type Asset as ImagePickerAsset,
 } from 'react-native-image-picker';
-import CropPicker from 'react-native-image-crop-picker';
 
 import { getPermissionStatus, PermissionType, requestPermission, RESULTS } from '@services/permissionService';
 import { UploadableImage } from '@type/auth';
+import { PROFILE_IMAGE_CROP_OPTIONS, PROFILE_IMAGE_OPTIONS } from './imageOption';
 
 export type ProfileImageSource = 'camera' | 'gallery';
 
-const PROFILE_IMAGE_OPTIONS = {
-    mediaType: 'photo' as const,
-    includeBase64: false,
-    selectionLimit: 1,
-};
 
-const PROFILE_IMAGE_CROP_OPTIONS = {
-    width: 800,
-    height: 800,
-    cropperCircleOverlay: true,
-    compressImageQuality: 0.8,
-    forceJpg: true,
-};
 
 const PICKER_OPEN_DELAY_MS = 180;
 
@@ -100,7 +89,7 @@ async function ensurePermission(permissionType: PermissionType, permissionName: 
     return false;
 }
 
-function normalizeCroppedImage(asset: { path: string; mime?: string; filename?: string }): UploadableImage {
+export function normalizeCroppedImage(asset: { path: string; mime?: string; filename?: string }): UploadableImage {
     const mimeType = asset.mime || 'image/jpeg';
     const extension = mimeType.split('/')[1] || 'jpg';
 

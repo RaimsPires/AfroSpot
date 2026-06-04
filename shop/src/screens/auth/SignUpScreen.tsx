@@ -1,12 +1,18 @@
-import CountryPicker, { CountryCode, type Country } from '@avaiyakapil/react-native-country-picker';
-import { AppIcon, Button, DatePickerField, Input } from '@components/ui';
+import CountryPicker from '@avaiyakapil/react-native-country-picker';
+import RenderCountryButton from '@components/business-kyc/RenderCountryButton';
+import { AppIcon, DatePickerField, Input } from '@components/ui';
+import AppButton from '@components/ui/Button';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AuthStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { pickAndCropFromLibrary, SHOP_CROP_PRESETS } from '@utils/hybridImagePicker';
-import React, { useState } from 'react';
+import { apiClient } from '@services/apiClient';
+import { useRegistrationStore } from '@store/useRegistrationStore';
+import { EmailCheckResponse } from '@type/auth';
+import { pickProfileImage } from '@utils/profileImagePicker';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+    ActivityIndicator,
     Image,
     Keyboard,
     KeyboardAvoidingView,
@@ -23,54 +29,95 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SignUpNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const SignUpScreen = () => {
     const { colors, spacing, isDark } = useTheme();
     const navigation = useNavigation<SignUpNavigationProp>();
 
-    const [profileImage, setProfileImage] = useState<string | null>(null);
-    const [countryCode, setCountryCode] = useState<CountryCode>('NG');
-    const [selectedCountryCode, setSelectedCountryCode] = useState<CountryCode>('NG');
+    const {fieldErrors , firstName, lastName ,setFirstName,setLastName , dateOfBirth , setDateOfBirth , userProfileImage , setUserProfileImage , userCountryCode , setUserCountryCode , userPhone , setUserPhone , userEmail , setUserEmail , password , setPassword , confirmPassword , setConfirmPassword } = useRegistrationStore();
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
 
-    const [fieldErrors, setFieldErrors] = useState<Partial<Record<string, string>>>({});
-    const [dateOfBirth, setDateOfBirth] = useState<Date | null>(new Date(1990, 0, 1));
+
+    // --- Email availability check ---
+    type EmailStatus = 'idle' | 'checking' | 'available' | 'taken' | 'error';
+    const [emailStatus, setEmailStatus] = useState<EmailStatus>('idle');
+    const emailDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
     const isDisabled =
         !firstName.trim() ||
         !lastName.trim() ||
-        !email.trim() ||
-        !phone.trim() ||
+        !userEmail.trim() ||
+        !userPhone.trim() ||
         !password.trim() ||
         password !== confirmPassword;
 
+
+    // --- Email status indicator ---
+    const renderEmailAdornment = () => {
+        if (emailStatus === 'checking') {
+            return <ActivityIndicator size="small" color={colors.primary} />;
+        }
+        if (emailStatus === 'available') {
+            return <AppIcon library="Feather" name="check-circle" size={18} color="#22c55e" />;
+        }
+        if (emailStatus === 'taken') {
+            return <AppIcon library="Feather" name="x-circle" size={18} color={colors.error ?? '#ef4444'} />;
+        }
+        return null;
+    };
+
+    const emailHelperText =
+        emailStatus === 'available'
+            ? 'Email is available.'
+            : emailStatus === 'taken'
+                ? 'This email is already registered.'
+                : fieldErrors.email ?? undefined;
+
+    const emailHelperColor =
+        emailStatus === 'available'
+            ? '#22c55e'
+            : emailStatus === 'taken'
+                ? colors.error ?? '#ef4444'
+                : colors.error ?? '#ef4444';
+
+    console.log(emailHelperText);
+    // --- Email debounce check ---
+    useEffect(() => {
+        if (emailDebounceRef.current) { clearTimeout(emailDebounceRef.current); }
+
+        if (!userEmail.trim() || !EMAIL_RE.test(userEmail.trim())) {
+            setEmailStatus('idle');
+            return;
+        }
+
+        setEmailStatus('checking');
+        emailDebounceRef.current = setTimeout(async () => {
+            try {
+                const response = await apiClient.get<EmailCheckResponse>(
+                    `/auth/check-email/?email=${encodeURIComponent(userEmail.trim().toLowerCase())}`,
+                );
+                setEmailStatus(response.data.available ? 'available' : 'taken');
+            } catch {
+                setEmailStatus('error');
+            }
+        }, 500);
+
+        return () => {
+            if (emailDebounceRef.current) { clearTimeout(emailDebounceRef.current); }
+        };
+    }, [userEmail]);
+
     const handlePickImage = async () => {
-        const selectedImage = await pickAndCropFromLibrary(
-            SHOP_CROP_PRESETS.profile,
-            'Error',
-            'Could not select image',
-        );
+        const selectedImage = await pickProfileImage();
 
         if (!selectedImage) {
             return;
         }
 
-        setProfileImage(selectedImage.path);
+        setUserProfileImage(selectedImage.path);
     };
-
-    const renderCountryButton = (country: Country) => (
-        <View style={styles.selectedCountryRow}>
-            <Image source={{ uri: country.flag }} style={styles.selectedCountryFlag} />
-            <Text style={[styles.selectedCountryName, { color: colors.text }]} numberOfLines={1}>
-                {country.name?.common}
-            </Text>
-        </View>
-    );
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -106,8 +153,8 @@ export const SignUpScreen = () => {
                             {/* Profile Photo Picker */}
                             <View style={styles.photoSection}>
                                 <TouchableOpacity onPress={handlePickImage} activeOpacity={0.8} style={styles.avatarContainer}>
-                                    {profileImage ? (
-                                        <Image source={{ uri: profileImage }} style={styles.avatar} />
+                                    {userProfileImage ? (
+                                        <Image source={{ uri: userProfileImage }} style={styles.avatar} />
                                     ) : (
                                         <View style={[styles.avatarPlaceholder, { backgroundColor: colors.surface }]}>
                                             <AppIcon library="Feather" name="user" size={40} color={colors.textSecondary} />
@@ -151,7 +198,7 @@ export const SignUpScreen = () => {
                                         value={dateOfBirth}
                                         onChange={(d) => {
                                             setDateOfBirth(d);
-                                            if (fieldErrors.dob) { setFieldErrors((e) => ({ ...e, dob: undefined })); }
+                                            // if (fieldErrors.dob) { setFieldErrors((e) => ({ ...e, dob: undefined })); }
                                         }}
                                         placeholder="Select your date of birth"
                                         maximumDate={new Date()}
@@ -165,22 +212,33 @@ export const SignUpScreen = () => {
                                     )}
                                 </View>
 
-                                <Input
-                                    label="Email Address"
-                                    placeholder="john@example.com"
-                                    leftIcon={{ library: 'Feather', name: 'mail' }}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                />
+                                <View>
+
+                                    <Input
+                                        label="Email Address"
+                                        placeholder="john@example.com"
+                                        leftIcon={{ library: 'Feather', name: 'mail' }}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        value={userEmail}
+                                        onChangeText={setUserEmail}
+                                    />
+                                    <View style={styles.emailAdornmentRow}>
+                                        {renderEmailAdornment()}
+                                        {emailStatus === 'available' && (
+                                            <Text style={[styles.emailHelperText, { color: emailHelperColor }]}>
+                                                {emailHelperText}
+                                            </Text>
+                                        )}
+                                    </View>
+                                </View>
 
                                 <View>
                                     <Text style={[styles.labelFix, { color: colors.text }]}>Country</Text>
                                     <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                                         <CountryPicker
                                             theme={isDark ? 'dark' : 'light'}
-                                            countryCode={selectedCountryCode}
+                                            countryCode={userCountryCode}
                                             showCallingCode={false}
                                             showCountryName
                                             showFlag
@@ -193,9 +251,9 @@ export const SignUpScreen = () => {
                                             }}
                                             iconColor={colors.text}
                                             // containerStyle={styles.countryPickerButton}
-                                            renderSelectedCountry={renderCountryButton}
+                                            renderSelectedCountry={RenderCountryButton}
                                             onSelect={(code) => {
-                                                setSelectedCountryCode(code);
+                                                setUserCountryCode(code);
                                             }}
                                         />
                                     </View>
@@ -208,7 +266,7 @@ export const SignUpScreen = () => {
                                         <View style={[styles.countryPickerWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                                             <CountryPicker
                                                 theme={isDark ? 'dark' : 'light'}
-                                                countryCode={countryCode}
+                                                countryCode={userCountryCode}
                                                 showCountryName={false}
                                                 showCallingCode
                                                 showFlag
@@ -222,7 +280,7 @@ export const SignUpScreen = () => {
                                                 iconColor={colors.text}
                                                 // containerStyle={styles.countryPickerButton}
                                                 onSelect={(code) => {
-                                                    setCountryCode(code);
+                                                    setUserCountryCode(code);
                                                 }}
                                             />
                                         </View>
@@ -233,8 +291,8 @@ export const SignUpScreen = () => {
                                             label=" "
                                             placeholder="812 345 6789"
                                             keyboardType="phone-pad"
-                                            value={phone}
-                                            onChangeText={setPhone}
+                                            value={userPhone}
+                                            onChangeText={setUserPhone}
                                         />
                                     </View>
                                 </View>
@@ -257,9 +315,9 @@ export const SignUpScreen = () => {
                                     onChangeText={setConfirmPassword}
                                 />
 
-                                <Button
+                                <AppButton
                                     title="Create Account"
-                                    disabled={isDisabled}
+                                    disabled={isDisabled || emailStatus === 'checking' || emailStatus === 'taken'}
                                     onPress={() => navigation.navigate('BusinessKYC')}
                                     style={{ marginTop: spacing(1) }}
                                 />
@@ -328,7 +386,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
     },
+    emailAdornmentRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, paddingHorizontal: 4 },
+    emailHelperText: { fontSize: 12 },
     fieldError: { fontSize: 12, marginTop: 4, paddingHorizontal: 4 },
+    fieldErrorCenter: { textAlign: 'center' },
     footerLink: { marginTop: 20, alignItems: 'center' },
     footerText: { fontSize: 15 },
 });

@@ -1,7 +1,7 @@
 import CountryPicker from "@avaiyakapil/react-native-country-picker";
 import { Input } from "@components/ui";
 import { useTheme } from "@contexts/ThemeContext";
-import { useBusinessRegistrationStore } from "@store/useBusinessRegistrationStore";
+import { useRegistrationStore } from "@store/useRegistrationStore";
 import { BusinessCategory } from "@type/business-kyc";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import RenderCountryButton from "./RenderCountryButton";
@@ -10,7 +10,7 @@ const BUSINESS_CATEGORIES: BusinessCategory[] = ['Beauty', 'Food', 'Fashion', 'E
 
 const BusinessKycDetails = () => {
     const { colors, spacing } = useTheme();
-    const {businessAddress,businessCategory , businessCountryCode , businessName , businessPhoneCountryCode , contactEmail , contactPhone , taxRegistrationNumber ,setBusinessAddress , setBusinessName , setBusinessCategory , setBusinessCountryCode , setBusinessPhoneCountryCode , setContactEmail , setContactPhone , setTaxRegistrationNumber } = useBusinessRegistrationStore()
+    const {businessAddress,businessCategory , businessCountryCode , businessName , businessPhoneCountryCode , contactEmail , contactPhone , taxRegistrationNumber ,setBusinessAddress , setBusinessName , setBusinessCategory , setBusinessCountryCode , setBusinessPhoneCountryCode , setContactEmail , setContactPhone , setTaxRegistrationNumber } = useRegistrationStore()
     return (
         <View style={styles.section}>
             <Input label="Business name" inputStyle={{ color: colors.text }} value={businessName} onChangeText={setBusinessName} placeholder="Enter legal business name" />_

@@ -1561,6 +1561,16 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-documents/picker@^12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-12.0.1.tgz#ea59796175308be9818dd9e8f14a41145c35042b"
+  integrity sha512-vpJKb4t/5bnxe9+gQl+plJfKrrIsmYwANGhNH2B9E1dS1+6FDBzg4Dwmcq4ueaGfkRKEPJ606mJttVEH1ZKZaA==
+
+"@react-native-documents/viewer@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/viewer/-/viewer-4.0.0.tgz#620ecf99ff42251e6206fb3a2665954959c812a3"
+  integrity sha512-yBi/+6QOJDxZI3zWvfFT259xsIbTcnH0Utl85b0eQPcXG7CWDYvcM3A+Tg0NWrFj4VfX4f06+kv8khN/alfwMA==
+
 "@react-native-vector-icons/ant-design@^13.1.1":
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/@react-native-vector-icons/ant-design/-/ant-design-13.1.1.tgz#b33f6e0e6a664723a633c38afe89824138102631"

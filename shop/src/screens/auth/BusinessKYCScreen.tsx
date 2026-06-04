@@ -1,9 +1,12 @@
+import BusinessKycDetails from '@components/business-kyc/business-kyc-details';
+import BusinessKYCHeader from '@components/business-kyc/business-kyc-header';
+import BusinessKycImagesUpload from '@components/business-kyc/business-kyc-imagesUpload';
 import { Button } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
-import { AuthStackParamList } from '@navigation/types';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { selectCanProceedToStep2, selectCanSubmitFinal, useBusinessRegistrationStore } from '@store/useBusinessRegistrationStore';
-import { pickAndCropFromLibrary, SHOP_CROP_PRESETS } from '@utils/hybridImagePicker';
+import { selectCanProceedToStep2, selectCanSubmitFinal, useRegistrationStore } from '@store/useRegistrationStore';
+import { pickBannerImage } from '@utils/bannerImagePicker';
+import { pickDocumentImage } from '@utils/documentImagePicker';
+import { pickProfileImage } from '@utils/profileImagePicker';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
@@ -17,31 +20,24 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BusinessKycDetails from './business-kyc/business-kyc-details';
-import BusinessKYCHeader from './business-kyc/business-kyc-header';
-import BusinessKycImagesUpload from './business-kyc/business-kyc-imagesUpload';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'BusinessKYC'>;
+// type Props = NativeStackScreenProps<AuthStackParamList, 'BusinessKYC'>;
 
 
 
 
-export const BusinessKYCScreen: React.FC<Props> = ({ navigation }) => {
+export const BusinessKYCScreen = () => {
     const { colors } = useTheme();
-    const { setIsCropping, setUpload, isCropping, uploads, isSubmitting, getFormData, reset } = useBusinessRegistrationStore();
+    const { setIsCropping, setUpload, isCropping, uploads, isSubmitting, submitFullRegistration } = useRegistrationStore();
 
     // --- STEP TRACKING ---
     const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
 
-    const pickBannerImage = async () => {
+    const pickBannerImageHandler = async () => {
         setIsCropping(true);
         try {
-            const image = await pickAndCropFromLibrary(
-                SHOP_CROP_PRESETS.banner,
-                'Upload failed',
-                'Could not select banner.'
-            );
+            const image = await pickBannerImage();
             console.log('Selected banner image:');
             if (image) setUpload('banner', image);
         } finally {
@@ -50,28 +46,20 @@ export const BusinessKYCScreen: React.FC<Props> = ({ navigation }) => {
         }
     };
 
-    const pickProfileImage = async () => {
+    const pickProfileImageHandler = async () => {
         setIsCropping(true);
         try {
-            const image = await pickAndCropFromLibrary(
-                SHOP_CROP_PRESETS.profile,
-                'Upload failed',
-                'Could not select logo.'
-            );
+            const image = await pickProfileImage();
             if (image) setUpload('profile', image);
         } finally {
             setTimeout(() => setIsCropping(false), 100);
         }
     };
 
-    const pickDocumentImage = async () => {
+    const pickDocumentImageHandler = async () => {
         setIsCropping(true);
         try {
-            const image = await pickAndCropFromLibrary(
-                null,
-                'Upload failed',
-                'Could not select document.'
-            );
+            const image = await pickDocumentImage();
             if (image) setUpload('document', image);
         } finally {
             setTimeout(() => setIsCropping(false), 100);
@@ -83,13 +71,7 @@ export const BusinessKYCScreen: React.FC<Props> = ({ navigation }) => {
     const handleSubmit = async () => {
 
         try {
-            const data = getFormData();
-            console.log(data);
-            reset(); // Clear form immediately to prevent duplicate submissions
-
-            // Simulate API call
-            await new Promise<void>((resolve) => setTimeout(resolve, 2000));
-
+            await submitFullRegistration();
 
         } catch (error) {
             console.error('Submission error:', error);
@@ -126,7 +108,7 @@ export const BusinessKYCScreen: React.FC<Props> = ({ navigation }) => {
 
                             {/* --- STEP 2: FILE UPLOADS --- */}
                             {currentStep === 2 && (
-                                <BusinessKycImagesUpload uploads={uploads} pickBannerImage={pickBannerImage} pickProfileImage={pickProfileImage} pickDocumentImage={pickDocumentImage} />
+                                <BusinessKycImagesUpload uploads={uploads} pickBannerImage={pickBannerImageHandler} pickProfileImage={pickProfileImageHandler} pickDocumentImage={pickDocumentImageHandler} />
                             )}
                         </ScrollView>
 
@@ -163,11 +145,5 @@ const styles = StyleSheet.create({
     title: { fontSize: 28, fontWeight: '900', marginBottom: 8 },
     subtitle: { fontSize: 14, lineHeight: 20 },
     content: { padding: 24 },
-
-    // label: { fontSize: 14, fontWeight: '700', marginBottom: 10 },
-    // phoneRow: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: 16 },
-    // categoryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 14 },
-    // categoryChip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 10 },
-    // countryPickerButton: { width: '100%' },
     footer: { padding: 24, borderTopWidth: 1 },
 });
