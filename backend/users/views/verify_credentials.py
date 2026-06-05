@@ -5,17 +5,23 @@ from rest_framework import status
 from users.serializers import VerifyCredentialsSerializer
 from drf_spectacular.utils import extend_schema
 
+# class VerifyCredentialsResponseSerializer(serializers.Serializer):
+#     message = serializers.CharField(default="Credentials are valid.")
+#     user_id = serializers.IntegerField()
+
 class VerifyCredentialsView(APIView):
     """
     Takes a login_id (email or phone) and a password.
     Returns the user ID if the credentials are valid.
     """
     permission_classes = [AllowAny]
+    serializer_class = VerifyCredentialsSerializer
     
     @extend_schema(
         request=VerifyCredentialsSerializer,
-        summary="Verify User Credentials",
-        description="Takes a login_id (email or phone) and a password to verify user credentials."
+        # summary="Verify User Credentials",
+        # description="Takes a login_id (email or phone) and a password to verify user credentials."
+        responses={200: VerifyCredentialsSerializer}
     )
     def post(self, request, *args, **kwargs):
         # 1. Pass the data and the request context to the serializer

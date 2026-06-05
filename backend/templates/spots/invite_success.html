@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full space-y-6 text-center bg-white p-8 sm:p-12 rounded-2xl shadow-xl border border-gray-100">
+        
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-50 border border-emerald-100">
+            <svg class="h-8 w-8 text-emerald-500 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+
+        <div class="space-y-3">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">
+                {% translate "Welcome to the Team!" %} 🎉
+            </h1>
+            <p class="text-base text-gray-500 leading-relaxed px-2">
+                {% translate "Your team position invitation sequence has been completely accepted and updated successfully." %}
+            </p>
+            <p class="text-xs font-medium text-gray-400 bg-gray-50 rounded-lg py-2 px-3 inline-block animate-pulse">
+                ℹ️ {% translate "We are currently attempting to route your navigation flow directly back inside your installed AfroSpot mobile application shell environment automatically..." %}
+            </p>
+        </div>
+
+        <div class="pt-4">
+            <a href="afrospot://login" 
+               class="inline-flex items-center justify-center w-full py-3.5 px-6 border border-transparent text-base font-black rounded-xl text-white bg-purple-600 hover:bg-purple-700 transition-all shadow-md hover:shadow-lg active:scale-[0.99] font-sans">
+                {% translate "Open AfroSpot Native Application" %}
+                <svg class="ml-2 -mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        // Attempt immediate universal execution context lookup jump instantly
+        window.location.href = "afrospot://login";
+        
+        // Safety Fallback: trigger background window context window redirect loop checks
+        setTimeout(function() {
+            window.location.replace("afrospot://login");
+        }, 800);
+    });
+</script>
+{% endblock content %}

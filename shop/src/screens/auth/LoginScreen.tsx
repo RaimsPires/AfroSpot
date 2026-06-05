@@ -20,8 +20,8 @@ const LoginScreen = () => {
     const navigation = useNavigation<LoginScreenNavigationProp>();
     const { signIn, loading } = useAuth();
     const route = useRoute();
-    const [email, setEmail] = useState('admin@admin.com');
-    const [password, setPassword] = useState('1234');
+    const [email, setEmail] = useState('admin2@admin.com');
+    const [password, setPassword] = useState('Afrospot123!');
     const [loginError, setLoginError] = useState<string | null>(null);
     const mode = (route.params as AuthStackParamList['Auth'])?.mode;
     const isBusinessRegistrationMode = mode === 'businessRegistration';

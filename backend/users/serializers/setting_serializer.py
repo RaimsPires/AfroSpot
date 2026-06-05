@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from users.models.setting import UserSettings
+from users.models.user_setting import UserSettings
 from users.models import UserSettings
 
 class SettingSerializer(serializers.ModelSerializer):

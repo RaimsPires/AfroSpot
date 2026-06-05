@@ -7,6 +7,7 @@ export const palette = {
     success: '#10B981',
     warning: '#F59E0B',
     info: '#3B82F6',
+    textMuted:"#9CA3AF",
     gray: {
         100: '#F5F5F5',
         200: '#EEEEEE',

@@ -1,90 +1,182 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert,
-    Image,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
+    RefreshControl // 🚀 Added for pull-to-refresh functionality
+    ,
+
+
+
+
+
+
+
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
+import { apiClient } from '@services/apiClient';
+import { memberService, SpotMemberData, SpotRole } from '@services/memberService';
+import StaffEditModal from './staff/StaffEdithModal';
+import StaffMemberItem from './staff/StaffMemberItem';
 
-const INITIAL_STAFF = [
-    { id: '1', name: 'Kwame O.', role: 'Master Barber', email: 'kwame@kushitecutz.com', phone: '555-0101', avatar: 'https://i.pravatar.cc/150?img=11', status: 'Active' },
-    { id: '2', name: 'Amara J.', role: 'Braiding Expert', email: 'amara@kushitecutz.com', phone: '555-0102', avatar: 'https://i.pravatar.cc/150?img=47', status: 'On Leave' },
-    { id: '3', name: 'Malik T.', role: 'Senior Stylist', email: 'malik@kushitecutz.com', phone: '555-0103', avatar: 'https://i.pravatar.cc/150?img=8', status: 'Active' },
-];
+// Unified interface representing either an active member or a pending invitation row
+interface UnifiedStaffRow {
+    id: string;
+    name: string;
+    role: string;
+    roleKey: SpotRole;
+    email: string;
+    avatar: string;
+    statusLabel: string;
+    isInvitation: boolean; // 🚀 Flag to differentiate styling/actions
+}
 
 export const ManageStaffScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
-    const [staff, setStaff] = useState(INITIAL_STAFF);
+    const [staffList, setStaffList] = useState<UnifiedStaffRow[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false); // 🚀 Added state for refresh loader
     const [modalVisible, setModalVisible] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [activeEditTarget, setActiveEditTarget] = useState<{ id: number; email: string; role: SpotRole } | null>(null);
 
-    // Form State
-    const [name, setName] = useState('');
-    const [role, setRole] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+    // --- 1. Consolidated Data Query Fetcher ---
+    const loadStaffData = async () => {
+        try {
+            // Fetch both active members and pending invitations over the network simultaneously
+            const [membersResponse, invitesResponse] = await Promise.all([
+                apiClient.get<SpotMemberData[]>('/spots/members/'),
+                memberService.getPendingInvitations()
+            ]);
 
+            // Map accepted/active members
+            const acceptedMembers: UnifiedStaffRow[] = membersResponse.data.map(member => ({
+                id: `member-${member.id}`,
+                name: `${member.user.first_name} ${member.user.last_name}`.trim() || member.user.email,
+                role: member.role_display,
+                roleKey: member.role,
+                email: member.user.email,
+                avatar: member.user.profile_picture || 'https://i.pravatar.cc/150?img=68',
+                statusLabel: 'Active',
+                isInvitation: false
+            }));
+
+            // Map unaccepted staging invitations
+            const pendingInvites: UnifiedStaffRow[] = invitesResponse.map(invite => ({
+                id: `invite-${invite.id}`,
+                name: invite.email.split('@')[0], // Fallback name display out of email handle string
+                role: invite.role.charAt(0).toUpperCase() + invite.role.slice(1),
+                roleKey: invite.role,
+                email: invite.email,
+                avatar: 'https://i.pravatar.cc/150?img=66', // Staging/invited user grey placeholder avatar
+                statusLabel: 'Pending Invite', // 🚀 Label used for display
+                isInvitation: true
+            }));
+
+            // Merge arrays cleanly (putting pending invitations at the top)
+            setStaffList([...pendingInvites, ...acceptedMembers]);
+        } catch (err) {
+            console.log(err);
+
+            Alert.alert("Sync Error", "Could not synchronize operational personnel rosters.");
+        } finally {
+            setIsLoading(false);
+            setIsRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        loadStaffData();
+    }, []);
+
+    // --- 2. Pull To Refresh Handler Hook ---
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        loadStaffData();
+    }, []);
+
+    // --- 3. Interaction Handlers ---
     const openAddModal = () => {
-        setEditingId(null);
-        setName(''); setRole(''); setEmail(''); setPhone('');
+        setActiveEditTarget(null);
         setModalVisible(true);
     };
 
-    const openEditModal = (member: any) => {
-        setEditingId(member.id);
-        setName(member.name); setRole(member.role); setEmail(member.email); setPhone(member.phone);
-        setModalVisible(true);
-    };
-
-    const handleDelete = (id: string) => {
-        Alert.alert('Remove Staff', 'Are you sure you want to remove this staff member? This will reassign their upcoming bookings.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Remove', style: 'destructive', onPress: () => setStaff(staff.filter(s => s.id !== id)) },
-        ]);
-    };
-
-    const handleSave = () => {
-        if (!name || !role) {
-            Alert.alert('Missing Fields', 'Name and Role are required.');
+    const openEditModal = (row: UnifiedStaffRow) => {
+        if (row.isInvitation) {
+            Alert.alert("Pending Invitation", "This user hasn't created their account or accepted the invitation yet. You cannot update their role until they join.");
             return;
         }
-        const newMember = {
-            id: editingId || Date.now().toString(),
-            name, role, email, phone,
-            avatar: 'https://i.pravatar.cc/150?img=68', // Placeholder for new staff
-            status: 'Active',
-        };
 
-        if (editingId) {
-            setStaff(staff.map(s => (s.id === editingId ? { ...s, ...newMember } : s)));
-        } else {
-            setStaff([...staff, newMember]);
-        }
-        setModalVisible(false);
+        // Extract raw numeric primary key out of string prefix map
+        const numericalId = parseInt(row.id.replace('member-', ''), 10);
+        setActiveEditTarget({
+            id: numericalId,
+            email: row.email,
+            role: row.roleKey,
+        });
+        setModalVisible(true);
     };
+
+    const handleSaveAction = async (email: string, role: SpotRole) => {
+        if (activeEditTarget) {
+            await memberService.updateMemberRole(activeEditTarget.id, role);
+        } else {
+            await memberService.addMember(email, role);
+        }
+    };
+
+const handleDelete = (row: UnifiedStaffRow) => {
+    console.log(row.id);
+    
+    const title = row.isInvitation ? 'Cancel Invitation' : 'Remove Staff';
+    const msg = row.isInvitation 
+        ? `Are you sure you want to revoke the pending invitation sent to ${row.email}?`
+        : `Are you sure you want to remove ${row.name}?`;
+
+    Alert.alert(title, msg, [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+            text: row.isInvitation ? 'Revoke' : 'Remove', 
+            style: 'destructive', 
+            onPress: async () => {
+                try {
+                    // Extract the raw numerical ID from your front-end display list prefix wrapper
+                    const numericId = row.id.replace(row.isInvitation ? 'invite-' : 'member-', '');
+
+                    if (row.isInvitation) {
+                        // 🚀 Use the new clean, explicit service method
+                        await memberService.revokeInvitation(numericId);
+                    } else {
+                        await memberService.removeMember(numericId);
+                    }
+
+                    // Optimistically remove row item context state visually
+                    setStaffList(prev => prev.filter(item => item.id !== row.id));
+                } catch (err) {
+                    console.log(err);
+                    
+                    Alert.alert("Error", "Could not complete action request. Please verify network paths.");
+                }
+            } 
+        },
+    ]);
+};
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-            {/* Header */}
+            {/* Header Navbar Block */}
             <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}
-                    onPress={() => navigation.goBack()}
-                >
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Manage Staff</Text>
@@ -93,58 +185,65 @@ export const ManageStaffScreen = ({ navigation }: any) => {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={styles.listContent}>
-                {staff.map((member) => (
-                    <View key={member.id} style={[styles.staffCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                        <Image source={{ uri: member.avatar }} style={styles.avatar} />
-                        <View style={styles.infoCol}>
-                            <Text style={[styles.name, { color: colors.text }]}>{member.name}</Text>
-                            <Text style={[styles.role, { color: colors.primary }]}>{member.role}</Text>
-                            <View style={styles.contactRow}>
-                                <AppIcon library="Feather" name="mail" size={12} color={colors.textSecondary} />
-                                <Text style={[styles.contactText, { color: colors.textSecondary }]}>{member.email}</Text>
-                            </View>
+            {isLoading && !isRefreshing ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            ) : (
+                <ScrollView
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
+                    // 🚀 Added pull to refresh control layout matrix configuration parameters
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            colors={[colors.primary]} // Android Theme Colorization
+                            tintColor={colors.primary} // iOS Theme Colorization
+                        />
+                    }
+                >
+                    {staffList.length === 0 ? (
+                        <View style={styles.emptyContainer}>
+                            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No team records or invitations found.</Text>
                         </View>
-                        <View style={styles.actionsCol}>
-                            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.border }]} onPress={() => openEditModal(member)}>
-                                <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: colors.destructiveSurface }]} onPress={() => handleDelete(member.id)}>
-                                <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
-            </ScrollView>
+                    ) : (
+                        staffList.map((row) => (
+                            <StaffMemberItem
+                                key={row.id}
+                                member={{
+                                    id: row.id,
+                                    name: row.name,
+                                    role: row.role,
+                                    email: row.email,
+                                    avatar: row.avatar,
+                                    // Pass custom labels styling indicators over into layout components
+                                    status: row.statusLabel
+                                }}
+                                handleDelete={() => handleDelete(row)}
+                                openEditModal={() => openEditModal(row)}
+                            />
+                        ))
+                    )}
+                </ScrollView>
+            )}
 
-            {/* Add/Edit Modal */}
-            <Modal visible={modalVisible} transparent animationType="slide">
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>{editingId ? 'Edit Staff' : 'Add Staff'}</Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}><AppIcon library="Feather" name="x" size={24} color={colors.text} /></TouchableOpacity>
-                        </View>
-                        <ScrollView contentContainerStyle={styles.modalBody}>
-                            <Text style={[styles.label, { color: colors.textSecondary }]}>FULL NAME</Text>
-                            <TextInput style={[styles.input, { borderColor: colors.border, color: colors.text }]} value={name} onChangeText={setName} placeholder="John Doe" placeholderTextColor={colors.textSecondary} />
-
-                            <Text style={[styles.label, { color: colors.textSecondary }]}>ROLE / TITLE</Text>
-                            <TextInput style={[styles.input, { borderColor: colors.border, color: colors.text }]} value={role} onChangeText={setRole} placeholder="e.g. Senior Barber" placeholderTextColor={colors.textSecondary} />
-
-                            <Text style={[styles.label, { color: colors.textSecondary }]}>EMAIL</Text>
-                            <TextInput style={[styles.input, { borderColor: colors.border, color: colors.text }]} value={email} onChangeText={setEmail} keyboardType="email-address" placeholder="john@example.com" placeholderTextColor={colors.textSecondary} />
-
-                            <TouchableOpacity style={[styles.saveBtn, { backgroundColor: colors.primary }]} onPress={handleSave}>
-                                <Text style={styles.saveBtnText}>Save Staff Member</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
-                    </View>
-                </KeyboardAvoidingView>
-            </Modal>
+            <StaffEditModal
+                modalVisible={modalVisible}
+                editingMember={activeEditTarget}
+                closeModal={() => {
+                    setModalVisible(false);
+                    setActiveEditTarget(null);
+                }}
+                handleSaveAction={handleSaveAction}
+                onSaveSuccess={() => {
+                    loadStaffData();
+                }}
+            />
         </SafeAreaView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -152,23 +251,7 @@ const styles = StyleSheet.create({
     headerTitle: { fontSize: 18, fontWeight: '800' },
     iconBtn: { padding: 4 },
     listContent: { padding: 20, gap: 16 },
-    staffCard: { flexDirection: 'row', padding: 16, borderRadius: 16, borderWidth: 1, alignItems: 'center' },
-    avatar: { width: 56, height: 56, borderRadius: 28, marginRight: 16 },
-    infoCol: { flex: 1 },
-    name: { fontSize: 16, fontWeight: '800', marginBottom: 2 },
-    role: { fontSize: 13, fontWeight: '700', marginBottom: 8 },
-    contactRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    contactText: { fontSize: 12 },
-    actionsCol: { flexDirection: 'row', gap: 8 },
-    actionBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-
-    modalOverlay: { flex: 1, justifyContent: 'flex-end' },
-    modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40 },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1 },
-    modalTitle: { fontSize: 18, fontWeight: '800' },
-    modalBody: { padding: 20 },
-    label: { fontSize: 11, fontWeight: '800', marginBottom: 8, marginTop: 16 },
-    input: { height: 50, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16 },
-    saveBtn: { height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginTop: 32 },
-    saveBtnText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    emptyContainer: { flex: 1, paddingVertical: 40, alignItems: 'center', justifyContent: 'center' },
+    emptyText: { fontSize: 14, textAlign: 'center', fontWeight: '500' },
 });

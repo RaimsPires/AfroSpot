@@ -25,6 +25,14 @@ class UserSettings(BaseModel):
     email_verifications = models.BooleanField(default=True)
     push_notifications = models.BooleanField(default=True)
     marketing_emails = models.BooleanField(default=False)
+    
+    active_spot = models.ForeignKey(
+        'spots.Spot', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='+' # '+' means Django won't create a backwards relation on Spot for this
+    )
 
     class Meta:
         verbose_name = 'User Setting'

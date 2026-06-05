@@ -8,6 +8,7 @@ import {
     PasswordResetConfirmPayload,
     PasswordResetRequestPayload,
     UpdateUserProfilePayload,
+    UserSpotMembership,
 } from '@type/auth';
 
 type AuthContextValue = {
@@ -24,6 +25,7 @@ type AuthContextValue = {
     changePassword: (payload: PasswordChangePayload) => Promise<void>;
     updateProfile: (payload: UpdateUserProfilePayload) => Promise<AuthUser>;
     setAuthenticated: (value: boolean) => void;
+    active_spot : UserSpotMembership | null;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -43,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const loading = useAuthStore((state) => state.loading);
     const isAuthBootstrapping = useAuthStore((state) => state.isAuthBootstrapping);
     const bootstrapAuth = useAuthStore((state) => state.bootstrapAuth);
+    const active_spot = user?.spot_memberships.find(membership => membership.spot.id === user.settings?.active_spot) || null;
 
     useEffect(() => {
         bootstrapAuth().catch((error) => {
@@ -65,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             changePassword,
             updateProfile,
             setAuthenticated,
+            active_spot,
         }),
         [
             isAuthenticated,
@@ -80,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             updateProfile,
             user,
             loading,
+            active_spot,
         ],
     );
 

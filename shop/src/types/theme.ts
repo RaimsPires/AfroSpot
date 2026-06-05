@@ -9,6 +9,7 @@ export interface AppTheme {
         text: string;
         textSecondary: string;
         textInverse: string;
+        textMuted:string,
         // Borders / dividers
         border: string;
         divider: string;

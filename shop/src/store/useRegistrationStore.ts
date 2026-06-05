@@ -102,7 +102,7 @@ const initialForm: FormFields = {
     userId: null,
     firstName: 'Henry',
     lastName: 'Jenkins',
-    userEmail: 'henry.jenkins@example.com',
+    userEmail: 'admin2@admin.com',
     userPhone: '69665432',
     password: 'Afrospot123!',
     confirmPassword: 'Afrospot123!',

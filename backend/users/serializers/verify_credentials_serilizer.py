@@ -5,6 +5,7 @@ class VerifyCredentialsSerializer(serializers.Serializer):
     # write_only=True ensures these are never accidentally returned in a response
     login_id = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    
 
     def validate(self, attrs):
         login_id = attrs.get('login_id')

@@ -27,6 +27,7 @@ export type AuthUser = {
     last_name: string,
     full_name: string,
     active_address: string | null,
+    active_spot_name: string | null,
     phone_number: string,
     dob: string,
     profile_picture: string,
@@ -38,11 +39,30 @@ export type AuthUser = {
     created_at: string,
     updated_at: string,
     settings: UserSettings | null,
-    addresses: UserAddress[]
+    addresses: UserAddress[],
+    spot_memberships: UserSpotMembership[]
 };
+
+export type UserSpotMembership = {
+    id: string,
+    spot: {
+        id: string,
+        name: string,
+        slug: string,
+        logo: string,
+        email: string,
+        phone_number: string,
+        is_verified: boolean,
+        is_active: boolean
+    },
+    role: string,
+    role_display: string,
+    is_active: boolean
+}
 
 export type UserSettings = {
     id: string,
+    active_spot: string,
     created_at: string,
     updated_at: string,
     is_deleted: boolean,

@@ -6,10 +6,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MenuItem, MenuSection, ProfileHeader, ScreenHeader, styles } from '@components/business-profile';
 import AppButton from '@components/ui/Button';
 import { useAuth } from '@contexts/AuthContext';
 import { useTheme } from '@contexts/ThemeContext';
-import { MenuItem, MenuSection, ProfileHeader, ScreenHeader, styles } from '../../components/business-profile';
 
 export const BusinessProfileScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();

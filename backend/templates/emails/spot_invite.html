@@ -1,0 +1,86 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% translate "Team Invitation - AfroSpot" %}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                
+                <!-- Main Container Card -->
+                <table width="100%" max-width="500px" border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #f1f5f9;">
+                    
+                    <!-- Top Branding Bar -->
+                    <tr>
+                        <td style="background-color: #7952b3; padding: 4px; text-align: center;"></td>
+                    </tr>
+
+                    <!-- Email Body Contents -->
+                    <tr>
+                        <td style="padding: 32px 24px;">
+                            
+                            <!-- Header Text -->
+                            <h2 style="margin: 0 0 16px 0; color: #111827; font-size: 22px; font-weight: 800; tracking-tight: -0.025em; line-height: 1.3;">
+                                {% blocktranslate %}You've been invited to join {{ spot_name }} on AfroSpot!{% endblocktranslate %}
+                            </h2>
+                            
+                            <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                                {% translate "Hello," %}
+                            </p>
+                            
+                            <p style="margin: 0 0 24px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                                {% blocktranslate with role_name=role_display|title %}The management team at <strong>{{ spot_name }}</strong> has invited you to join their digital business dashboard as a <strong>{{ role_name }}</strong>.{% endblocktranslate %}
+                            </p>
+                            
+                            <!-- Staging Account Status Logic Check Banner -->
+                            <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 28px; text-align: center;">
+                                <p style="margin: 0; color: #374151; font-size: 14px; font-weight: 500; line-height: 1.5;">
+                                    {% if user_exists %}
+                                        🎉 {% translate "You already have an active AfroSpot profile! Click below to review and instantly accept your team assignment." %}
+                                    {% else %}
+                                        ✨ {% translate "It looks like you don't have an account yet. Click below to quickly set up your profile and join the workspace." %}
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <!-- Call To Action (Button) -->
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ invite_url }}" target="_blank" style="display: inline-block; background-color: #7952b3; color: #ffffff; font-size: 16px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(121, 82, 179, 0.2); transition: all 0.2s ease;">
+                                            {% translate "Accept Invitation & Join" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Expiration Warning Alert Meta Footer -->
+                            <p style="margin: 32px 0 0 0; color: #9ca3af; font-size: 12px; text-align: center; line-height: 1.5; border-top: 1px dashed #e5e7eb; padding-top: 20px;">
+                                ⚠️ {% translate "This secured invitation link will automatically expire in 7 days. If you were not expecting this team request, you can safely disregard this message." %}
+                            </p>
+
+                        </td>
+                    </tr>
+                    
+                    <!-- Copyright / Small Meta Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 16px 24px; border-top: 1px solid #f1f5f9; text-align: center;">
+                            <span style="color: #9ca3af; font-size: 11px; font-weight: 500;">
+                                &copy; 2026 AfroSpot Inc. {% translate "All rights reserved." %}
+                            </span>
+                        </td>
+                    </tr>
+
+                </table>
+                
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

@@ -1,3 +1,4 @@
+import { useTheme } from '@contexts/ThemeContext';
 import React from 'react';
 import {
     ActivityIndicator,
@@ -21,13 +22,6 @@ type ConfirmationModalProps = {
     isLoading?: boolean;
     onConfirm: () => void;
     onCancel: () => void;
-    colors: {
-        surface: string;
-        border: string;
-        text: string;
-        textSecondary: string;
-        background: string;
-    };
 };
 
 const VARIANT_COLOR: Record<ConfirmationModalVariant, string> = {
@@ -46,9 +40,9 @@ const ConfirmationModal = ({
     isLoading = false,
     onConfirm,
     onCancel,
-    colors,
 }: ConfirmationModalProps) => {
     const accentColor = VARIANT_COLOR[variant];
+    const { colors } = useTheme();
 
     return (
         <Modal

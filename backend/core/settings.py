@@ -28,14 +28,7 @@ SECRET_KEY = 'django-insecure-=skg48%*7x*8-19xshu85%#h6*+bkl2@n4hcxfpbs$vegh!=(c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '192.168.1.105',
-    'localhost',
-    '10.17.17.129',
-    '10.52.82.10',
-    '192.168.100.24',
-    
-]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -92,6 +85,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # third party middlewares like auth_kit's JWT middleware would go here if needed 
     # 'user_language_middleware.UserLanguageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 
