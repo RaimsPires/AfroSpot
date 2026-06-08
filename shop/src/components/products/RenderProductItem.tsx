@@ -1,9 +1,10 @@
 import { AppIcon } from '@components/ui'
 import { useTheme } from '@contexts/ThemeContext'
+import { ProductData } from '@type/product'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-const RenderProductItem: React.FC<{ product }> = ({ product }) => {
+const RenderProductItem: React.FC<{ product:ProductData,onEdit:()=>void,onDelete:()=>void }> = ({ product , onDelete , onEdit }) => {
     const { colors } = useTheme()
         const getStockColor = (count: number) => {
             if (count === 0) return colors.destructive;
@@ -16,13 +17,13 @@ const RenderProductItem: React.FC<{ product }> = ({ product }) => {
             <View style={styles.cardContentRow}>
                 <Image source={{ uri: product.image }} style={styles.productImage} />
                 <View style={styles.productInfo}>
-                    <Text style={[styles.productTitle, { color: colors.text }]} numberOfLines={1}>{product.title}</Text>
+                    <Text style={[styles.productTitle, { color: colors.text }]} numberOfLines={1}>{product.name}</Text>
                     <Text style={[styles.productPrice, { color: colors.primary }]}>${product.price}</Text>
 
                     <View style={styles.stockRow}>
-                        <View style={[styles.stockIndicator, { backgroundColor: getStockColor(product.stock) }]} />
+                        <View style={[styles.stockIndicator, { backgroundColor: getStockColor(product.stock_quantity) }]} />
                         <Text style={[styles.stockText, { color: colors.textSecondary }]}>
-                            {product.stock === 0 ? 'Out of stock' : `${product.stock} in stock`}
+                            {product.stock_quantity === 0 ? 'Out of stock' : `${product.stock_quantity} in stock`}
                         </Text>
                     </View>
                 </View>
@@ -31,11 +32,11 @@ const RenderProductItem: React.FC<{ product }> = ({ product }) => {
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <View style={styles.actionRow}>
-                <TouchableOpacity style={styles.actionBtn} onPress={() => openEditModal(product)}>
+                <TouchableOpacity style={styles.actionBtn} onPress={onEdit}>
                     <AppIcon library="Feather" name="edit-2" size={16} color={colors.textSecondary} />
                     <Text style={[styles.actionText, { color: colors.textSecondary }]}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionBtn} onPress={() => handleDelete(product.id)}>
+                <TouchableOpacity style={styles.actionBtn} onPress={onDelete}>
                     <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
                     <Text style={[styles.actionText, { color: colors.destructive }]}>Delete</Text>
                 </TouchableOpacity>

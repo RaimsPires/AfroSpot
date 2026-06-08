@@ -21,6 +21,6 @@
       "@type/*": ["src/types/*"],
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "../shop/src/services/productService.ts", "../shop/src/types/product.ts"],
   "exclude": ["**/node_modules", "**/Pods"]
 }

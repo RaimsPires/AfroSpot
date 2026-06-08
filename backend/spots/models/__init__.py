@@ -5,6 +5,7 @@ from  .operating_hours import OperatingHours
 from .events import Event
 from .event_registration import EventRegistration
 from .even_ticket_tier import EventTicketTier
+from . products import Product , Service , Ticket
 
 __all__ = [
     'Spot',
@@ -15,4 +16,7 @@ __all__ = [
     'Event',
     'EventRegistration',
     'EventTicketTier',
+    'Product' , 
+    'Service' ,
+    'Ticket'
 ]

@@ -1,165 +1,132 @@
-import React, { useState } from 'react';
-import {
-    Alert,
-    ScrollView,
-    StatusBar,
-    StyleSheet
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import AddEditModalProduct from '@components/products/AddEditModalProduct';
+import ProductEmptyState from '@components/products/ProductEmptyState';
+import ProductHeader from '@components/products/ProductHeader';
+import RenderProductItem from '@components/products/RenderProductItem';
 import { useTheme } from '@contexts/ThemeContext';
-import AddEditModalProduct from './products/AddEditModalProduct';
-import ProductEmptyState from './products/ProductEmptyState';
-import RenderProductItem from './products/RenderProductItem';
-import ProductHeader from './products/productHeader';
-
-// --- Mock Data ---
-const INITIAL_PRODUCTS = [
-    {
-        id: '1',
-        title: 'Adire Silk Scarf',
-        description: 'Hand-dyed premium silk scarf with traditional Yoruba Adire patterns.',
-        price: '45.00',
-        stock: 12,
-        image: 'https://images.unsplash.com/photo-1583391733958-d25e07fac0ec?q=80&w=200',
-    },
-    {
-        id: '2',
-        title: 'Berbere Spice Blend',
-        description: 'Authentic Ethiopian spice mix, perfect for stews and marinades.',
-        price: '18.50',
-        stock: 45,
-        image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=200',
-    },
-    {
-        id: '3',
-        title: 'Shea Butter Luxe',
-        description: '100% unrefined raw organic shea butter from Ghana.',
-        price: '24.00',
-        stock: 0, // Out of stock example
-        image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=200',
-    },
-];
+import { productService } from '@services/productService';
+import { ProductData } from '@type/product';
 
 const ManageProductsScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
-    const [products, setProducts] = useState(INITIAL_PRODUCTS);
+    const [products, setProducts] = useState<ProductData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    
+    // Store the ENTIRE product object when editing, null when creating new
+    const [editingProduct, setEditingProduct] = useState<ProductData | null>(null);
 
-    // Form States
+    // Fetch Products on Mount
+    const fetchProducts = async () => {
+        try {
+            setIsLoading(true);
+            const data = await productService.getProducts();
+            console.log(data);
+            
+            setProducts(data);
+        } catch (error) {
+            Alert.alert("Error", "Could not load products.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
 
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const openAddModal = () => {
-        setEditingId(null);
-        setTitle('');
-        setDescription('');
-        setPrice('');
-        setStock('');
-        setProductImage(null);
+        setEditingProduct(null);
         setModalVisible(true);
     };
 
-    const openEditModal = (product: any) => {
-        setEditingId(product.id);
-        setTitle(product.title);
-        setDescription(product.description);
-        setPrice(product.price);
-        setStock(product.stock.toString());
-        setProductImage(product.image);
+    // Make sure RenderProductItem passes the full product object to this function!
+    const openEditModal = (product: ProductData) => {
+        setEditingProduct(product);
         setModalVisible(true);
     };
 
-    const handleDelete = (id: string) => {
-        Alert.alert(
-            'Delete Product',
-            'Are you sure you want to remove this product from your store?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => setProducts(products.filter(p => p.id !== id))
-                },
-            ]
-        );
+    const handleDelete = (id: number) => {
+        Alert.alert('Delete Product', 'Are you sure you want to remove this product?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: async () => {
+                    try {
+                        await productService.deleteProduct(id);
+                        setProducts(prev => prev.filter(p => p.id !== id));
+                    } catch (error) {
+                        Alert.alert("Error", "Could not delete this product.");
+                    }
+                }
+            },
+        ]);
     };
 
-    const handleSave = () => {
-        if (!title || !price || !stock) {
-            Alert.alert('Missing Fields', 'Please fill out the title, price, and stock count.');
-            return;
+    const handleSave = async (formData: FormData) => {
+        try {
+            if (editingProduct) {
+                // UPDATE
+                const updatedProduct = await productService.updateProduct(editingProduct.id, formData);
+                setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+            } else {
+                // CREATE
+                const newProduct = await productService.createProduct(formData);
+                setProducts([newProduct, ...products]);
+            }
+        } catch (error) {
+            Alert.alert("Save Failed", "Could not save product information.");
+            throw error; // Let the modal catch it to stop the loading spinner
         }
-
-        const newStock = parseInt(stock, 10);
-        const finalImage = productImage || 'https://images.unsplash.com/photo-1544413165-388a109a250b?q=80&w=200'; // Fallback image
-
-        if (editingId) {
-            setProducts(products.map(p =>
-                p.id === editingId ? { id: editingId, title, description, price, stock: newStock, image: finalImage } : p
-            ));
-        } else {
-            const newProduct = {
-                id: Date.now().toString(),
-                title,
-                description,
-                price,
-                stock: newStock,
-                image: finalImage,
-            };
-            setProducts([newProduct, ...products]);
-        }
-        setModalVisible(false);
     };
-
-
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-            {/* Header */}
-            <ProductHeader 
-            openAddModal={openAddModal}
-            />
+            <ProductHeader openAddModal={openAddModal} />
 
-            {/* Products List */}
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
-                {products.length === 0 ? (
-                    <ProductEmptyState
-                    openAddModal={openAddModal}
-                    />
-                ) : (
-                    products.map((product) => (
-                        <RenderProductItem
-                            product={product}
-                        />
-                    ))
-                )}
-            </ScrollView>
+            {isLoading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            ) : (
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
+                    {products.length === 0 ? (
+                        <ProductEmptyState openAddModal={openAddModal} />
+                    ) : (
+                        products.map((product) => (
+                            <RenderProductItem
+                                key={product.id.toString()}
+                                product={product}
+                                // Ensure your RenderProductItem accepts these props
+                                onEdit={() => openEditModal(product)}
+                                onDelete={() => handleDelete(product.id)}
+                            />
+                        ))
+                    )}
+                </ScrollView>
+            )}
 
-            {/* Add / Edit Modal */}
             <AddEditModalProduct
                 modalVisible={modalVisible}
-                closeModal={() => {
-                    setModalVisible(false)
-                }}
+                editingProduct={editingProduct}
+                closeModal={() => setModalVisible(false)}
+                handleSave={handleSave}
             />
-
         </SafeAreaView>
     );
 };
 
-// --- Styles ---
-
 const styles = StyleSheet.create({
     container: { flex: 1 },
     listContent: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
-
-
-
-
 });
 
 export default ManageProductsScreen;

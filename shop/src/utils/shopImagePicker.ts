@@ -222,4 +222,5 @@ export async function pickAndCropImage(
 export const CROP_PRESETS = {
     banner: { width: 1200, height: 400 } as const,
     profile: { width: 300, height: 300, circleOverlay: true } as const,
+    sqaure: { width: 300, height: 300, circleOverlay: false }
 } as const;
