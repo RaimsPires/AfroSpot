@@ -3,6 +3,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BusinessProfileScreen } from '@screens/app/BusinessProfileScreen';
 import { ManageHoursScreen } from '@screens/app/ManageHoursScreen';
+import { ManageSpotScreen } from '@screens/app/ManageSpotScreen';
 import { ManageStaffScreen } from '@screens/app/ManageStaffScreen';
 import { MerchantSupportScreen } from '@screens/app/MerchantSupportScreen';
 import { PayoutsEarningsScreen } from '@screens/app/PayoutsEarningsScreen';
@@ -22,6 +23,7 @@ const Stack = createNativeStackNavigator();
 const ProfileStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="BusinessProfileHome" component={BusinessProfileScreen} />
+        <Stack.Screen name="ManageSpot" component={ManageSpotScreen} />
         <Stack.Screen name="ManageHours" component={ManageHoursScreen} />
         {/* <Stack.Screen name="SettingsInTab" component={SettingsScreen} /> */}
         <Stack.Screen name="ManageStaff" component={ManageStaffScreen} />

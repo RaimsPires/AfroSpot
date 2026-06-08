@@ -6,7 +6,7 @@ import { AppIcon } from '@components/ui';
 import { styles } from './styles';
 import { MenuItemProps } from './types';
 
-export const MenuItem = ({ icon, label, value, isLast, rightElement, colorOverride, colors, handlePress }: MenuItemProps) => (
+export const MenuItem = ({ icon, label, value, isLast, rightElement, colorOverride, colors, handlePress , iconLibrary='Feather' }: MenuItemProps) => (
     <TouchableOpacity
         style={[styles.itemContainer, !isLast && { borderBottomWidth: 1, borderBottomColor: colors.border }]}
         disabled={!!rightElement}
@@ -14,7 +14,7 @@ export const MenuItem = ({ icon, label, value, isLast, rightElement, colorOverri
     >
         <View style={styles.itemLeft}>
             <View style={[styles.iconBg, { backgroundColor: colorOverride ? colorOverride + '15' : colors.primary + '15' }]}>
-                <AppIcon library="Feather" name={icon} size={18} color={colorOverride || colors.primary} />
+                <AppIcon library={iconLibrary} name={icon} size={18} color={colorOverride || colors.primary} />
             </View>
             <Text style={[styles.itemLabel, { color: colorOverride || colors.text }]}>{label}</Text>
         </View>

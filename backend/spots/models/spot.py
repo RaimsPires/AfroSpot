@@ -28,7 +28,7 @@ class Spot(BaseModel):
     # Basic Info
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True,max_length=200,null=True)
     email = models.EmailField(blank=True,null=True)
 
     shop_type = models.CharField(

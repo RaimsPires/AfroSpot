@@ -35,6 +35,7 @@ export const BusinessProfileScreen = ({ navigation }: any) => {
                 <ProfileHeader colors={colors} />
 
                 <MenuSection title="STORE MANAGEMENT" colors={colors}>
+                    <MenuItem icon="storefront-outline" iconLibrary='Ionicons' label="Manage Store" colors={colors} handlePress={() => navigation.navigate('ManageSpot')} />
                     <MenuItem icon="layout" label="Manage Store Hours" colors={colors} handlePress={() => navigation.navigate('ManageHours')} />
                     <MenuItem icon="scissors" label="Manage Services" colors={colors} handlePress={() => navigation.navigate('ManageServices')} />
                     <MenuItem icon="package" label="Manage Products" colors={colors} handlePress={() => navigation.navigate('ManageProducts')} />

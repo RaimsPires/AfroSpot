@@ -1,4 +1,5 @@
 import { AppTheme } from '@type/theme';
+import { IconLibrary } from '@type/ui';
 import { ReactNode } from 'react';
 
 
@@ -13,6 +14,7 @@ export type MenuItemProps = {
     isLast?: boolean;
     rightElement?: ReactNode;
     colorOverride?: string;
+    iconLibrary?: IconLibrary ,
     handlePress?: () => void;
 };
 

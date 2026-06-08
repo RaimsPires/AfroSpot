@@ -46,6 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isAuthBootstrapping = useAuthStore((state) => state.isAuthBootstrapping);
     const bootstrapAuth = useAuthStore((state) => state.bootstrapAuth);
     const active_spot = user?.spot_memberships.find(membership => membership.spot.id === user.settings?.active_spot) || null;
+    console.log(user);
+    
 
     useEffect(() => {
         bootstrapAuth().catch((error) => {
