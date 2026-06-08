@@ -71,7 +71,6 @@ const ProductDetailScreen = ({ route, navigation }: any) => {
 
     const handleSetPrimary = async () => {
         if (!heroImage || heroImage.is_primary) return;
-        console.log(heroImage);
 
         setIsUpdating(true);
         try {
@@ -91,8 +90,7 @@ const ProductDetailScreen = ({ route, navigation }: any) => {
                 variant: 'success',
                 placement: 'top',
             });
-        } catch (err) {
-            console.log(err.response.data);
+        } catch {
             showAlert({
                 title: 'Error',
                 message: 'Could not set primary image. Please try again.',
