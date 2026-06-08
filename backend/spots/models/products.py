@@ -44,13 +44,17 @@ class ProductImage(BaseModel):
 class Service(PurchasableItem):
     duration_minutes = models.PositiveIntegerField(help_text="Time it takes to complete")
     buffer_minutes = models.PositiveIntegerField(default=0, help_text="Cleanup time between clients")
-    # You could even link this to specific staff members:
-    # staff_members = models.ManyToManyField('spots.SpotMember')
+    
 
-# 4. The Ticket Model (Creates a 'Ticket' table)
-class Ticket(PurchasableItem):
-    event_name = models.CharField(max_length=255)
-    event_start_time = models.DateTimeField()
-    event_end_time = models.DateTimeField()
-    max_capacity = models.PositiveIntegerField()
-    qr_code_rules = models.JSONField(blank=True, null=True)
+class ServiceImage(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='services/gallery/')
+    alt_text = models.CharField(max_length=255, blank=True)
+    is_primary = models.BooleanField(default=False)
+    display_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['display_order']
+
+    def __str__(self):
+        return f"Image for {self.service.name}"
