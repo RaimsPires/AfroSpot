@@ -1,21 +1,36 @@
+import { img_landscape } from '@assets/index'
 import { AppIcon } from '@components/ui'
 import { useTheme } from '@contexts/ThemeContext'
+import { useNavigation } from "@react-navigation/native"
 import { ProductData } from '@type/product'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-const RenderProductItem: React.FC<{ product:ProductData,onEdit:()=>void,onDelete:()=>void }> = ({ product , onDelete , onEdit }) => {
+const RenderProductItem: React.FC<{ product: ProductData, onEdit: () => void, onDelete: () => void }> = ({ product, onDelete, onEdit }) => {
     const { colors } = useTheme()
-        const getStockColor = (count: number) => {
-            if (count === 0) return colors.destructive;
-            if (count < 5) return colors.warning;
-            return colors.success;
-        };
-        
+    const getStockColor = (count: number) => {
+        if (count === 0) return colors.destructive;
+        if (count < 5) return colors.warning;
+        return colors.success;
+    };
+    const navigation = useNavigation()
+
+    const image = product.images.find((Img) => Img.is_primary === true)
     return (
         <View key={product.id} style={[styles.productCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <View style={styles.cardContentRow}>
-                <Image source={{ uri: product.image }} style={styles.productImage} />
+            <TouchableOpacity
+                onPress={() => {
+                    navigation.navigate('ProductDetail', {
+                        product: product
+                    })
+                }}
+                activeOpacity={0.7}
+                style={styles.cardContentRow}>
+                {
+                    image ?
+                        <Image source={{ uri: image.image }} style={styles.productImage} /> :
+                        <Image source={img_landscape} style={styles.productImage} />
+                }
                 <View style={styles.productInfo}>
                     <Text style={[styles.productTitle, { color: colors.text }]} numberOfLines={1}>{product.name}</Text>
                     <Text style={[styles.productPrice, { color: colors.primary }]}>${product.price}</Text>
@@ -27,7 +42,7 @@ const RenderProductItem: React.FC<{ product:ProductData,onEdit:()=>void,onDelete
                         </Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 

@@ -6,17 +6,19 @@ import AddEditModalProduct from '@components/products/AddEditModalProduct';
 import ProductEmptyState from '@components/products/ProductEmptyState';
 import ProductHeader from '@components/products/ProductHeader';
 import RenderProductItem from '@components/products/RenderProductItem';
+import { ConfirmationModal } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { productService } from '@services/productService';
 import { ProductData } from '@type/product';
 
-const ManageProductsScreen = ({ navigation }: any) => {
+const ManageProductsScreen = () => {
     const { colors, isDark } = useTheme();
 
     const [products, setProducts] = useState<ProductData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
-    
+    const [productTopDelete, setProductToDelete] = useState<ProductData | null>(null)
+
     // Store the ENTIRE product object when editing, null when creating new
     const [editingProduct, setEditingProduct] = useState<ProductData | null>(null);
 
@@ -26,15 +28,14 @@ const ManageProductsScreen = ({ navigation }: any) => {
             setIsLoading(true);
             const data = await productService.getProducts();
             console.log(data);
-            
+
             setProducts(data);
-        } catch (error) {
-            Alert.alert("Error", "Could not load products.");
+        } catch {
         } finally {
             setIsLoading(false);
         }
     };
-    
+
 
     useEffect(() => {
         fetchProducts();
@@ -51,38 +52,32 @@ const ManageProductsScreen = ({ navigation }: any) => {
         setModalVisible(true);
     };
 
-    const handleDelete = (id: number) => {
-        Alert.alert('Delete Product', 'Are you sure you want to remove this product?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                style: 'destructive',
-                onPress: async () => {
-                    try {
-                        await productService.deleteProduct(id);
-                        setProducts(prev => prev.filter(p => p.id !== id));
-                    } catch (error) {
-                        Alert.alert("Error", "Could not delete this product.");
-                    }
-                }
-            },
-        ]);
+    const handleDelete = async (id: number) => {
+        try {
+            await productService.deleteProduct(id);
+            setProducts(prev => prev.filter(p => p.id !== id));
+        } catch {
+        } finally {
+                        setProductToDelete(null)
+        }
+
     };
 
+    // 🚀 Update the parameter type from Partial<ProductData> to FormData
     const handleSave = async (formData: FormData) => {
         try {
             if (editingProduct) {
-                // UPDATE
+                // UPDATE: Send the FormData to the update service
                 const updatedProduct = await productService.updateProduct(editingProduct.id, formData);
                 setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
             } else {
-                // CREATE
+                // CREATE: Send the FormData to the create service
                 const newProduct = await productService.createProduct(formData);
                 setProducts([newProduct, ...products]);
             }
         } catch (error) {
-            Alert.alert("Save Failed", "Could not save product information.");
-            throw error; // Let the modal catch it to stop the loading spinner
+            Alert.alert("Save Failed", "Could not save product information. Please check your network connection.");
+            throw error;
         }
     };
 
@@ -91,6 +86,21 @@ const ManageProductsScreen = ({ navigation }: any) => {
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
             <ProductHeader openAddModal={openAddModal} />
+            {
+                productTopDelete &&
+                <ConfirmationModal
+                    variant='danger'
+                    visible={!!productTopDelete}
+                    message="Delete Product', 'Are you sure you want to remove this product?"
+                    onCancel={() => {
+                        setProductToDelete(null)
+                    }}
+                    onConfirm={() => {
+                        handleDelete(productTopDelete?.id)
+                    }}
+                    title='Delete Product'
+                />
+            }
 
             {isLoading ? (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -107,7 +117,7 @@ const ManageProductsScreen = ({ navigation }: any) => {
                                 product={product}
                                 // Ensure your RenderProductItem accepts these props
                                 onEdit={() => openEditModal(product)}
-                                onDelete={() => handleDelete(product.id)}
+                                onDelete={() => setProductToDelete(product)}
                             />
                         ))
                     )}

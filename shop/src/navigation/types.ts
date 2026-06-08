@@ -1,4 +1,5 @@
 import type { BuyerOrderTab, OrderLifecycleStatus } from '@type/commerce';
+import { ProductData } from '@type/product';
 
 export type AuthStackParamList = {
     AccountChoice: undefined;
@@ -32,7 +33,7 @@ export type AppStackParamList = {
     MainTabs: undefined;
     ProfileStack: undefined;
     MarketplaceProducts: undefined;
-    ProductDetail: { productId: string };
+    ProductDetail: { product: ProductData };
     Cart: undefined;
     Checkout: undefined;
     OrderSuccess: { orderId: string };

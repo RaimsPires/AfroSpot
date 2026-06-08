@@ -4,6 +4,6 @@ from .operating_hours import OperatingHoursSerializer
 from . staff_member import SpotMemberReadSerializer , UserMinifiedSerializer ,SpotMemberWriteSerializer
 from .spot_invitation import SpotInvitationSerializer
 from . spot import SpotSerializer
-from . product import ProductSerializer
+from . product import ProductSerializer ,ProductImageSerializer
 
-__all__ = ['RegisterAllSerializer', 'SpotMinifiedSerializer' , "UserSpotMembershipSerializer","OperatingHoursSerializer" , "SpotMemberReadSerializer" , "UserMinifiedSerializer" , "SpotMemberWriteSerializer" , "SpotInvitationSerializer","SpotSerializer","ProductSerializer"]
+__all__ = ['RegisterAllSerializer', 'SpotMinifiedSerializer' , "UserSpotMembershipSerializer","OperatingHoursSerializer" , "SpotMemberReadSerializer" , "UserMinifiedSerializer" , "SpotMemberWriteSerializer" , "SpotInvitationSerializer","SpotSerializer","ProductSerializer","ProductImageSerializer"]

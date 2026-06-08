@@ -1,3 +1,5 @@
+import { useTheme } from '@contexts/ThemeContext';
+import { IconLibrary } from '@type/ui';
 import React from 'react';
 import {
     Modal,
@@ -9,12 +11,9 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
-import { useTheme } from '../../contexts/ThemeContext';
-import { IconLibrary } from '../../types/ui';
 import AppIcon from './AppIcon';
 
 export type AlertVariant = 'success' | 'warning' | 'info' | 'error';
-// 1. Define the placement options
 export type AlertPlacement = 'top' | 'center' | 'bottom'; 
 
 type AppAlertProps = {
@@ -22,7 +21,7 @@ type AppAlertProps = {
     title: string;
     message?: string;
     variant?: AlertVariant;
-    placement?: AlertPlacement; // 2. Add to props
+    placement?: AlertPlacement;
     iconLibrary?: IconLibrary;
     iconName?: string;
     dismissible?: boolean;
@@ -43,33 +42,33 @@ type VariantTheme = {
 
 const VARIANT_THEME: Record<AlertVariant, VariantTheme> = {
     success: {
-        accent: '#00E676', // Electric Spring Green
-        bgLight: '#E8F5E9', // Solid crisp light green
-        bgDark: '#0A2E1C', // Solid deep forest green
+        accent: '#00E676',
+        bgLight: '#E8F5E9',
+        bgDark: '#0A2E1C',
         borderLight: '#81C784',
-        borderDark: '#00E676', // Glowing border for dark mode
+        borderDark: '#00E676',
         defaultIcon: 'check-circle',
     },
     warning: {
-        accent: '#FFB300', // Vibrant Amber/Gold
-        bgLight: '#FFF8E1', // Solid warm cream
-        bgDark: '#3E2700', // Solid rich dark brown
+        accent: '#FFB300',
+        bgLight: '#FFF8E1',
+        bgDark: '#3E2700',
         borderLight: '#FFD54F',
         borderDark: '#FFB300', 
         defaultIcon: 'alert-circle',
     },
     info: {
-        accent: '#2979FF', // Bright Electric Blue
-        bgLight: '#E3F2FD', // Solid crisp light blue
-        bgDark: '#0A192F', // Solid deep navy blue
+        accent: '#2979FF',
+        bgLight: '#E3F2FD',
+        bgDark: '#0A192F',
         borderLight: '#90CAF9',
         borderDark: '#2979FF',
         defaultIcon: 'info',
     },
     error: {
-        accent: '#FF1744', // Neon Crimson Red
-        bgLight: '#FFEBEE', // Solid soft pink/red
-        bgDark: '#3B0A0A', // Solid deep blood red
+        accent: '#FF1744',
+        bgLight: '#FFEBEE',
+        bgDark: '#3B0A0A',
         borderLight: '#E57373',
         borderDark: '#FF1744',
         defaultIcon: 'x-circle',
@@ -81,7 +80,7 @@ const AppAlert: React.FC<AppAlertProps> = ({
     title,
     message,
     variant = 'info',
-    placement = 'center', // Default to center
+    placement = 'center',
     iconLibrary = 'Feather',
     iconName,
     dismissible = false,
@@ -90,40 +89,34 @@ const AppAlert: React.FC<AppAlertProps> = ({
     onAction,
     containerStyle,
 }) => {
-    const { colors, isDark, spacing } = useTheme();
+    const { colors, isDark } = useTheme();
     const visual = VARIANT_THEME[variant];
 
     const rootStyle = {
         backgroundColor: isDark ? visual.bgDark : visual.bgLight,
         borderColor: isDark ? visual.borderDark : visual.borderLight,
-        padding: spacing(2),
     };
 
     const iconWrapStyle = {
         backgroundColor: isDark ? `${colors.surface}E6` : `${colors.background}F0`,
     };
 
-    const actionButtonStyle = {
-        borderColor: visual.accent,
-    };
-
-    // 3. Calculate dynamic styles based on placement
     const placementStyle: StyleProp<ViewStyle> = {
         justifyContent: 
             placement === 'top' ? 'flex-start' : 
             placement === 'bottom' ? 'flex-end' : 'center',
-        paddingTop: placement === 'top' ? 60 : 0,       // Safe area buffer for top
-        paddingBottom: placement === 'bottom' ? 40 : 0, // Safe area buffer for bottom
+        paddingTop: placement === 'top' ? 60 : 0,       
+        paddingBottom: placement === 'bottom' ? 40 : 0, 
     };
 
     return (
         <Modal
             transparent
             visible={visible}
-            animationType={placement === 'bottom' ? 'slide' : 'fade'} // Slides up if at the bottom!
+            animationType={placement === 'bottom' ? 'slide' : 'fade'} 
             onRequestClose={dismissible ? onClose : undefined}
+            statusBarTranslucent
         >
-            {/* Apply the placementStyle here */}
             <View style={[styles.overlay, placementStyle]}>
                 <Pressable 
                     style={styles.backdrop} 
@@ -131,7 +124,7 @@ const AppAlert: React.FC<AppAlertProps> = ({
                 />
 
                 <View style={[styles.root, rootStyle, containerStyle]}>
-                    <View style={styles.row}>
+                    <View style={styles.topRow}>
                         <View style={[styles.iconWrap, iconWrapStyle]}>
                             <AppIcon
                                 library={iconLibrary}
@@ -148,18 +141,6 @@ const AppAlert: React.FC<AppAlertProps> = ({
                                     {message}
                                 </Text>
                             )}
-
-                            {!!actionLabel && !!onAction && (
-                                <TouchableOpacity
-                                    activeOpacity={0.8}
-                                    style={[styles.actionButton, actionButtonStyle]}
-                                    onPress={onAction}
-                                >
-                                    <Text style={[{ color: visual.accent }, styles.actionText]}>
-                                        {actionLabel}
-                                    </Text>
-                                </TouchableOpacity>
-                            )}
                         </View>
 
                         {dismissible && (
@@ -170,10 +151,23 @@ const AppAlert: React.FC<AppAlertProps> = ({
                                 onPress={onClose}
                                 style={styles.closeButton}
                             >
-                                <AppIcon library="Feather" name="x" size={16} color={colors.textSecondary} />
+                                <AppIcon library="Feather" name="x" size={20} color={colors.textSecondary} />
                             </TouchableOpacity>
                         )}
                     </View>
+
+                    {/* Action Button moved below the text to match the ConfirmationModal layout */}
+                    {!!actionLabel && !!onAction && (
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            style={[styles.actionButton, { backgroundColor: visual.accent }]}
+                            onPress={onAction}
+                        >
+                            <Text style={styles.actionText}>
+                                {actionLabel}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
         </Modal>
@@ -184,67 +178,68 @@ const styles = StyleSheet.create({
     overlay: {
         flex: 1,
         alignItems: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 24, // Matched ConfirmationModal
     },
     backdrop: {
         ...StyleSheet.absoluteFill,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Matched ConfirmationModal
     },
     root: {
         width: '100%',
         maxWidth: 400,
         borderWidth: 1,
-        borderRadius: 14,
+        borderRadius: 18, // Matched ConfirmationModal
+        padding: 20,      // Matched ConfirmationModal
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 12,
         elevation: 5,
     },
-    row: {
+    topRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
     },
     iconWrap: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
+        width: 38,
+        height: 38,
+        borderRadius: 19,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 12,
+        marginRight: 14,
     },
     content: {
         flex: 1,
+        paddingTop: 2,
     },
     title: {
-        fontSize: 15,
-        fontWeight: '700',
-        lineHeight: 21,
+        fontSize: 17,       // Matched ConfirmationModal
+        fontWeight: '800',  // Matched ConfirmationModal
+        lineHeight: 22,
+        marginBottom: 4,
     },
     message: {
-        marginTop: 4,
-        fontSize: 14,
-        lineHeight: 20,
+        fontSize: 14,       // Matched ConfirmationModal
+        lineHeight: 20,     // Matched ConfirmationModal
     },
     actionButton: {
-        alignSelf: 'flex-start',
-        marginTop: 12,
-        borderWidth: 1,
-        borderRadius: 999,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-    },
-    actionText: {
-        fontSize: 12,
-        fontWeight: '700',
-        letterSpacing: 0.3,
-        textTransform: 'uppercase',
-    },
-    closeButton: {
-        width: 28,
-        height: 28,
+        marginTop: 20,
+        height: 44,         // Matched ConfirmationModal
+        borderRadius: 12,   // Matched ConfirmationModal
         alignItems: 'center',
         justifyContent: 'center',
+        width: '100%',
+    },
+    actionText: {
+        color: '#FFF',      // Matched ConfirmationModal
+        fontSize: 14,
+        fontWeight: '700',
+    },
+    closeButton: {
+        width: 32,
+        height: 32,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
         marginLeft: 10,
     },
 });

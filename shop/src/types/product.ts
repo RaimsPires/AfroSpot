@@ -1,8 +1,16 @@
+export interface ProductImageData {
+    id: number;
+    image: string;
+    is_primary: boolean;
+    display_order: number;
+}
+
 export interface ProductData {
     id: number;
-    name: string;       // Mapped from 'title' in UI
+    name: string;
     description: string;
     price: string;
-    stock_quantity: number; // Mapped from 'stock' in UI
-    image: string | null;
+    stock_quantity: number;
+    sku: string;
+    images: ProductImageData[];
 }
