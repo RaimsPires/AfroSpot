@@ -115,7 +115,7 @@ const ManageServicesScreen = ({ navigation }: any) => {
                                 <TouchableOpacity 
                                     key={service.id} 
                                     style={[styles.serviceCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                                    onPress={() => navigation.navigate('ServiceDetailScreen', { service })}
+                                    onPress={() => navigation.navigate('ServiceDetail', { service })}
                                 >
                                     {/* Thumbnail Image */}
                                     <View style={styles.thumbnailContainer}>

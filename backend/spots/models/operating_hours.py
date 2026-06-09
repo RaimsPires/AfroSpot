@@ -28,6 +28,7 @@ class OperatingHours(BaseModel):
     class Meta:
         unique_together = ('spot', 'day') # A spot can only have one schedule per day
         ordering = ['day']
+        db_table = "operating_hours"
 
     def __str__(self):
         return f"{self.spot.name} - {self.get_day_display()}"

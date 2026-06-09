@@ -39,6 +39,7 @@ export const BusinessProfileScreen = ({ navigation }: any) => {
                     <MenuItem icon="layout" label="Manage Store Hours" colors={colors} handlePress={() => navigation.navigate('ManageHours')} />
                     <MenuItem icon="scissors" label="Manage Services" colors={colors} handlePress={() => navigation.navigate('ManageServices')} />
                     <MenuItem icon="package" label="Manage Products" colors={colors} handlePress={() => navigation.navigate('ManageProducts')} />
+                    <MenuItem icon="layout" label="Event" colors={colors} handlePress={() => navigation.navigate('EventStack')} />
                     <MenuItem icon="users" label="Manage Staff" colors={colors} isLast handlePress={() => navigation.navigate('ManageStaff')} />
                 </MenuSection>
 

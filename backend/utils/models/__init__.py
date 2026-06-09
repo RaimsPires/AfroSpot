@@ -1,6 +1,8 @@
 
-from utils.models.models import BaseModel
+from .models import BaseModel 
+from .puchaseable_item import PurchasableItem
 
 __all__ = [
-    "BaseModel"
+    "BaseModel",
+    "PurchasableItem"
 ]

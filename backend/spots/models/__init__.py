@@ -1,15 +1,16 @@
 from .spot import Spot
-from .items_for_sale import ItemForSale
 from  .spot_member import SpotMember
 from  .operating_hours import OperatingHours
 from .events import Event
 from .event_registration import EventRegistration
 from .even_ticket_tier import EventTicketTier
-from . products import Product , Service  , ProductImage,ServiceImage
-
+from . products import Product ,  ProductImage
+from . service import Service  ,ServiceImage
+from . event_order import EventOrder
+from . event_vendor import EventVendorBooking
+from . event_vendor_tier import EventVendorTier
 __all__ = [
     'Spot',
-    'ItemForSale',
     'SpotMember',
     'OperatingHours',
     # event related models
@@ -19,5 +20,8 @@ __all__ = [
     'Product' , 
     'Service' ,
     'ProductImage',
-    'ServiceImage'
+    'ServiceImage',
+    "EventVendorBooking",
+    "EventOrder",
+    "EventVendorTier"
 ]

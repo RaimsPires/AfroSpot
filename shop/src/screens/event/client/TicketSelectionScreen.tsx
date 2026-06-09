@@ -4,14 +4,20 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export const TicketSelectionScreen = () => {
+export const TicketSelectionScreen = ({ navigation }) => {
     const { colors } = useTheme();
     const [qty, setQty] = useState(1);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.header}>
-                <AppIcon library="Feather" name="x" size={24} color={colors.text} />
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.goBack()
+                    }}
+                >
+                    <AppIcon library="Feather" name="x" size={24} color={colors.text} />
+                </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Select Tickets</Text>
                 <View style={{ width: 24 }} />
             </View>

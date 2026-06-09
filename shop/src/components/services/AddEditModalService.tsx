@@ -2,8 +2,9 @@ import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { ServiceData } from '@services/serviceService';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
+import { ImageLibraryOptions, ImagePickerResponse, launchImageLibrary } from 'react-native-image-picker';
 
 interface SelectedFile { uri: string; type?: string; fileName?: string; }
 
@@ -45,18 +46,36 @@ const AddEditModalService: React.FC<AddEditModalServiceProps> = ({ modalVisible,
         }
     }, [editingService, modalVisible]);
 
-    const pickImage = (type: 'primary' | 'gallery') => {
-        // REPLACE WITH ACTUAL IMAGE PICKER
-        const mockFile = { uri: 'file://mock/path.jpg', type: 'image/jpeg', fileName: 'upload.jpg' };
-        if (type === 'primary') {
-            setPrimaryImage(mockFile);
-        } else {
-            if (galleryImages.length >= 10) {
-                showAlert({ title: 'Limit Reached', message: 'Maximum 10 gallery images allowed.', variant: 'warning', placement: 'top' });
-                return;
+ const pickImage = async (type: 'primary' | 'gallery') => {
+        const options: ImageLibraryOptions = {
+            mediaType: 'photo' as const,
+            quality: 1,
+        };
+
+        launchImageLibrary(options, (response: ImagePickerResponse) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                Alert.alert("Error", response.errorMessage);
+            } else if (response.assets && response.assets.length > 0) {
+                const asset = response.assets[0];
+                const formattedFile = {
+                    uri: asset.uri!,
+                    type: asset.type || 'image/jpeg',
+                    fileName: asset.fileName || 'upload.jpg'
+                };
+
+                if (type === 'primary') {
+                    setPrimaryImage(formattedFile);
+                } else {
+                    if (galleryImages.length >= 10) {
+                        Alert.alert("Limit Reached", "You can only add up to 10 gallery images.");
+                        return;
+                    }
+                    setGalleryImages(prev => [...prev, formattedFile]);
+                }
             }
-            setGalleryImages(prev => [...prev, mockFile]);
-        }
+        });
     };
 
     const removeGalleryItem = (index: number) => setGalleryImages(prev => prev.filter((_, i) => i !== index));

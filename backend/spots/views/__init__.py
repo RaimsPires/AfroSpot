@@ -6,5 +6,9 @@ from . spot_invitation import SpotInvitationViewSet
 from . spot import ActiveSpotView
 from . product import ProductViewSet,ProductImageDetailView
 from . service import ServiceViewSet,ServiceImageDetailView
+from . event import EventViewSet
 
-__all__ = ['RegisterAllView','BulkOperatingHoursView','SpotMemberViewSet',"AcceptInvitationWebView","SpotInvitationViewSet","ActiveSpotView","ProductViewSet","ProductImageDetailView","ServiceViewSet","ServiceImageDetailView"]
+__all__ = ['RegisterAllView','BulkOperatingHoursView','SpotMemberViewSet',
+        "AcceptInvitationWebView","SpotInvitationViewSet","ActiveSpotView",
+        "ProductViewSet","ProductImageDetailView","ServiceViewSet","ServiceImageDetailView",
+        "EventViewSet"]

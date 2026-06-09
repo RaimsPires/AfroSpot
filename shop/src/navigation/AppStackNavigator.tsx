@@ -4,15 +4,7 @@ import CheckoutScreen from '@screens/app/CheckoutScreen';
 import SellerOrderDetailScreen from '@screens/app/SellerOrderDetailScreen';
 import { ChatRoomScreen } from '@screens/chat/ChatRoomScreen';
 import { MessageTimelineScreen } from '@screens/chat/MessageTimelineScreen';
-import { CreateEventScreen } from '@screens/event/CreateEventScreen';
-import { EventDetailScreen } from '@screens/event/EventDetailScreen';
-import { EventStatsScreen } from '@screens/event/EventStatsScreen';
-import { OrganizerEventListScreen } from '@screens/event/OrganizerEventListScreen';
-import { TicketScannerScreen } from '@screens/event/TicketScannerScreen';
-import { VendorBookingScreen } from '@screens/event/VendorBookingScreen';
-import { EventsDiscoveryScreen } from '@screens/event/client/EventsDiscoveryScreen';
-import { MyTicketsScreen } from '@screens/event/client/MyTicketsScreen';
-import { TicketSelectionScreen } from '@screens/event/client/TicketSelectionScreen';
+
 import { CreateFeedScreen } from '@screens/feeds/CreateFeedScreen';
 import { FeedInsightsScreen } from '@screens/feeds/FeedInsightsScreen';
 import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
@@ -47,7 +39,9 @@ import ManageReviewsScreen from '@screens/shop/ManageReviewsScreen';
 import ManageServicesScreen from '@screens/shop/ManageServicesScreen';
 import ProductCatalogScreen from '@screens/shop/ProductCatalogScreen';
 import ProductDetailScreen from '@screens/shop/ProductDetailScreen';
+import ServiceDetailScreen from '@screens/shop/ServiceDetailScreen';
 import BusinessTabNavigator from './BusinessTabNavigator';
+import EventStackNavigation from './EventStackNavigation';
 import ProfileStack from './ProfileStack';
 import StoreStack from './StoreStack';
 import type { AppStackParamList } from './types';
@@ -59,8 +53,10 @@ const AppStackNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainTabs">
             <Stack.Screen name="MainTabs" component={BusinessTabNavigator} />
             <Stack.Screen name="ProfileStack" component={ProfileStack} />
+            <Stack.Screen name='EventStack' component={EventStackNavigation} />
             <Stack.Screen name="MarketplaceProducts" component={ProductCatalogScreen} />
             <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+            <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
             <Stack.Screen name="Cart" component={CartScreen} />
             <Stack.Screen name="Checkout" component={CheckoutScreen} />
             <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} />
@@ -83,15 +79,6 @@ const AppStackNavigator = () => {
             <Stack.Screen name="MessageTimeline" component={MessageTimelineScreen} />
             <Stack.Screen name="ChatRoom" component={ChatRoomScreen} />
 
-            <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
-            <Stack.Screen name="EventDetail" component={EventDetailScreen} />
-            <Stack.Screen name="EventStats" component={EventStatsScreen} />
-            <Stack.Screen name="OrganizerEventList" component={OrganizerEventListScreen} />
-            <Stack.Screen name="TicketScanner" component={TicketScannerScreen} />
-            <Stack.Screen name="VendorBooking" component={VendorBookingScreen} />
-            <Stack.Screen name="EventsDiscovery" component={EventsDiscoveryScreen} />
-            <Stack.Screen name="MyTickets" component={MyTicketsScreen} />
-            <Stack.Screen name="TicketSelection" component={TicketSelectionScreen} />
 
             <Stack.Screen name="CreateFeed" component={CreateFeedScreen} />
             <Stack.Screen name="FeedViewer" component={FeedViewerScreen} />

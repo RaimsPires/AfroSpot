@@ -10,14 +10,18 @@ const STAND_TYPES = [
     { id: '3', name: 'Premium Indoor Booth', price: 400, available: 0, desc: 'Heated indoor area with table & chairs provided.' },
 ];
 
-export const VendorBookingScreen = () => {
-    const { colors, isDark } = useTheme();
+export const VendorBookingScreen = ({ navigation }) => {
+    const { colors } = useTheme();
     const [selectedStand, setSelectedStand] = useState<string | null>(null);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.header}>
-                <TouchableOpacity><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.goBack()
+                    }}
+                ><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Book Vendor Spot</Text>
                 <View style={{ width: 24 }} />
             </View>

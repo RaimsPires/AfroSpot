@@ -4,9 +4,6 @@ from utils.models.models import BaseModel
 from utils.upload import ImageUploadHandler  
 from spots.models.spot import Spot
 
-# Assuming BaseModel and Spot are imported from your other files
-# from core.models import BaseModel
-# from spots.models import Spot
 
 class Event(BaseModel):
     class EventType(models.TextChoices):
@@ -43,11 +40,12 @@ class Event(BaseModel):
     is_at_spot_location = models.BooleanField(default=True, help_text=_("Uncheck if hosting at a different venue"))
     custom_address = models.CharField(max_length=255, blank=True)
     virtual_link = models.URLField(blank=True, help_text=_("Link for virtual events (e.g., Zoom, Google Meet)"))
+    category = models.CharField(max_length=100, blank=True, help_text=_("e.g., Festival, Workshop, Pop-up"))
 
     def __str__(self):
         return f"{self.title} @ {self.spot.name}"
-
-
-
+    
+    class Meta:
+        db_table = "events"
 
 

@@ -1,3 +1,4 @@
+import { ServiceData } from '@services/serviceService';
 import type { BuyerOrderTab, OrderLifecycleStatus } from '@type/commerce';
 import { ProductData } from '@type/product';
 
@@ -8,13 +9,13 @@ export type AuthStackParamList = {
     ForgotPassword: { email?: string } | undefined;
     VerifyResetCode: { contactInfo: string };
     ResetPassword:
-        | {
-              contactInfo?: string;
-              uid?: string;
-              token?: string;
-              email?: string;
-          }
-        | undefined;
+    | {
+        contactInfo?: string;
+        uid?: string;
+        token?: string;
+        email?: string;
+    }
+    | undefined;
     PasswordResetSuccess: undefined;
     BusinessKYCSuccess: undefined;
     UserOnboarding: undefined;
@@ -29,11 +30,24 @@ export type BusinessTabParamList = {
     Settings: undefined;
 };
 
+export type EventStackParamList = {
+        CreateEvent: undefined;
+    EventDetail: undefined;
+    EventStats: undefined;
+    OrganizerEventList: undefined;
+    TicketScanner: undefined;
+    VendorBooking: undefined;
+    EventsDiscovery: undefined;
+    MyTickets: undefined;
+    TicketSelection: undefined;
+}
+
 export type AppStackParamList = {
     MainTabs: undefined;
     ProfileStack: undefined;
     MarketplaceProducts: undefined;
     ProductDetail: { product: ProductData };
+    ServiceDetail: { service: ServiceData };
     Cart: undefined;
     Checkout: undefined;
     OrderSuccess: { orderId: string };
@@ -53,15 +67,7 @@ export type AppStackParamList = {
     SellerOrderDetail: { orderId: string };
     MessageTimeline: undefined;
     ChatRoom: undefined;
-    CreateEvent: undefined;
-    EventDetail: undefined;
-    EventStats: undefined;
-    OrganizerEventList: undefined;
-    TicketScanner: undefined;
-    VendorBooking: undefined;
-    EventsDiscovery: undefined;
-    MyTickets: undefined;
-    TicketSelection: undefined;
+    EventStack: undefined
     CreateFeed: undefined;
     FeedViewer: undefined;
     FeedInsights: { feed: any };
