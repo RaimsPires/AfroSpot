@@ -5,7 +5,6 @@ import SellerOrderDetailScreen from '@screens/app/SellerOrderDetailScreen';
 import { ChatRoomScreen } from '@screens/chat/ChatRoomScreen';
 import { MessageTimelineScreen } from '@screens/chat/MessageTimelineScreen';
 
-import { CreateFeedScreen } from '@screens/feeds/CreateFeedScreen';
 import { FeedInsightsScreen } from '@screens/feeds/FeedInsightsScreen';
 import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
 import { StoreFeedsScreen } from '@screens/feeds/StoreFeedsScreen';
@@ -80,7 +79,6 @@ const AppStackNavigator = () => {
             <Stack.Screen name="ChatRoom" component={ChatRoomScreen} />
 
 
-            <Stack.Screen name="CreateFeed" component={CreateFeedScreen} />
             <Stack.Screen name="FeedViewer" component={FeedViewerScreen} />
             <Stack.Screen name="FeedInsights" component={FeedInsightsScreen} />
             <Stack.Screen name="StoreFeeds" component={StoreFeedsScreen} />

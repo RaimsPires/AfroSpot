@@ -1,33 +1,40 @@
 import React from 'react';
-import { FlatList, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
+import { useNavigation } from "@react-navigation/native";
 
 import SectionHeader from './SectionHeader';
 
 const FeedItem = () => {
     const { colors, isDark } = useTheme();
     const playIconStyle = [styles.playIcon, { backgroundColor: isDark ? 'rgba(255,255,255,0.16)' : `${colors.background}55` }];
-
+    const navigation = useNavigation()
     return (
-        <ImageBackground
-            source={{ uri: 'https://images.unsplash.com/photo-1555126634-323283e090fa' }}
-            style={styles.feedCard}
-            imageStyle={[styles.feedImage, { borderColor: colors.border, borderWidth: 1 }]}
+        <TouchableOpacity
+            onPress={ ()=>{
+                navigation.navigate('FeedViewer')
+            }}
         >
-            <View style={playIconStyle}>
-                <AppIcon library="Feather" name="play" size={16} color={colors.text} />
-            </View>
-            <View style={styles.feedBottom}>
-                <View style={styles.feedUser}>
-                    <View style={[styles.userDot, { backgroundColor: colors.primary }]} />
-                    <Text style={[styles.userName, { color: colors.text }]}>Abebi.Vlogs</Text>
+            <ImageBackground
+                source={{ uri: 'https://images.unsplash.com/photo-1555126634-323283e090fa' }}
+                style={styles.feedCard}
+                imageStyle={[styles.feedImage, { borderColor: colors.border, borderWidth: 1 }]}
+            >
+                <View style={playIconStyle}>
+                    <AppIcon library="Feather" name="play" size={16} color={colors.text} />
                 </View>
-                <Text style={[styles.feedPlace, { color: colors.text }]}>Suya Spot</Text>
-                <Text style={[styles.feedRate, { color: colors.textSecondary }]}>★ 4.9</Text>
-            </View>
-        </ImageBackground>
+                <View style={styles.feedBottom}>
+                    <View style={styles.feedUser}>
+                        <View style={[styles.userDot, { backgroundColor: colors.primary }]} />
+                        <Text style={[styles.userName, { color: colors.text }]}>Abebi.Vlogs</Text>
+                    </View>
+                    <Text style={[styles.feedPlace, { color: colors.text }]}>Suya Spot</Text>
+                    <Text style={[styles.feedRate, { color: colors.textSecondary }]}>★ 4.9</Text>
+                </View>
+            </ImageBackground>
+        </TouchableOpacity>
     );
 };
 

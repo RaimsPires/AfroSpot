@@ -27,10 +27,10 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'slug', 'description', 'category', # 🚀 Added category
+            'id', 'title', 'slug', 'description', 'category',
             'banner_image', 'start_datetime', 'end_datetime', 
             'event_type', 'status', 'custom_address', 
-            'ticket_tiers', 'vendor_tiers' # 🚀 Nested Relationships
+            'ticket_tiers', 'vendor_tiers' 
         ]
         read_only_fields = ['id', 'slug', 'status']
 

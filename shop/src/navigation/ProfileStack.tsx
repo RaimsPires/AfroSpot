@@ -9,7 +9,7 @@ import { MerchantSupportScreen } from '@screens/app/MerchantSupportScreen';
 import { PayoutsEarningsScreen } from '@screens/app/PayoutsEarningsScreen';
 import { TaxInvoiceScreen } from '@screens/app/TaxInvoiceScreen';
 import { BoostFeedScreen } from '@screens/feeds/BoostFeedScreen';
-import { CreateFeedScreen } from '@screens/feeds/CreateFeedScreen';
+import CreateFeedScreen from '@screens/feeds/CreateFeedScreen';
 import { FeedInsightsScreen } from '@screens/feeds/FeedInsightsScreen';
 import { FeedViewerScreen } from '@screens/feeds/FeedViewerScreen';
 import { StoreFeedsScreen } from '@screens/feeds/StoreFeedsScreen';

@@ -9,6 +9,8 @@ from . service import Service  ,ServiceImage
 from . event_order import EventOrder
 from . event_vendor import EventVendorBooking
 from . event_vendor_tier import EventVendorTier
+from . feed import FeedItem , FeedViewLog
+
 __all__ = [
     'Spot',
     'SpotMember',
@@ -23,5 +25,7 @@ __all__ = [
     'ServiceImage',
     "EventVendorBooking",
     "EventOrder",
-    "EventVendorTier"
+    "EventVendorTier",
+    "FeedItem",
+    "FeedViewLog"
 ]

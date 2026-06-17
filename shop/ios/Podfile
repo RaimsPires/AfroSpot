@@ -6,6 +6,10 @@
 #   )', __dir__]).strip
 
 
+# Enable Video Caching
+$RNVideoUseVideoCaching=true
+$RNVideoUseGoogleIMA=true
+
 def node_require(script)
   # Resolve script with node to allow for hoisting
   require Pod::Executable.execute_command('node', ['-p',

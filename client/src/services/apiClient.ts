@@ -266,4 +266,4 @@ class ApiClient {
     }
 }
 
-export const apiClient = new ApiClient('http://10.52.82.10:8000/api');
+export const apiClient = new ApiClient('http://192.168.100.221:8000/api');
