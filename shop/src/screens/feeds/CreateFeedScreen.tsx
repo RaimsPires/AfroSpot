@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Video, { ViewType } from 'react-native-video'; // 🚀 Added
+import Video, { ViewType } from 'react-native-video';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
@@ -14,6 +14,7 @@ const CreateFeedScreen = ({ navigation }: any) => {
     const [tags, setTags] = useState('');
     const [videoAsset, setVideoAsset] = useState<Asset | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
 
     const pickVideo = async () => {
         const result = await launchImageLibrary({ mediaType: 'video', selectionLimit: 1 });
@@ -22,6 +23,9 @@ const CreateFeedScreen = ({ navigation }: any) => {
         if (!result.didCancel && result.assets) setVideoAsset(result.assets[0]);
     };
 
+    const togglePlayPause = () => {
+        setIsPaused(prevState => !prevState);
+    };
     const handlePublish = async () => {
         if (!videoAsset) {
             Alert.alert("Missing Video", "Please select a video to post.");
@@ -63,45 +67,29 @@ const CreateFeedScreen = ({ navigation }: any) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.content}>
                     <Text style={[styles.label, { color: colors.textSecondary }]}>UPLOAD VIDEO</Text>
-
-                    <View style={styles.previewContainer}>
-
-                        <Video
-                            // source={{ uri: videoAsset.uri }}
-                            source={{ uri: "https://www.w3schools.com/html/mov_bbb.mp4" }}
-                            // style={StyleSheet.absoluteFill}
-                            resizeMode="cover"
-                            repeat={true}
-                            muted={true}
-                            viewType={ViewType.TEXTURE} // 🚀 Replaces useTextureView={true}
-                            disableFocus={true}
-                        />
-                    </View>
                     {videoAsset ? (
                         <View style={styles.previewContainer}>
                             {/* 🚀 Real Video Preview */}
-                            {/* <Video
-                                source={{ uri: videoAsset.uri }}
-                                style={StyleSheet.absoluteFill}
-                                resizeMode="cover"
-                                repeat={true}
-                                muted={true} // Mute the preview so it's not annoying while they type
-                            /> */}
+                            <Pressable style={styles.videoContainer} onPress={togglePlayPause}>
+                                <Video
+                                    source={{ uri: videoAsset.uri }}
+                                    style={StyleSheet.absoluteFill}
+                                    resizeMode="cover"
+                                    repeat={true}
+                                    muted={true}
+                                    viewType={ViewType.TEXTURE}
+                                    disableFocus={true}
+                                    // 4. Pass the state to the paused prop
+                                    paused={isPaused}
+                                />
 
-
-                            <Video
-                                // source={{ uri: videoAsset.uri }}
-                                source={{ uri: "https://www.w3schools.com/html/mov_bbb.mp4" }}
-                                style={StyleSheet.absoluteFill}
-                                resizeMode="cover"
-                                repeat={true}
-                                muted={true}
-                                viewType={ViewType.TEXTURE} // 🚀 Replaces useTextureView={true}
-                                disableFocus={true}
-                            />
-
-
-
+                                {/* Optional: Add a UI indicator when the video is paused */}
+                                {isPaused && (
+                                    <View style={styles.overlay}>
+                                        <Text style={styles.playIcon}>▶️</Text>
+                                    </View>
+                                )}
+                            </Pressable>
                             {/* Dark gradient for text readability */}
                             <View style={{ ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.3)' }} />
 
@@ -149,6 +137,9 @@ const styles = StyleSheet.create({
     uploadBox: { height: 200, borderWidth: 1, borderStyle: 'dashed', borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
     uploadText: { fontSize: 15, fontWeight: '700' },
     previewContainer: { height: 350, width: '70%', alignSelf: 'center', borderRadius: 16, overflow: 'hidden', position: 'relative' },
+    videoContainer: { flex: 1, },
+    overlay: {...StyleSheet.absoluteFill,justifyContent: 'center', alignItems: 'center',backgroundColor: 'rgba(0, 0, 0, 0.3)',},
+    playIcon: {fontSize: 50,color: 'white',},
     previewOverlay: { position: 'absolute', bottom: 20, left: 20, right: 20 },
     previewCaption: { color: 'white', fontWeight: '800', fontSize: 16, textShadowColor: 'black', textShadowRadius: 4 },
     previewTags: { color: '#00D1FF', fontWeight: '700', fontSize: 14, marginTop: 4 },

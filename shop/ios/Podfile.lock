@@ -23,7 +23,9 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - DVAssetLoaderDelegate (0.3.3)
   - FBLazyVector (0.85.3)
+  - GoogleAds-IMA-iOS-SDK (3.22.1)
   - hermes-engine (250829098.0.10):
     - hermes-engine/Pre-built (= 250829098.0.10)
   - hermes-engine/Pre-built (250829098.0.10)
@@ -1728,6 +1730,9 @@ PODS:
     - ReactNativeDependencies
     - Yoga
   - react-native-video/Video (6.19.2):
+    - DVAssetLoaderDelegate (~> 0.3.1)
+    - GoogleAds-IMA-iOS-SDK (~> 3.22.1)
+    - GoogleAds-IMA-tvOS-SDK (~> 4.2)
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1749,6 +1754,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+    - SPTPersistentCache (~> 1.1.0)
     - Yoga
   - React-NativeModulesApple (0.85.3):
     - hermes-engine
@@ -2486,6 +2492,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - SPTPersistentCache (1.1.0)
   - TOCropViewController (2.8.0)
   - VisionCamera (5.0.9):
     - hermes-engine
@@ -2517,6 +2524,7 @@ PODS:
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - "CookieManager (from `../node_modules/@preeternal/react-native-cookie-manager`)"
+  - DVAssetLoaderDelegate
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - NitroImage (from `../node_modules/react-native-nitro-image`)
@@ -2615,11 +2623,15 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
+  - SPTPersistentCache
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - DVAssetLoaderDelegate
+    - GoogleAds-IMA-iOS-SDK
+    - SPTPersistentCache
     - TOCropViewController
 
 EXTERNAL SOURCES:
@@ -2830,7 +2842,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
   CookieManager: a6884056edc3617a4db99245b769eaa44c9a2daf
+  DVAssetLoaderDelegate: 0caec20e4e08b8560b691131539e9180024d4bce
   FBLazyVector: 24e62c765683b8d89006a88a2c8f5cf019f0074d
+  GoogleAds-IMA-iOS-SDK: 160c3616b8371b58016e30aaf441e71d6d9e8f7d
   hermes-engine: e2733c94dcf9e220099fa9be79c904e31a9f886d
   NitroImage: 16ed06fae11c332d5cde1011985040ce5601d1f2
   NitroModules: ba9ddd723ffde85412ec774827d4a80ad9864b89
@@ -2883,14 +2897,9 @@ SPEC CHECKSUMS:
   react-native-vector-icons-feather: 76dcd7caba65d8799a0587bd298c256c3687b96c
   react-native-vector-icons-ionicons: c416c2cdf94f4cd9957ec77fde502e3410e40d14
   react-native-vector-icons-material-design-icons: 99c750d15cbc5df6f240bf1e7a45a0c07d42a015
-<<<<<<< HEAD
-  react-native-video: db3a70efc9fa0c00f5499d7798283bf0585cbd37
-  React-NativeModulesApple: deba264b03bd79c6bd61014fa30e40321b5e443a
-  React-networking: 35e6070b084f435429f85c5db40b4d5b38652fe9
-=======
+  react-native-video: 5eb2b717140286c27b237431a1e6b226ebcfcd81
   React-NativeModulesApple: cc6ec4767844d610e92cc358bd3ea34937438d56
   React-networking: a8ce15641ed7775d5b54a9d0d32defc367c2216e
->>>>>>> 8d33d8c964afcf60158be97688b988b51e4c85a2
   React-oscompat: 64a0c7ef5441855dc6e2a6afe8ba8f92aa05075e
   React-perflogger: b2b0144e4ba8dd157c1e90f8ebb02d22edbd040d
   React-performancecdpmetrics: 5a715ec33f2dea48a93a70db37a78b4f51f9fd5a
@@ -2932,10 +2941,11 @@ SPEC CHECKSUMS:
   RNShare: 43cee010ada075019148c7a6bac1ca71b074e1d7
   RNVectorIcons: 9d52f79c911eb6099a14b8135bd261ccef039fcb
   RNWorklets: 32b9ca9e0588b838ce3202a9ea3971f553c9011c
+  SPTPersistentCache: df36ea46762d7cf026502bbb86a8b79d0080dff4
   TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
   VisionCamera: 2df1092c6b62f226f17eb6c658ffa8a1f842fac2
   Yoga: 77dfa8673de2874e1855002ae59c68b8be9b007b
 
-PODFILE CHECKSUM: 655913d602a8c61b8d9dcbcd5a1079c130ec48e0
+PODFILE CHECKSUM: 4aedfcb826085f6a0bb466f4c5007840986ff41e
 
 COCOAPODS: 1.16.2
