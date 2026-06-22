@@ -1,5 +1,5 @@
 from django.urls import path , include
-from .views import (RegisterAllView , BulkOperatingHoursView , SpotMemberViewSet,AcceptInvitationWebView,SpotInvitationViewSet,ActiveSpotView,ProductViewSet,ProductImageDetailView,ServiceViewSet,ServiceImageDetailView,EventViewSet)
+from .views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -8,6 +8,7 @@ router.register(r'spots/invitations', SpotInvitationViewSet, basename='spot-invi
 router.register(r'products', ProductViewSet, basename='products')
 router.register(r'services', ServiceViewSet, basename='services')
 router.register(r'events', EventViewSet, basename='events')
+router.register(r'feeds', FeedViewSet, basename='feeds')
 
 urlpatterns = [
     path('spots/register-all/', RegisterAllView.as_view(), name='register-all'),

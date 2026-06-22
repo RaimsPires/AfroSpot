@@ -47,6 +47,11 @@ end
 target 'afrospotshop' do
   config = use_native_modules!
 
+  # --- Fix for react-native-video Swift dependencies ---
+  pod 'SPTPersistentCache', :modular_headers => true
+  pod 'DVAssetLoaderDelegate', :modular_headers => true
+  # -----------------------------------------------------
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
@@ -60,5 +65,13 @@ target 'afrospotshop' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # --- FORCED DEPLOYMENT TARGET FIX ---
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      end
+    end
+    # ------------------------------------
   end
 end

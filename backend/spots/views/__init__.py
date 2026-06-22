@@ -7,8 +7,9 @@ from . spot import ActiveSpotView
 from . product import ProductViewSet,ProductImageDetailView
 from . service import ServiceViewSet,ServiceImageDetailView
 from . event import EventViewSet
+from . feed import FeedViewSet
 
 __all__ = ['RegisterAllView','BulkOperatingHoursView','SpotMemberViewSet',
         "AcceptInvitationWebView","SpotInvitationViewSet","ActiveSpotView",
         "ProductViewSet","ProductImageDetailView","ServiceViewSet","ServiceImageDetailView",
-        "EventViewSet"]
+        "EventViewSet" ,"FeedViewSet"]

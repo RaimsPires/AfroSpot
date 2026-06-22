@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from utils.models.models import BaseModel
 from utils.upload import VideoUploadHandler,ImageUploadHandler
@@ -28,3 +29,55 @@ class FeedViewLog(BaseModel):
 
     class Meta:
         db_table = "feed_view_logs"
+        
+        
+
+# 🚀 NEW: Relational Like Model
+class FeedLike(BaseModel):
+    feed = models.ForeignKey(FeedItem, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feed_likes')
+
+    class Meta:
+        db_table = "feed_likes"
+        unique_together = ('feed', 'user') # Prevents double-liking
+
+
+class FeedComment(BaseModel):
+    feed = models.ForeignKey(FeedItem, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()
+    parent = models.ForeignKey(
+        'self', 
+        null=True, 
+        blank=True, 
+        on_delete=models.CASCADE, 
+        related_name='replies'
+    )
+
+    class Meta:
+        db_table = "feed_comments"
+        ordering = ['-created_at'] 
+
+# 🚀 NEW: Dedicated Boost Campaign Model
+class FeedBoost(BaseModel):
+    class BoostStatus(models.TextChoices):
+        ACTIVE = 'active', 'Active'
+        PAUSED = 'paused', 'Paused'
+        COMPLETED = 'completed', 'Completed'
+
+    feed = models.ForeignKey(FeedItem, on_delete=models.CASCADE, related_name='boosts')
+    status = models.CharField(max_length=20, choices=BoostStatus.choices, default=BoostStatus.ACTIVE)
+    
+    # Financials and Targeting
+    budget_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    target_audience = models.CharField(max_length=255, blank=True)
+    
+    # Insights
+    reach = models.PositiveIntegerField(default=0, help_text="Number of unique users who saw this via boost")
+    link_clicks = models.PositiveIntegerField(default=0)
+    
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
+    class Meta:
+        db_table = "feed_boosts"

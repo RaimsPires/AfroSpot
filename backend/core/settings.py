@@ -84,12 +84,16 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     # third party middlewares like auth_kit's JWT middleware would go here if needed 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     # 'user_language_middleware.UserLanguageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 ]
 
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 if DEBUG:
     INSTALLED_APPS += ["django_browser_reload"]

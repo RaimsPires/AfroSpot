@@ -7,10 +7,10 @@ from . spot import SpotSerializer
 from . product import ProductSerializer ,ProductImageSerializer
 from . service import ServiceImageSerializer , ServiceSerializer
 from . event import EventSerializer , EventTicketTierSerializer , EventVendorTierSerializer
-from . feed import FeedItemSerializer
+from . feed import FeedItemSerializer ,FeedCommentSerializer
 
 __all__ = [
     'RegisterAllSerializer', 'SpotMinifiedSerializer' , "UserSpotMembershipSerializer","OperatingHoursSerializer" ,
     "SpotMemberReadSerializer" , "UserMinifiedSerializer" , "SpotMemberWriteSerializer" , "SpotInvitationSerializer","SpotSerializer",
     "ProductSerializer","ProductImageSerializer","ServiceImageSerializer" , "ServiceSerializer","EventSerializer",
-    "EventTicketTierSerializer" , "EventVendorTierSerializer" , "FeedItemSerializer"]
+    "EventTicketTierSerializer" , "EventVendorTierSerializer" , "FeedItemSerializer","FeedCommentSerializer"]
