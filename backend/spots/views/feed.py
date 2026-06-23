@@ -75,18 +75,6 @@ class FeedViewSet(viewsets.ModelViewSet):
             "total_likes": total_likes,
             "total_reach": total_reach
         })
-        
-    @action(detail=True, methods=['post'])
-    def toggle_like(self, request, pk=None):
-        feed = self.get_object()
-        like, created = FeedLike.objects.get_or_create(feed=feed, user=request.user)
-        
-        if not created:
-            # If it already existed, they are unliking it
-            like.delete()
-            return Response({"status": "unliked", "likes_count": feed.likes.count()})
-            
-        return Response({"status": "liked", "likes_count": feed.likes.count()})
 
     # 🚀 ACTION: Add a Comment
     @action(detail=True, methods=['post'])
