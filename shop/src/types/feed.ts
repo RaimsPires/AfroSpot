@@ -1,10 +1,16 @@
+export interface userComment {
+    profile_picture: string,
+    short_name: string,
+    id: string
+}
 
 export interface FeedCommentData {
     id: string;
-    user_name: string;
+    user: userComment;
     text: string;
     created_at: string;
-    avatar?: string;
+    replies: FeedCommentData[];
+    reply_count:number;
 }
 
 export interface FeedLikeData {

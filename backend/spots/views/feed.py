@@ -117,26 +117,42 @@ class FeedViewSet(viewsets.ModelViewSet):
         serializer = FeedCommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    # 🚀 GET all likes for this specific feed
+    # 🚀 ACTION: Get Paginated Likes
     @action(detail=True, methods=['get'])
     def likes(self, request, pk=None):
         feed = self.get_object()
-        likes = FeedLike.objects.filter(feed=feed).select_related('user')
+        likes_qs = FeedLike.objects.filter(feed=feed).select_related('user')
         
-        page = self.paginate_queryset(likes)
+        # Use DRF's built-in pagination
+        page = self.paginate_queryset(likes_qs)
         
+        # Logic to serialize
         def serialize_likes(queryset):
             return [{
                 "id": str(like.id),
                 "name": like.user.get_full_name(),
-                "username": like.user.username,
-                "avatar": like.user.profile_picture.url if hasattr(like.user, 'profile_picture') and like.user.profile_picture else None
+                "username": getattr(like.user, 'username', like.user.email), 
+                "avatar": request.build_absolute_uri(like.user.profile_picture.url) if like.user.profile_picture else None
             } for like in queryset]
 
         if page is not None:
             return self.get_paginated_response(serialize_likes(page))
+        
+        return Response(serialize_likes(likes_qs))
+
+    # 🚀 ACTION: Toggle Like (POST Only)
+    @action(detail=True, methods=['post'])
+    def toggle_like(self, request, pk=None):
+        feed = self.get_object()
+        
+        # Toggle logic: Create if not exists, delete if exists
+        like, created = FeedLike.objects.get_or_create(feed=feed, user=request.user)
+        
+        if not created:
+            like.delete()
+            return Response({"status": "unliked", "is_liked": False}, status=status.HTTP_200_OK)
             
-        return Response(serialize_likes(likes))
+        return Response({"status": "liked", "is_liked": True}, status=status.HTTP_201_CREATED)
 
     # 🚀 GET all comments for this specific feed
     @action(detail=True, methods=['get'])
@@ -147,8 +163,50 @@ class FeedViewSet(viewsets.ModelViewSet):
         
         page = self.paginate_queryset(comments)
         if page is not None:
-            serializer = FeedCommentSerializer(page, many=True)
+            serializer = FeedCommentSerializer(page, many=True,context={'request': request})
             return self.get_paginated_response(serializer.data)
             
-        serializer = FeedCommentSerializer(comments, many=True)
+        serializer = FeedCommentSerializer(comments, many=True,context={'request': request})
         return Response(serializer.data)
+    
+    
+    @action(detail=True, methods=['get'], url_path='comments/(?P<comment_id>[^/.]+)/replies')
+    def comment_replies(self, request, pk=None, comment_id=None):
+        """
+        Fetches paginated replies for a specific top-level comment.
+        URL: /api/feeds/<feed_id>/comments/<comment_id>/replies/?offset=2&limit=10
+        """
+        feed = self.get_object()
+        
+        try:
+            # Ensure the parent comment belongs to this feed
+            parent_comment = FeedComment.objects.get(id=comment_id, feed=feed)
+        except FeedComment.DoesNotExist:
+            return Response({"detail": "Comment not found."}, status=404)
+
+        # Get pagination parameters from the query string (defaults to offset 0, limit 10)
+        try:
+            offset = int(request.query_params.get('offset', 0))
+            limit = int(request.query_params.get('limit', 10))
+        except ValueError:
+            return Response({"detail": "Invalid offset or limit"}, status=400)
+        
+        # Fetch the replies ordered by creation time
+        replies_qs = FeedComment.objects.filter(
+            parent=parent_comment
+        ).select_related('user').order_by('created_at')
+        
+        # Slice the queryset
+        replies = replies_qs[offset:offset + limit]
+        
+        # Pass a context flag to prevent infinite nesting in the serializer
+        serializer = FeedCommentSerializer(
+            replies, 
+            many=True, 
+            context={'request': request, 'is_reply_fetch': True}
+        )
+        
+        return Response({
+            'results': serializer.data,
+            'next_offset': offset + limit if (offset + limit) < replies_qs.count() else None
+        })

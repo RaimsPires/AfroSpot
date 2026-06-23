@@ -57,10 +57,6 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     const videoRef = useRef<any>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    useEffect(() => {
-        fetchFeedDetails();
-    }, []);
-
     const fetchFeedDetails = async () => {
         try {
             const data = await feedService.getFeed(feedId);
@@ -75,6 +71,10 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
             setIsLoading(false);
         }
     };
+    useEffect(() => {
+        fetchFeedDetails();
+    }, []);
+
 
     // --- Action Handlers ---
 
@@ -297,13 +297,9 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
 
             <Modal visible={isCommentsVisible} transparent animationType="slide" onRequestClose={() => setCommentsVisible(false)}>
                 <CommentsBottomSheet
-                    comments={comments}
+                    feedId={feedId}
                     commentCountLabel={feed.comments_count}
                     onClose={() => setCommentsVisible(false)}
-                    onSubmitComment={async (text, parentId) => {
-                        const response = await feedService.addFeedComment(feedId, text, parentId)
-                        setComments([response , ...comments])
-                    }}
                 />
             </Modal>
 

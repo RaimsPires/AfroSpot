@@ -1,32 +1,47 @@
 from rest_framework import serializers
 from spots.models.feed import FeedItem, FeedComment
+from users.serializers import UserCommentSerializer
 
 class FeedCommentSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='user.get_full_name', read_only=True)
-    # user_avatar = serializers.ImageField(source='user.profile_picture', read_only=True) # Optional
-    
+    user = UserCommentSerializer(read_only=True)    
     class Meta:
         model = FeedComment
         fields = ['id', 'user', 'user_name', 'text', 'created_at']
         read_only_fields = ['id', 'user', 'created_at']
 
 class FeedCommentSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='user.get_full_name', read_only=True)
-    user_username = serializers.CharField(source='user.username', read_only=True)
+    user = UserCommentSerializer(read_only=True)
     replies = serializers.SerializerMethodField()
+    reply_count = serializers.SerializerMethodField()
 
     class Meta:
         model = FeedComment
-        fields = ['id', 'user', 'user_name', 'user_username', 'text', 'parent', 'replies', 'created_at']
-        read_only_fields = ['id', 'user', 'created_at']
+        fields = ['id', 'user', 'text', 'parent', 'replies','reply_count']
+        read_only_fields = ['id', 'user', 'created_at','avatar']
+        
+    def get_avatar(self,obj):
+        return f"{obj.user.profile_picture}"
 
     def get_replies(self, obj):
-        # Check if the comment has replies. 
-        # We only nest one level deep to avoid infinite loops and massive payloads.
-        if obj.replies.exists():
-            # We reuse the same serializer for the replies
-            return FeedCommentSerializer(obj.replies.all(), many=True).data
-        return []
+        # If we are explicitly fetching replies via the new endpoint, don't nest further
+        if obj.parent_id is not None or self.context.get('is_reply_fetch'):
+            return []
+            
+        # For top-level comments, only load the first 2 replies initially
+        initial_replies = FeedComment.objects.filter(
+            parent=obj
+        ).select_related('user').order_by('created_at')[:2]
+        
+        return FeedCommentSerializer(
+            initial_replies, 
+            many=True, 
+            context={'request': self.context.get('request'), 'is_reply_fetch': True}
+        ).data
+    
+    def get_reply_count(self, obj):
+        if obj.parent_id is not None:
+            return 0
+        return FeedComment.objects.filter(parent=obj).count()
 
 class FeedItemSerializer(serializers.ModelSerializer):
     spot_name = serializers.CharField(source='spot.name', read_only=True)

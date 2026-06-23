@@ -1,6 +1,7 @@
 import { localeStorage } from '@services/localeStorage';
 import { STORAGE_KEYS } from '@utils/storage_constants';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { BASE_URL } from './url_config';
 
 // Extend Axios config to track retries internally
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
@@ -266,4 +267,4 @@ class ApiClient {
     }
 }
 
-export const apiClient = new ApiClient('http://192.168.100.239:8000/api');
+export const apiClient = new ApiClient(`${BASE_URL}/api`);
