@@ -4,10 +4,13 @@ from django.utils.translation import gettext_lazy as _
 from utils.models.models import BaseModel
 from utils.upload import VideoUploadHandler,ImageUploadHandler
 from spots.models.spot import Spot
+from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+
 
 class FeedItem(BaseModel):
     spot = models.ForeignKey(Spot, on_delete=models.CASCADE, related_name='feed_items')
-    video_file = models.FileField(upload_to=VideoUploadHandler('spots/feed/videos/'))
+    video_file = models.FileField(upload_to=VideoUploadHandler('spots/feed/videos/'),
+                                storage=VideoMediaCloudinaryStorage())
     video_cover = models.ImageField(upload_to=ImageUploadHandler('spots/feed/covers/'), null=True, blank=True)
     caption = models.TextField(blank=True)
     hashtags = models.CharField(max_length=500, blank=True)
@@ -58,7 +61,7 @@ class FeedComment(BaseModel):
         db_table = "feed_comments"
         ordering = ['-created_at'] 
 
-# 🚀 NEW: Dedicated Boost Campaign Model
+
 class FeedBoost(BaseModel):
     class BoostStatus(models.TextChoices):
         ACTIVE = 'active', 'Active'

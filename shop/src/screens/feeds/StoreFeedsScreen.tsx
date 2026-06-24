@@ -15,7 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
-import { FeedData, feedService } from '@services/feedService';
+import { feedService } from '@services/feedService';
+import { FeedData } from '@type/feed';
 
 const FILTER_TABS = ['All', 'Boosted', 'Organic'];
 
@@ -206,10 +207,8 @@ export const StoreFeedsScreen = ({ navigation }: any) => {
                     renderItem={({ item: feed }) => (
                         <View style={[styles.feedCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                             {/* Card Body */}
-                            <TouchableOpacity
+                            <View
                                 style={styles.cardBody}
-                                onPress={() => navigation.navigate('FeedInsights', { feedId: feed.id })}
-                                activeOpacity={0.85}
                             >
                                 <ImageBackground
                                     source={{ uri: feed.video_cover || 'https://via.placeholder.com/400' }}
@@ -258,11 +257,13 @@ export const StoreFeedsScreen = ({ navigation }: any) => {
 
                                     <Text style={[styles.cardDate, { color: colors.textSecondary }]}>{formatDate(feed.created_at)}</Text>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
 
                             {/* Card Footer */}
                             <View style={[styles.cardFooter, { borderTopColor: colors.border }]}>
-                                <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.navigate('FeedInsights', { feed })}>
+                                <TouchableOpacity style={styles.footerBtn}
+                                    onPress={() => navigation.navigate('FeedInsights', { feedId: feed.id })}
+                                >
                                     <AppIcon library="Feather" name="bar-chart-2" size={15} color={colors.textSecondary} />
                                     <Text style={[styles.footerBtnText, { color: colors.textSecondary }]}>Insights</Text>
                                 </TouchableOpacity>

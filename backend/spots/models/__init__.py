@@ -10,6 +10,7 @@ from . event_order import EventOrder
 from . event_vendor import EventVendorBooking
 from . event_vendor_tier import EventVendorTier
 from . feed import FeedItem , FeedViewLog , FeedLike , FeedBoost ,FeedComment
+from . promotion import Promotion
 
 __all__ = [
     'Spot',
@@ -30,5 +31,6 @@ __all__ = [
     "FeedViewLog",
     "FeedLike",
     "FeedBoost",
-    "FeedComment"
+    "FeedComment",
+    "Promotion"
 ]

@@ -14,6 +14,9 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
+from dotenv import load_dotenv
+
+load_dotenv() 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +51,9 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     "debug_toolbar",
+    
+    'cloudinary_storage',
+    'cloudinary',
     
     
     'django.contrib.admin',
@@ -189,14 +195,44 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'afrospot//media'
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_SECRETE'),
+}
+
+# Use Cloudinary for Media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+# For Django 4.2+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+# def get_media_url(settings, path):
+#     return f"{settings.MEDIA_URL}{path}"
+
+# # Add this at the bottom of settings.py
+# WHITENOISE_ROOT = BASE_DIR / 'media'
+
+# # To prevent WhiteNoise from trying to compress large video files (which can cause issues)
+# WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ('mp4', 'mov', 'm4v', 'webm', 'ogg')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 AUTH_USER_MODEL = 'users.User' 
 

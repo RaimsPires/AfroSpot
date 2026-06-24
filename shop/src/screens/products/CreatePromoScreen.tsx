@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
     KeyboardAvoidingView,
+    Modal,
     Platform,
     ScrollView,
     StatusBar,
@@ -15,8 +16,10 @@ import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import BasicInfoForm from '@screens/promo_code/BasicInfoForm';
 import DiscountConfiguration from '@screens/promo_code/DiscountConfiguration';
+import ItemsSelectionBottomSheet from '@screens/promo_code/ItemsSelectionBottomSheet';
 import LivePreviewCard from '@screens/promo_code/LivePreviewCard';
 import TargetAndScheduling from '@screens/promo_code/TargetAndScheduling';
+import { promoService, PromoTargetItem } from '@services/promotionService';
 
 
 
@@ -34,6 +37,36 @@ const CreatePromoScreen = ({ navigation, route }: any) => {
     const [appliesTo, setAppliesTo] = useState(editingPromo?.target ?? 'All Services');
     const [startDate, setStartDate] = useState(editingPromo?.startDate ?? 'Oct 24, 2023');
     const [endDate, setEndDate] = useState(editingPromo?.endDate ?? 'Oct 31, 2023');
+
+    const [selectedSpecificItems, setSelectedSpecificItems] = useState<PromoTargetItem[]>([]);
+    const [isItemSheetVisible, setIsItemSheetVisible] = useState(false);
+
+    const handlePublish = async () => {
+        // Map frontend display string to backend choices
+        const targetMapping: Record<string, string> = {
+            'All Services': 'all_services',
+            'All Products': 'all_products',
+            'Specific Items': 'specific_items'
+        };
+
+        const selectedProductIds = selectedSpecificItems.filter(i => i.type === 'product');
+        const selectedServiceIds = selectedSpecificItems.filter(i => i.type === 'service');
+
+        const payload = {
+            title,
+            code: promoCode,
+            discount_type: discountType,
+            discount_value: parseFloat(discountValue),
+            target: targetMapping[appliesTo], // sends 'all_services', etc.
+            start_date: '2023-10-24',
+            end_date: '2023-10-31',
+            // If they chose specific items, pass their IDs collected from a modal selection
+            products: appliesTo === 'Specific Items' ? selectedProductIds : [],
+            services: appliesTo === 'Specific Items' ? selectedServiceIds : [],
+        };
+
+        await promoService.createPromo(payload);
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -85,20 +118,32 @@ const CreatePromoScreen = ({ navigation, route }: any) => {
                     {/* 4. Discount Configuration */}
                     <DiscountConfiguration
                         discountType={discountType}
-                        setDiscountType={(discountType)=>{
+                        setDiscountType={(discountType) => {
                             setDiscountType(discountType)
                         }}
-                        discountValue={discountType}
-                        setDiscountValue={(dicountValue)=>{
+                        setDiscountValue={(dicountValue) => {
                             setDiscountValue(dicountValue)
                         }}
+                        discountValue={discountValue}
                     />
 
                     {/* 5. Target & Scheduling */}
                     <TargetAndScheduling
                         appliesTo={appliesTo}
                         setAppliesTo={setAppliesTo}
+                        onOpenSpecificItems={() => setIsItemSheetVisible(true)}
+                        selectedCount={selectedSpecificItems.length}
                     />
+                    <Modal visible={isItemSheetVisible} transparent animationType="slide">
+                        <ItemsSelectionBottomSheet
+                            initialSelected={selectedSpecificItems}
+                            onClose={() => setIsItemSheetVisible(false)}
+                            onConfirm={(items) => {
+                                setSelectedSpecificItems(items);
+                                setIsItemSheetVisible(false);
+                            }}
+                        />
+                    </Modal>
 
 
 
@@ -107,7 +152,10 @@ const CreatePromoScreen = ({ navigation, route }: any) => {
 
             {/* 6. Bottom Sticky Publish Button */}
             <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
-                <TouchableOpacity style={[styles.publishBtn, { backgroundColor: colors.primary }]}>
+                <TouchableOpacity
+                    style={[styles.publishBtn, { backgroundColor: colors.primary }]}
+                    onPress={handlePublish}
+                >
                     <AppIcon library="Feather" name="check" size={20} color={colors.textInverse} />
                     <Text style={[styles.publishBtnText, { color: colors.textInverse }]}>
                         {isEditing ? 'Save Changes' : 'Publish Promotion'}

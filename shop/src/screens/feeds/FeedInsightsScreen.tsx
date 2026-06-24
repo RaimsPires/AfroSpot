@@ -22,7 +22,7 @@ import { LikesBottomSheet } from '@components/feed/LikesBottomSheet';
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import { feedService } from '@services/feedService';
-import { FeedCommentData, FeedData, FeedLikeData } from '@type/feed';
+import { FeedData } from '@type/feed';
 import Video, { ViewType } from 'react-native-video';
 
 const METRIC_CARDS = [
@@ -50,15 +50,14 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     const [isCommentsVisible, setCommentsVisible] = useState(false);
     const [isLikesVisible, setLikesVisible] = useState(false);
 
-    // Relational Data
-    const [comments, setComments] = useState<FeedCommentData[]>([]);
-    const [likers, setLikers] = useState<FeedLikeData[]>([]);
 
     const videoRef = useRef<any>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
     const fetchFeedDetails = async () => {
         try {
+            console.log(feedId);
+
             const data = await feedService.getFeed(feedId);
             console.log(data);
 
@@ -74,6 +73,8 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     useEffect(() => {
         fetchFeedDetails();
     }, []);
+
+
 
 
     // --- Action Handlers ---
@@ -113,24 +114,18 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     const handleMetricPress = async (metricKey: string) => {
         if (metricKey === 'likes_count') {
             setLikesVisible(true);
-            try {
-                const data = await feedService.getFeedLikes(feedId);
-                setLikers(data);
-            } catch (e) { console.error("Could not fetch likers", e); }
         }
 
         if (metricKey === 'comments_count') {
             setCommentsVisible(true);
-            try {
-                const data = await feedService.getFeedComments(feedId);
-                setComments(data);
-            } catch (e) { console.error("Could not fetch comments", e); }
+
         }
     };
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
+    
 
     if (isLoading || !feed) {
         return (
@@ -165,7 +160,12 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
                     {/* 1. The Video Component (Always at the bottom layer) */}
                     <Video
                         ref={videoRef}
-                        source={{ uri: feed.video_file }}
+                        source={{
+                            uri: feed.video_file,
+                            headers: {
+                                'Accept': '*/*', // Ensure the player can request ranges
+                            }
+                        }}
                         style={StyleSheet.absoluteFill}
                         resizeMode="cover"
                         viewType={ViewType.TEXTURE}
@@ -304,7 +304,9 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
             </Modal>
 
             <Modal visible={isLikesVisible} transparent animationType="slide" onRequestClose={() => setLikesVisible(false)}>
-                <LikesBottomSheet users={likers} likeCountLabel={feed.likes_count} onClose={() => setLikesVisible(false)} />
+                <LikesBottomSheet
+                    feedId={feedId}
+                    likeCountLabel={feed.likes_count} onClose={() => setLikesVisible(false)} />
             </Modal>
         </SafeAreaView>
     );

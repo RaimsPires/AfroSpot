@@ -1,18 +1,67 @@
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
+import { feedService } from '@services/feedService'; // Ensure this path is correct
 import { FeedLikeData } from '@type/feed';
 
 type LikesBottomSheetProps = {
-  users?: FeedLikeData[];
+  feedId: string; // 🚀 Pass the feedId to fetch data internally
   likeCountLabel?: string | number;
   onClose?: () => void;
 };
 
-export const LikesBottomSheet = ({ users = [], likeCountLabel, onClose }: LikesBottomSheetProps) => {
+export const LikesBottomSheet = ({ feedId, likeCountLabel, onClose }: LikesBottomSheetProps) => {
   const { colors } = useTheme();
+
+  // Pagination States
+  const [likes, setLikes] = useState<FeedLikeData[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLikes(1);
+  }, [feedId]);
+
+  const fetchLikes = async (pageNum: number) => {
+    try {
+      // 🚀 Assuming you have this method in your feedService
+      const response = await feedService.getFeedLikes(feedId, pageNum);
+      
+      if (pageNum === 1) {
+        setLikes(response.results);
+      } else {
+        setLikes(prev => [...prev, ...response.results]);
+      }
+      
+      setHasMore(!!response.next);
+      setPage(pageNum);
+    } catch (error) {
+      console.error("Failed to fetch likes", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderLike = ({ item: user }: { item: FeedLikeData }) => (
+    <View style={[styles.userRow, { borderBottomColor: colors.border }]}> 
+      <View style={styles.userInfo}>
+        <Image 
+            source={{ uri: user.avatar || 'https://via.placeholder.com/150' }} 
+            style={styles.avatar} 
+        />
+        <View>
+          <Text style={[styles.userName, { color: colors.text }]}>{user.name}</Text>
+          <Text style={[styles.userHandle, { color: colors.textSecondary }]}>@{user.username}</Text>
+        </View>
+      </View>
+      <TouchableOpacity style={[styles.viewBtn, { borderColor: colors.border }]}>
+        <Text style={[styles.viewBtnText, { color: colors.text }]}>View</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={[styles.overlay, { backgroundColor: colors.overlay }]}> 
@@ -21,41 +70,33 @@ export const LikesBottomSheet = ({ users = [], likeCountLabel, onClose }: LikesB
         {/* Header */}
         <View style={[styles.sheetHeader, { borderBottomColor: colors.divider }]}> 
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Likes ({likeCountLabel !== undefined ? likeCountLabel : users.length})
+            Likes ({likeCountLabel !== undefined ? likeCountLabel : likes.length})
           </Text>
           <TouchableOpacity onPress={onClose}>
             <AppIcon library="Feather" name="x" size={24} color={colors.text} />
           </TouchableOpacity>
         </View>
 
-        {/* List Content */}
-        <ScrollView contentContainerStyle={styles.listContent}>
-          {users.map((user) => (
-            <View key={user.id} style={[styles.userRow, { borderBottomColor: colors.border }]}> 
-              <View style={styles.userInfo}>
-                {/* 🚀 Fallback to placeholder if user has no avatar */}
-                <Image 
-                    source={{ uri: user.avatar || 'https://via.placeholder.com/150' }} 
-                    style={styles.avatar} 
-                />
-                <View>
-                  <Text style={[styles.userName, { color: colors.text }]}>{user.name}</Text>
-                  <Text style={[styles.userHandle, { color: colors.textSecondary }]}>@{user.username}</Text>
-                </View>
-              </View>
-              <TouchableOpacity style={[styles.viewBtn, { borderColor: colors.border }]}>
-                <Text style={[styles.viewBtnText, { color: colors.text }]}>View</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-
-          {/* 🚀 Empty State Handling */}
-          {users.length === 0 && (
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              No likes yet.
-            </Text>
-          )}
-        </ScrollView>
+        {/* Paginated List Content */}
+        <FlatList
+          data={likes}
+          keyExtractor={(item) => item.id}
+          renderItem={renderLike}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          onEndReached={() => hasMore && !isLoading && fetchLikes(page + 1)}
+          onEndReachedThreshold={0.5}
+          ListEmptyComponent={
+            !isLoading ? (
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                No likes yet. Be the first!
+              </Text>
+            ) : null
+          }
+          ListFooterComponent={
+            isLoading ? <ActivityIndicator color={colors.primary} style={{ margin: 20 }} /> : null
+          }
+        />
       </View>
     </View>
   );
@@ -76,6 +117,5 @@ const styles = StyleSheet.create({
   viewBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10, borderWidth: 1 },
   viewBtnText: { fontSize: 12, fontWeight: '700' },
 
-  // 🚀 New Empty State Style
   emptyText: { textAlign: 'center', marginTop: 30, fontSize: 14, fontWeight: '500' }
 });

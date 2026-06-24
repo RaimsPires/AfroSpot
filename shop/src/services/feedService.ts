@@ -63,27 +63,30 @@ export const feedService = {
     getFeedComments: async (id: string, page: number = 1): Promise<PaginatedResponse<FeedCommentData>> => {
         // Assumes you added a comments/ endpoint to your viewset, or standard filtering
         const response = await apiClient.get<PaginatedResponse<FeedCommentData>>(`/feeds/${id}/comments/`, { params: { page } });
-        
+
         return Array.isArray(response.data) ? { results: response.data, next: null, count: response.data.length, previous: null } : response.data;
     },
 
     // Add this right below it
     getCommentReplies: async (feedId: string, commentId: string, offset: number, limit: number = 10): Promise<PaginatedResponse<FeedCommentData>> => {
         const response = await apiClient.get<PaginatedResponse<FeedCommentData>>(
-            `/feeds/${feedId}/comments/${commentId}/replies/`, 
+            `/feeds/${feedId}/comments/${commentId}/replies/`,
             { params: { offset, limit } }
         );
         // Using the same array fallback just in case your backend ever returns a flat list
         return Array.isArray(response.data) ? { results: response.data, next: null, count: response.data.length, previous: null } : response.data;
     },
 
-    getFeedLikes: async (id: string, page: number = 1): Promise<PaginatedResponse<FeedLikeData>> => {
-        const response = await apiClient.post<PaginatedResponse<FeedLikeData>>(`/feeds/${id}/likes/`, { params: { page } });
-        return Array.isArray(response.data) ? { results: response.data, next: null, count: response.data.length, previous: null } : response.data;
-    },
     addFeedComment: async (feedId: string, text: string, parentId?: string): Promise<FeedCommentData> => {
         const payload = parentId ? { text, parent_id: parentId } : { text };
-        const response = await apiClient.post<FeedCommentData>(`/feeds/${feedId}/likes/`, payload);
+        const response = await apiClient.post<FeedCommentData>(`/feeds/${feedId}/add_comment/`, payload);
         return response.data;
+    },
+
+    getFeedLikes: async (id: string, page: number = 1): Promise<PaginatedResponse<FeedLikeData>> => {
+        const response = await apiClient.get<PaginatedResponse<FeedLikeData>>(`/feeds/${id}/likes/`, { params: { page } });
+        console.log(response.data);
+
+        return Array.isArray(response.data) ? { results: response.data, next: null, count: response.data.length, previous: null } : response.data;
     },
 };

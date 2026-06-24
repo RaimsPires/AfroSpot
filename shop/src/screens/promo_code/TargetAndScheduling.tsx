@@ -4,8 +4,14 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const APPLIES_TO_OPTIONS = ['All Services', 'All Products', 'Specific Items'];
+type Props = {
+    appliesTo: string;
+    setAppliesTo: (applied_to: string) => void;
+    onOpenSpecificItems: () => void;
+    selectedCount: number;
+};
 
-const TargetAndScheduling: React.FC<{ appliesTo: string, setAppliesTo: (appliend_to: string) => void }> = ({ appliesTo, setAppliesTo }) => {
+const TargetAndScheduling: React.FC<Props> = ({ appliesTo, setAppliesTo, onOpenSpecificItems, selectedCount }) => {
     const { colors } = useTheme()
     return (
         <View style={styles.formSection}>
@@ -34,9 +40,14 @@ const TargetAndScheduling: React.FC<{ appliesTo: string, setAppliesTo: (appliend
             </View>
 
             {appliesTo === 'Specific Items' && (
-                <TouchableOpacity style={[styles.selectItemsBtn, { borderColor: colors.primary, backgroundColor: colors.primary + '05' }]}>
-                    <AppIcon library="Feather" name="plus-circle" size={16} color={colors.primary} />
-                    <Text style={[styles.selectItemsText, { color: colors.primary }]}>Select Products/Services</Text>
+                <TouchableOpacity
+                    onPress={onOpenSpecificItems} // 🚀 Open the sheet here
+                    style={[styles.selectItemsBtn, { borderColor: colors.primary, backgroundColor: colors.primary + '05' }]}
+                >
+                    <AppIcon library="Feather" name={selectedCount > 0 ? "edit-2" : "plus-circle"} size={16} color={colors.primary} />
+                    <Text style={[styles.selectItemsText, { color: colors.primary }]}>
+                        {selectedCount > 0 ? `${selectedCount} Items Selected` : 'Select Products/Services'}
+                    </Text>
                 </TouchableOpacity>
             )}
         </View>

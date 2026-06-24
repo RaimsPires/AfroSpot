@@ -8,8 +8,9 @@ from . product import ProductViewSet,ProductImageDetailView
 from . service import ServiceViewSet,ServiceImageDetailView
 from . event import EventViewSet
 from . feed import FeedViewSet
+from . promotion import PromotionViewSet
 
 __all__ = ['RegisterAllView','BulkOperatingHoursView','SpotMemberViewSet',
         "AcceptInvitationWebView","SpotInvitationViewSet","ActiveSpotView",
         "ProductViewSet","ProductImageDetailView","ServiceViewSet","ServiceImageDetailView",
-        "EventViewSet" ,"FeedViewSet"]
+        "EventViewSet" ,"FeedViewSet" , "PromotionViewSet"]

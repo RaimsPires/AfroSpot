@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from spots.models.feed import FeedItem, FeedComment
+from spots.models.feed import FeedItem, FeedComment ,FeedLike
 from users.serializers import UserCommentSerializer
 
 class FeedCommentSerializer(serializers.ModelSerializer):
@@ -69,3 +69,26 @@ class FeedItemSerializer(serializers.ModelSerializer):
         if active_boost:
             return active_boost.reach
         return 0
+    
+
+
+class FeedLikeSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.get_full_name', read_only=True)
+    username = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FeedLike
+        fields = ['id', 'name', 'username', 'avatar']
+        
+    def get_username(self, obj):
+        # Fallback to email if the user model doesn't have a username field
+        return getattr(obj.user, 'username', obj.user.email)
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        if obj.user.profile_picture and hasattr(obj.user.profile_picture, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.user.profile_picture.url)
+            return obj.user.profile_picture.url
+        return None

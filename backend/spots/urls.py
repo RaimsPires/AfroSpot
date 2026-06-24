@@ -9,6 +9,7 @@ router.register(r'products', ProductViewSet, basename='products')
 router.register(r'services', ServiceViewSet, basename='services')
 router.register(r'events', EventViewSet, basename='events')
 router.register(r'feeds', FeedViewSet, basename='feeds')
+router.register(r'promotions', PromotionViewSet)
 
 urlpatterns = [
     path('spots/register-all/', RegisterAllView.as_view(), name='register-all'),

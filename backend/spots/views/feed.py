@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from spots.models import FeedItem, FeedLike, FeedComment, FeedBoost
-from spots.serializers import FeedItemSerializer, FeedCommentSerializer
+from spots.serializers import FeedItemSerializer, FeedCommentSerializer , FeedLikeSerializer
 from utils.pagination import StandardResultsSetPagination
 
 class FeedViewSet(viewsets.ModelViewSet):
@@ -81,7 +81,7 @@ class FeedViewSet(viewsets.ModelViewSet):
     def add_comment(self, request, pk=None):
         feed = self.get_object()
         text = request.data.get('text')
-        parent_id = request.data.get('parent_id') # 🚀 Extract parent_id if it exists
+        parent_id = request.data.get('parent_id')
         
         if not text:
             return Response({"error": "Comment text is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -109,24 +109,16 @@ class FeedViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def likes(self, request, pk=None):
         feed = self.get_object()
-        likes_qs = FeedLike.objects.filter(feed=feed).select_related('user')
+        likes_qs = FeedLike.objects.filter(feed=feed).select_related('user').order_by('-created_at')
         
-        # Use DRF's built-in pagination
         page = self.paginate_queryset(likes_qs)
-        
-        # Logic to serialize
-        def serialize_likes(queryset):
-            return [{
-                "id": str(like.id),
-                "name": like.user.get_full_name(),
-                "username": getattr(like.user, 'username', like.user.email), 
-                "avatar": request.build_absolute_uri(like.user.profile_picture.url) if like.user.profile_picture else None
-            } for like in queryset]
-
         if page is not None:
-            return self.get_paginated_response(serialize_likes(page))
-        
-        return Response(serialize_likes(likes_qs))
+            # Pass the request context for absolute URLs in the avatar
+            serializer = FeedLikeSerializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+            
+        serializer = FeedLikeSerializer(likes_qs, many=True, context={'request': request})
+        return Response(serializer.data)
 
     # 🚀 ACTION: Toggle Like (POST Only)
     @action(detail=True, methods=['post'])
