@@ -45,10 +45,10 @@ const AddressCard = ({
                     <View style={[styles.iconBg, { backgroundColor: `${colors.primary}15` }]}>
                         <AppIcon library="Feather" name={getAddressIcon(item.address_type)} size={16} color={colors.primary} />
                     </View>
-                    <Text style={[styles.labelText, { color: colors.text }]}>{t(`deliveryAddresses.labels.${getAddressTypeLabel(item.address_type).toLowerCase()}`)}</Text>
+                    <Text style={[styles.labelText, { color: colors.text }]}>{t(`addresses.labels.${getAddressTypeLabel(item.address_type).toLowerCase()}`)}</Text>
                     {item.is_active ? (
                         <View style={[styles.primaryBadge, { backgroundColor: colors.primary }]}> 
-                            <Text style={styles.primaryBadgeText}>{t('deliveryAddresses.badges.primary')}</Text>
+                            <Text style={styles.primaryBadgeText}>{t('addresses.badges.primary')}</Text>
                         </View>
                     ) : null}
                 </View>
@@ -84,7 +84,7 @@ const AddressCard = ({
                     disabled={isSettingPrimary}
                 >
                     <Text style={[styles.setPrimaryText, { color: colors.primary }]}> 
-                        {isSettingPrimary ? t('deliveryAddresses.actions.updating') : t('deliveryAddresses.actions.setAsPrimary')}
+                        {isSettingPrimary ? t('addresses.actions.updating') : t('addresses.actions.setAsPrimary')}
                     </Text>
                 </TouchableOpacity>
             ) : null}

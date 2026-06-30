@@ -59,39 +59,39 @@ const AddressDetailsModal = ({
                                     <AppIcon library="Feather" name={getAddressIcon(address.address_type)} size={16} color={colors.primary} />
                                 </View>
                                 <View style={styles.detailsHeaderTextWrap}>
-                                    <Text style={[styles.detailsTitle, { color: colors.text }]}>{t('deliveryAddresses.details.title')}</Text>
-                                    <Text style={[styles.detailsSubtitle, { color: colors.textSecondary }]}>{t(`deliveryAddresses.labels.${getAddressTypeLabel(address.address_type).toLowerCase()}`)}</Text>
+                                    <Text style={[styles.detailsTitle, { color: colors.text }]}>{t('addresses.details.title')}</Text>
+                                    <Text style={[styles.detailsSubtitle, { color: colors.textSecondary }]}>{t(`addresses.labels.${getAddressTypeLabel(address.address_type).toLowerCase()}`)}</Text>
                                 </View>
                                 {address.is_active ? (
                                     <View style={[styles.primaryBadge, { backgroundColor: colors.primary }]}> 
-                                        <Text style={styles.primaryBadgeText}>{t('deliveryAddresses.badges.primary')}</Text>
+                                        <Text style={styles.primaryBadgeText}>{t('addresses.badges.primary')}</Text>
                                     </View>
                                 ) : null}
                             </View>
 
                             <View style={styles.detailsBody}>
                                 <View style={styles.detailsRow}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.name')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.name')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{displayName}</Text>
                                 </View>
                                 <View style={styles.detailsRow}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.street')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.street')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{address.address}</Text>
                                 </View>
                                 <View style={styles.detailsRow}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.city')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.city')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{address.city}</Text>
                                 </View>
                                 <View style={styles.detailsRow}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.state')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.state')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{address.state}</Text>
                                 </View>
                                 <View style={styles.detailsRow}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.zipCode')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.zipCode')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{address.zip_code}</Text>
                                 </View>
                                 <View style={[styles.detailsRow, styles.detailsRowLast]}>
-                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.country')}</Text>
+                                    <Text style={[styles.detailsRowLabel, { color: colors.textSecondary }]}>{t('addresses.fields.country')}</Text>
                                     <Text style={[styles.detailsRowValue, { color: colors.text }]}>{address.country}</Text>
                                 </View>
                             </View>
@@ -101,7 +101,7 @@ const AddressDetailsModal = ({
                                     style={[styles.detailsEditBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
                                     onPress={() => onEdit(address)}
                                 >
-                                    <Text style={[styles.detailsEditBtnText, { color: colors.text }]}>{t('deliveryAddresses.actions.editAddress')}</Text>
+                                    <Text style={[styles.detailsEditBtnText, { color: colors.text }]}>{t('addresses.actions.editAddress')}</Text>
                                 </TouchableOpacity>
 
                                 {!address.is_active ? (
@@ -111,11 +111,11 @@ const AddressDetailsModal = ({
                                         disabled={isSettingPrimary}
                                     >
                                         <Text style={[styles.detailsPrimaryBtnText, { color: colors.primary }]}> 
-                                            {isSettingPrimary ? t('deliveryAddresses.actions.updating') : t('deliveryAddresses.actions.setAsPrimary')}
+                                            {isSettingPrimary ? t('addresses.actions.updating') : t('addresses.actions.setAsPrimary')}
                                         </Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <Text style={[styles.detailsPrimaryHint, { color: colors.textSecondary }]}>{t('deliveryAddresses.details.primaryHint')}</Text>
+                                    <Text style={[styles.detailsPrimaryHint, { color: colors.textSecondary }]}>{t('addresses.details.primaryHint')}</Text>
                                 )}
 
                                 {!address.is_active ? (
@@ -123,7 +123,7 @@ const AddressDetailsModal = ({
                                         style={styles.detailsDeleteBtn}
                                         onPress={() => { onDelete(address); onClose(); }}
                                     >
-                                        <Text style={styles.detailsDeleteBtnText}>{t('deliveryAddresses.actions.deleteAddress')}</Text>
+                                        <Text style={styles.detailsDeleteBtnText}>{t('addresses.actions.deleteAddress')}</Text>
                                     </TouchableOpacity>
                                 ) : null}
 
@@ -131,7 +131,7 @@ const AddressDetailsModal = ({
                                     style={[styles.detailsCloseBtn, { backgroundColor: colors.background, borderColor: colors.border }]}
                                     onPress={onClose}
                                 >
-                                    <Text style={[styles.detailsCloseBtnText, { color: colors.text }]}>{t('deliveryAddresses.actions.close')}</Text>
+                                    <Text style={[styles.detailsCloseBtnText, { color: colors.text }]}>{t('addresses.actions.close')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </>

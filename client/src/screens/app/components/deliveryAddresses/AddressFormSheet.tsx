@@ -136,7 +136,7 @@ const AddressFormSheet = ({
                             </View>
                         ) : (
                             <Text style={[styles.formTitle, { color: colors.text }]}>
-                                {isEditingAddress ? t('deliveryAddresses.form.editTitle') : t('deliveryAddresses.form.newTitle')}
+                                {isEditingAddress ? t('addresses.form.editTitle') : t('addresses.form.newTitle')}
                             </Text>
                         )}
 
@@ -153,7 +153,7 @@ const AddressFormSheet = ({
                                     </TouchableOpacity>
                                 )}
                                 ListEmptyComponent={(
-                                    <Text style={[styles.pickerEmptyText, { color: colors.textSecondary }]}>{t('deliveryAddresses.pickers.noOptions')}</Text>
+                                    <Text style={[styles.pickerEmptyText, { color: colors.textSecondary }]}>{t('addresses.pickers.noOptions')}</Text>
                                 )}
                                 keyboardShouldPersistTaps="handled"
                             />
@@ -174,7 +174,7 @@ const AddressFormSheet = ({
                                                 style={[styles.typePill, { backgroundColor: newLabel === typedLabel ? colors.primary : colors.background, borderColor: colors.border }]}
                                             >
                                                 <Text style={[styles.typePillText, newLabel === typedLabel ? styles.typePillTextSelected : styles.typePillTextUnselected]}>
-                                                    {t(`deliveryAddresses.labels.${typedLabel.toLowerCase()}`)}
+                                                    {t(`addresses.labels.${typedLabel.toLowerCase()}`)}
                                                 </Text>
                                             </TouchableOpacity>
                                         );
@@ -182,7 +182,7 @@ const AddressFormSheet = ({
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.form.receiverNameLabel')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.form.receiverNameLabel')}</Text>
                                     <TextInput
                                         style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
                                         placeholder={displayName}
@@ -193,10 +193,10 @@ const AddressFormSheet = ({
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.form.streetAddressLabel')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.form.streetAddressLabel')}</Text>
                                     <TextInput
                                         style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                        placeholder={t('deliveryAddresses.form.streetPlaceholder')}
+                                        placeholder={t('addresses.form.streetPlaceholder')}
                                         placeholderTextColor={colors.textSecondary}
                                         value={newStreet}
                                         onChangeText={onSetNewStreet}
@@ -204,7 +204,7 @@ const AddressFormSheet = ({
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.country')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.fields.country')}</Text>
                                     <TouchableOpacity
                                         onPress={onOpenCountryPicker}
                                         style={[
@@ -221,14 +221,14 @@ const AddressFormSheet = ({
                                                 { color: newCountry ? colors.text : colors.textSecondary },
                                             ]}
                                         >
-                                            {newCountry || t('deliveryAddresses.pickers.selectCountry')}
+                                            {newCountry || t('addresses.pickers.selectCountry')}
                                         </Text>
                                         <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
                                     </TouchableOpacity>
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.state')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.fields.state')}</Text>
                                     <Pressable
                                         onPress={onOpenStatePicker}
                                         style={[
@@ -246,14 +246,14 @@ const AddressFormSheet = ({
                                                 { color: newState ? colors.text : colors.textSecondary },
                                             ]}
                                         >
-                                            {newState || (newCountryIsoCode ? t('deliveryAddresses.pickers.selectState') : t('deliveryAddresses.pickers.selectCountryFirst'))}
+                                            {newState || (newCountryIsoCode ? t('addresses.pickers.selectState') : t('addresses.pickers.selectCountryFirst'))}
                                         </Text>
                                         <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
                                     </Pressable>
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.city')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.fields.city')}</Text>
                                     <Pressable
                                         onPress={onOpenCityPicker}
                                         style={[
@@ -271,17 +271,17 @@ const AddressFormSheet = ({
                                                 { color: newCity ? colors.text : colors.textSecondary },
                                             ]}
                                         >
-                                            {newCity || (newState ? t('deliveryAddresses.pickers.selectCity') : t('deliveryAddresses.pickers.selectStateFirst'))}
+                                            {newCity || (newState ? t('addresses.pickers.selectCity') : t('addresses.pickers.selectStateFirst'))}
                                         </Text>
                                         <AppIcon library="Feather" name="chevron-down" size={16} color={colors.textSecondary} />
                                     </Pressable>
                                 </View>
 
                                 <View style={styles.inputGroup}>
-                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('deliveryAddresses.fields.zipCode')}</Text>
+                                    <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{t('addresses.fields.zipCode')}</Text>
                                     <TextInput
                                         style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-                                        placeholder={t('deliveryAddresses.form.zipPlaceholder')}
+                                        placeholder={t('addresses.form.zipPlaceholder')}
                                         placeholderTextColor={colors.textSecondary}
                                         value={newZipCode}
                                         onChangeText={onSetNewZipCode}
@@ -305,7 +305,7 @@ const AddressFormSheet = ({
                                             <AppIcon library="Feather" name="check" size={14} color="#FFF" />
                                         ) : null}
                                     </View>
-                                    <Text style={[styles.makePrimaryText, { color: colors.text }]}>{t('deliveryAddresses.actions.setAsPrimaryAddress')}</Text>
+                                    <Text style={[styles.makePrimaryText, { color: colors.text }]}>{t('addresses.actions.setAsPrimaryAddress')}</Text>
                                 </TouchableOpacity>
 
                                 <View style={styles.formActions}>
@@ -315,8 +315,8 @@ const AddressFormSheet = ({
                                     <View style={styles.flexOne}>
                                         <AppButton
                                             title={isSubmitting
-                                                ? (isEditingAddress ? t('deliveryAddresses.actions.updating') : t('deliveryAddresses.actions.saving'))
-                                                : (isEditingAddress ? t('deliveryAddresses.actions.updateAddress') : t('deliveryAddresses.actions.saveAddress'))}
+                                                ? (isEditingAddress ? t('addresses.actions.updating') : t('addresses.actions.saving'))
+                                                : (isEditingAddress ? t('addresses.actions.updateAddress') : t('addresses.actions.saveAddress'))}
                                             onPress={onSubmit}
                                             disabled={!isFormValid || isSubmitting}
                                         />

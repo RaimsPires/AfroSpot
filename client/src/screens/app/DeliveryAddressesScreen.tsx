@@ -227,15 +227,15 @@ const DeliveryAddressesScreen = () => {
 
     const pickerTitle = useMemo(() => {
         if (activePicker === 'country') {
-            return t('deliveryAddresses.pickers.selectCountry');
+            return t('addresses.pickers.selectCountry');
         }
 
         if (activePicker === 'state') {
-            return t('deliveryAddresses.pickers.selectState');
+            return t('addresses.pickers.selectState');
         }
 
         if (activePicker === 'city') {
-            return t('deliveryAddresses.pickers.selectCity');
+            return t('addresses.pickers.selectCity');
         }
 
         return '';
@@ -259,7 +259,7 @@ const DeliveryAddressesScreen = () => {
 
     const displayName = useMemo(() => {
         if (!user) {
-            return t('deliveryAddresses.fallbackUserName');
+            return t('addresses.fallbackUserName');
         }
 
         const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
@@ -380,7 +380,7 @@ const DeliveryAddressesScreen = () => {
 
     const submitAddress = async () => {
         if (!newStreet.trim() || !newCity.trim() || !newState.trim() || !newZipCode.trim() || !newCountry.trim()) {
-            setErrorMessage(t('deliveryAddresses.errors.requiredFields'));
+            setErrorMessage(t('addresses.errors.requiredFields'));
             return;
         }
 
@@ -406,8 +406,8 @@ const DeliveryAddressesScreen = () => {
             closeAddressSheet();
         } catch {
             setErrorMessage(editingAddressId
-                ? t('deliveryAddresses.errors.updateFailed')
-                : t('deliveryAddresses.errors.saveFailed'));
+                ? t('addresses.errors.updateFailed')
+                : t('addresses.errors.saveFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -420,8 +420,8 @@ const DeliveryAddressesScreen = () => {
             await setPrimaryAddress(addressId);
         } catch {
             Alert.alert(
-                t('deliveryAddresses.alerts.updateFailedTitle'),
-                t('deliveryAddresses.alerts.setPrimaryFailedMessage'),
+                t('addresses.alerts.updateFailedTitle'),
+                t('addresses.alerts.setPrimaryFailedMessage'),
             );
         } finally {
             setIsSettingPrimary(null);
@@ -448,8 +448,8 @@ const DeliveryAddressesScreen = () => {
             setSelectedAddressId(null);
         } catch {
             Alert.alert(
-                t('deliveryAddresses.alerts.deleteFailedTitle'),
-                t('deliveryAddresses.alerts.deleteFailedMessage'),
+                t('addresses.alerts.deleteFailedTitle'),
+                t('addresses.alerts.deleteFailedMessage'),
             );
         } finally {
             setIsDeletingAddress(false);
@@ -470,7 +470,7 @@ const DeliveryAddressesScreen = () => {
                 <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
                     <AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('deliveryAddresses.title')}</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('addresses.title')}</Text>
                 <View style={styles.headerSpacer} />
             </View>
 
@@ -480,20 +480,20 @@ const DeliveryAddressesScreen = () => {
                     onPress={openAddAddressSheet}
                 >
                     <AppIcon library="Feather" name="plus-circle" size={20} color={colors.primary} />
-                    <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>{t('deliveryAddresses.actions.addNewAddress')}</Text>
+                    <Text style={[styles.addBtnLargeText, { color: colors.primary }]}>{t('addresses.actions.addNewAddress')}</Text>
                 </TouchableOpacity>
 
-                <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('deliveryAddresses.savedAddresses')}</Text>
+                <Text style={[styles.sectionHeader, { color: colors.text }]}>{t('addresses.savedAddresses')}</Text>
                 {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 ) : null}
 
                 {loading && addresses.length === 0 ? (
-                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('deliveryAddresses.loading')}</Text>
+                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('addresses.loading')}</Text>
                 ) : null}
 
                 {!loading && addresses.length === 0 ? (
-                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('deliveryAddresses.emptyState')}</Text>
+                    <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>{t('addresses.emptyState')}</Text>
                 ) : (
                     <FlatList
                         data={addresses}
@@ -573,10 +573,10 @@ const DeliveryAddressesScreen = () => {
 
             <ConfirmationModal
                 visible={Boolean(pendingDeleteAddress)}
-                title={t('deliveryAddresses.deleteConfirm.title')}
-                message={t('deliveryAddresses.deleteConfirm.message')}
-                confirmLabel={t('deliveryAddresses.deleteConfirm.confirmLabel')}
-                cancelLabel={t('deliveryAddresses.deleteConfirm.cancelLabel')}
+                title={t('addresses.deleteConfirm.title')}
+                message={t('addresses.deleteConfirm.message')}
+                confirmLabel={t('addresses.deleteConfirm.confirmLabel')}
+                cancelLabel={t('addresses.deleteConfirm.cancelLabel')}
                 variant="danger"
                 isLoading={isDeletingAddress}
                 onConfirm={handleConfirmDelete}
