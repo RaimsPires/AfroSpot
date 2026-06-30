@@ -5,42 +5,29 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from itertools import chain
 from spots.models import Product , Service
-
+from utils.pagination import StandardResultsSetPagination
 
 class PromotionViewSet(viewsets.ModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
+    pagination_class = StandardResultsSetPagination
     
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
+    # In your PromotionViewSet
     def list(self, request, *args, **kwargs):
-        query = request.query_params.get('q', '').strip()
+        # Fetch all promotions (not products/services)
+        queryset = Promotion.objects.all().order_by('-created_at')
         
-        # 1. Fetch data
-        products = Product.objects.filter(name__icontains=query)
-        services = Service.objects.filter(name__icontains=query)
-        
-        # 2. Combine and Sort
-        combined_results = sorted(
-            chain(products, services), 
-            key=lambda x: x.name.lower()
-        )
-        
-        # 3. Paginate
-        page = self.paginate_queryset(combined_results)
+        # Paginate
+        page = self.paginate_queryset(queryset)
         
         if page is not None:
-            # 4. Standardize data for the paginated slice
-            results = []
-            for item in page:
-                results.append({
-                    "id": str(item.id),
-                    "name": item.name,
-                    "image": request.build_absolute_uri(item.image.url) if hasattr(item, 'image') and item.image else None,
-                    "type": "product" if isinstance(item, Product) else "service"
-                })
-            return self.get_paginated_response(results)
-
-        # Fallback for non-paginated requests
-        return Response([])
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        return Response(self.get_serializer(queryset, many=True).data)
     
     @action(detail=False, methods=['get'])
     def search_items(self, request):

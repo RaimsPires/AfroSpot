@@ -26,6 +26,7 @@
     "@react-navigation/native-stack": "^7.15.1",
     "@tspvivek/react-native-gifted-chat": "^2.8.16",
     "axios": "^1.16.1",
+    "date-fns": "^4.4.0",
     "i18next": "^26.3.0",
     "react": "19.2.3",
     "react-i18next": "^17.0.8",

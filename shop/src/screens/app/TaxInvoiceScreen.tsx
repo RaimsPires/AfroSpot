@@ -10,7 +10,7 @@ const INVOICES = [
     { id: 'INV-2023-102', date: 'Oct 23, 2023', customer: 'Platform Fees (Oct)', amount: '$124.00', status: 'Deducted' },
 ];
 
-export const TaxInvoiceScreen = () => {
+export const TaxInvoiceScreen = ({ navigation }) => {
     const { colors, isDark } = useTheme();
     const [activeTab, setActiveTab] = useState('Invoices');
 
@@ -19,7 +19,12 @@ export const TaxInvoiceScreen = () => {
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
             <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.goBack()
+                    }}
+                    style={styles.iconBtn}
+                ><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Taxes & Invoices</Text>
                 <TouchableOpacity style={styles.iconBtn}><AppIcon library="Feather" name="download" size={20} color={colors.text} /></TouchableOpacity>
             </View>

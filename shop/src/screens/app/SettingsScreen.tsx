@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { CurrencyBottomSheet } from '@components/settings/CurrencyBottomSheet';
 import { LanguageBottomSheet } from '@components/settings/LanguageBottomSheet';
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
@@ -23,10 +22,9 @@ const SettingsScreen = ({ navigation }: any) => {
     const [pushNotifications, setPushNotifications] = useState(true);
     const [emailNotifications, setEmailNotifications] = useState(false);
     const [locationServices, setLocationServices] = useState(true);
+    
     const [selectedLanguage, setSelectedLanguage] = useState('English (US)');
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
     const [languageSheetVisible, setLanguageSheetVisible] = useState(false);
-    const [currencySheetVisible, setCurrencySheetVisible] = useState(false);
     const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 
     const handleDeleteAccount = () => {
@@ -112,7 +110,6 @@ const SettingsScreen = ({ navigation }: any) => {
                             }
                         />
                         <SettingsItem icon="globe" label="Language" value={selectedLanguage} colors={colors} onPress={() => setLanguageSheetVisible(true)} />
-                        <SettingsItem icon="dollar-sign" label="Currency" value={selectedCurrency} colors={colors} onPress={() => setCurrencySheetVisible(true)} />
                         <SettingsItem
                             icon={isDark ? "moon" : "sun"}
                             label="Dark Theme"
@@ -153,6 +150,7 @@ const SettingsScreen = ({ navigation }: any) => {
 
             </ScrollView>
 
+            {/* Modals */}
             <Modal
                 visible={languageSheetVisible}
                 transparent
@@ -167,23 +165,6 @@ const SettingsScreen = ({ navigation }: any) => {
                         setLanguageSheetVisible(false);
                     }}
                     onClose={() => setLanguageSheetVisible(false)}
-                />
-            </Modal>
-
-            <Modal
-                visible={currencySheetVisible}
-                transparent
-                animationType="slide"
-                onRequestClose={() => setCurrencySheetVisible(false)}
-            >
-                <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => setCurrencySheetVisible(false)} />
-                <CurrencyBottomSheet
-                    selectedCurrency={selectedCurrency}
-                    onSelectCurrency={(currencyCode) => {
-                        setSelectedCurrency(currencyCode);
-                        setCurrencySheetVisible(false);
-                    }}
-                    onClose={() => setCurrencySheetVisible(false)}
                 />
             </Modal>
 
@@ -221,7 +202,6 @@ const SettingsScreen = ({ navigation }: any) => {
 };
 
 // --- Reusable Settings Item Component ---
-
 const SettingsItem = ({ icon, label, value, isLast, rightElement, colors, onPress }: any) => (
     <TouchableOpacity
         style={[
@@ -252,7 +232,6 @@ const SettingsItem = ({ icon, label, value, isLast, rightElement, colors, onPres
 );
 
 // --- Styles ---
-
 const styles = StyleSheet.create({
     container: { flex: 1 },
 

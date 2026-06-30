@@ -56,11 +56,7 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
 
     const fetchFeedDetails = async () => {
         try {
-            console.log(feedId);
-
             const data = await feedService.getFeed(feedId);
-            console.log(data);
-
             setFeed(data);
             setCaption(data.caption);
             setTags(data.hashtags);
@@ -73,11 +69,6 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     useEffect(() => {
         fetchFeedDetails();
     }, []);
-
-
-
-
-    // --- Action Handlers ---
 
     const handleUpdate = async () => {
         setIsSaving(true);
@@ -125,7 +116,7 @@ export const FeedInsightsScreen = ({ navigation, route }: any) => {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
-    
+
 
     if (isLoading || !feed) {
         return (

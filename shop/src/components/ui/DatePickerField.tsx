@@ -1,10 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Modal,
+    Platform,
     Pressable,
+    StyleProp,
     StyleSheet,
     Text,
+    TextStyle,
     View,
+    ViewStyle,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
@@ -20,6 +24,11 @@ export interface DatePickerFieldProps {
     minimumDate?: Date;
     maximumDate?: Date;
     helperText?: string;
+    dateContainer?: StyleProp<ViewStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
+    labelStyle?: StyleProp<TextStyle>;
+    // 🚀 New prop to control the presentation style
+    variant?: 'modal' | 'bottomSheet'; 
 }
 
 const formatDate = (date: Date) =>
@@ -37,16 +46,20 @@ const DatePickerField = ({
     minimumDate,
     maximumDate,
     helperText,
+    containerStyle,
+    labelStyle,
+    dateContainer,
+    variant = 'bottomSheet', // Defaulting to bottomSheet for a modern feel
 }: DatePickerFieldProps) => {
     const { colors, spacing, isDark } = useTheme();
     const [open, setOpen] = useState(false);
     const [activeDate, setActiveDate] = useState(value ?? new Date());
 
-    const {language} = useTranslation();
+    const { language } = useTranslation();
 
     const displayValue = useMemo(() => (value ? formatDate(value) : ''), [value]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (value) {
             setActiveDate(value);
         }
@@ -57,8 +70,10 @@ const DatePickerField = ({
         setOpen(false);
     };
 
+    const isBottomSheet = variant === 'bottomSheet';
+
     return (
-        <View style={[styles.container, { gap: spacing(1) }]}>
+        <View style={[styles.container, { gap: spacing(1) }, dateContainer]}>
             {label ? <Text style={[styles.label, { color: colors.text }]}>{label}</Text> : null}
 
             <Pressable
@@ -73,9 +88,10 @@ const DatePickerField = ({
                         borderColor: colors.border,
                         paddingHorizontal: spacing(1.5),
                     },
+                    containerStyle
                 ]}
             >
-                <Text style={[styles.value, { color: value ? colors.text : colors.textSecondary }]}>
+                <Text style={[styles.value, { color: value ? colors.text : colors.textSecondary }, labelStyle]}>
                     {displayValue || placeholder}
                 </Text>
                 <AppIcon library="Feather" name="calendar" size={18} color={colors.textSecondary} />
@@ -83,9 +99,30 @@ const DatePickerField = ({
 
             {helperText ? <Text style={[styles.helper, { color: colors.textSecondary }]}>{helperText}</Text> : null}
 
-            <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
-                <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-                    <Pressable style={[styles.sheet, { backgroundColor: colors.surface }]} onPress={() => undefined}>
+            <Modal 
+                transparent 
+                visible={open} 
+                animationType={isBottomSheet ? "slide" : "fade"} 
+                onRequestClose={() => setOpen(false)}
+            >
+                <Pressable 
+                    style={[styles.backdrop, isBottomSheet ? styles.backdropBottom : styles.backdropCenter]} 
+                    onPress={() => setOpen(false)}
+                >
+                    <Pressable 
+                        style={[
+                            isBottomSheet ? styles.sheetBottom : styles.sheetModal, 
+                            { backgroundColor: colors.surface }
+                        ]} 
+                        onPress={() => undefined} // Prevent clicks from bubbling to backdrop
+                    >
+                        {/* Handle bar for bottom sheet UX */}
+                        {isBottomSheet && (
+                            <View style={styles.handleBarWrap}>
+                                <View style={[styles.handleBar, { backgroundColor: colors.border }]} />
+                            </View>
+                        )}
+
                         <View style={styles.sheetHeader}>
                             <Pressable onPress={() => setOpen(false)} hitSlop={10}>
                                 <Text style={[styles.sheetAction, { color: colors.textSecondary }]}>Cancel</Text>
@@ -140,19 +177,50 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 2,
     },
+    
+    // Backdrop configurations
     backdrop: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    },
+    backdropCenter: {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    sheet: {
+    backdropBottom: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+
+    // Modal Variant Styles
+    sheetModal: {
         width: '92%',
         maxWidth: 420,
         borderRadius: 24,
         paddingHorizontal: 20,
         paddingTop: 16,
         paddingBottom: 24,
+    },
+
+    // Bottom Sheet Variant Styles
+    sheetBottom: {
+        width: '100%',
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        paddingHorizontal: 20,
+        paddingTop: 8,
+        paddingBottom: Platform.OS === 'ios' ? 40 : 24, // Safe area padding
+    },
+
+    // Universal Inner Styles
+    handleBarWrap: {
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    handleBar: {
+        width: 40,
+        height: 4,
+        borderRadius: 2,
     },
     sheetHeader: {
         flexDirection: 'row',

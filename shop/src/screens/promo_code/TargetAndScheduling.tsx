@@ -3,9 +3,14 @@ import { useTheme } from '@contexts/ThemeContext';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const APPLIES_TO_OPTIONS = ['All Services', 'All Products', 'Specific Items'];
+const TARGET_MAP: Record<string, string> = {
+    'all_services': 'All Services',
+    'all_products': 'All Products',
+    'specific_items': 'Specific Items',
+};
+
 type Props = {
-    appliesTo: string;
+    appliesTo: string; // This expects the backend key (e.g., 'all_services')
     setAppliesTo: (applied_to: string) => void;
     onOpenSpecificItems: () => void;
     selectedCount: number;
@@ -17,12 +22,12 @@ const TargetAndScheduling: React.FC<Props> = ({ appliesTo, setAppliesTo, onOpenS
         <View style={styles.formSection}>
             <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>APPLIES TO</Text>
             <View style={styles.chipsWrapper}>
-                {APPLIES_TO_OPTIONS.map((option) => {
-                    const isActive = appliesTo === option;
+                {Object.entries(TARGET_MAP).map(([key, label]) => {
+                    const isActive = appliesTo === key;
                     return (
                         <TouchableOpacity
-                            key={option}
-                            onPress={() => setAppliesTo(option)}
+                            key={key}
+                            onPress={() => setAppliesTo(key)} // 🚀 Set the backend key
                             style={[
                                 styles.chip,
                                 {
@@ -32,16 +37,16 @@ const TargetAndScheduling: React.FC<Props> = ({ appliesTo, setAppliesTo, onOpenS
                             ]}
                         >
                             <Text style={[styles.chipText, { color: isActive ? colors.primary : colors.text }]}>
-                                {option}
+                                {label} {/* Display the human label */}
                             </Text>
                         </TouchableOpacity>
                     );
                 })}
             </View>
 
-            {appliesTo === 'Specific Items' && (
+            {appliesTo === 'specific_items' && (
                 <TouchableOpacity
-                    onPress={onOpenSpecificItems} // 🚀 Open the sheet here
+                    onPress={onOpenSpecificItems}
                     style={[styles.selectItemsBtn, { borderColor: colors.primary, backgroundColor: colors.primary + '05' }]}
                 >
                     <AppIcon library="Feather" name={selectedCount > 0 ? "edit-2" : "plus-circle"} size={16} color={colors.primary} />

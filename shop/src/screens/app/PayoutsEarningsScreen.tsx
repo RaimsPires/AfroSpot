@@ -10,15 +10,18 @@ const PAYOUT_HISTORY = [
     { id: '3', date: 'Oct 07, 2023', amount: '$1,105.00', status: 'Completed', method: 'Mobile Money (+234***)' },
 ];
 
-export const PayoutsEarningsScreen = () => {
+export const PayoutsEarningsScreen = ({navigation}) => {
     const { colors, isDark } = useTheme();
-
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
             <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.iconBtn}><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
+                <TouchableOpacity 
+                onPress={()=>{
+                    navigation.goBack()
+                }}
+                style={styles.iconBtn}><AppIcon library="Feather" name="chevron-left" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Earnings & Payouts</Text>
                 <View style={{ width: 40 }} />
             </View>

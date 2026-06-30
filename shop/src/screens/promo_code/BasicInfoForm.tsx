@@ -1,9 +1,9 @@
-import { AppIcon } from '@components/ui'
+import { DatePickerField } from '@components/ui'
 import { useTheme } from '@contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
-const BasicInfoForm: React.FC<{ title: string, setTitle: (title: string) => void, promoCode: string, setPromoCode: (promo_code: string) => void, startDate: string, endDate: string, setEndDate: (date: Date) => void, setStartDate: (date: Date) => void }> = ({ title, setTitle, promoCode, setPromoCode, startDate, endDate }) => {
+const BasicInfoForm: React.FC<{ title: string, setTitle: (title: string) => void, promoCode: string, setPromoCode: (promo_code: string) => void, startDate: Date, endDate: Date, setEndDate: (date: Date) => void, setStartDate: (date: Date) => void }> = ({ title, setTitle, promoCode, setPromoCode, startDate, endDate, setEndDate, setStartDate }) => {
     const { colors } = useTheme()
     return (
         <>
@@ -34,22 +34,22 @@ const BasicInfoForm: React.FC<{ title: string, setTitle: (title: string) => void
 
             <View style={styles.formSection}>
                 <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>DURATION</Text>
-                <View style={styles.rowInputs}>
-                    <TouchableOpacity style={[styles.dateInputWrap, { backgroundColor: colors.surface, borderColor: colors.border, marginRight: 12 }]}>
-                        <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>Starts</Text>
-                        <View style={styles.dateValueRow}>
-                            <Text style={[styles.dateValue, { color: colors.text }]}>{startDate}</Text>
-                            <AppIcon library="Feather" name="calendar" size={16} color={colors.primary} />
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.dateInputWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                        <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>Ends</Text>
-                        <View style={styles.dateValueRow}>
-                            <Text style={[styles.dateValue, { color: colors.text }]}>{endDate}</Text>
-                            <AppIcon library="Feather" name="calendar" size={16} color={colors.primary} />
-                        </View>
-                    </TouchableOpacity>
+                <View >
+                    <DatePickerField
+                        minimumDate={new Date()}
+                        variant='bottomSheet'
+                        onChange={(date) => {
+                            setStartDate(date)
+                        }}
+                        value={startDate}
+                    />
+                    <DatePickerField
+                        minimumDate={startDate}
+                        onChange={(date) => {
+                            setEndDate(date)
+                        }}
+                        value={endDate}
+                    />
                 </View>
             </View>
         </>
@@ -63,11 +63,4 @@ const styles = StyleSheet.create({
     inputGroup: { marginBottom: 16 },
     inputLabel: { fontSize: 11, fontWeight: '800', letterSpacing: 0.5, marginBottom: 8 },
     inputField: { height: 50, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 15 },
-
-
-    rowInputs: { flexDirection: 'row' },
-    dateInputWrap: { flex: 1, borderWidth: 1, borderRadius: 12, padding: 12 },
-    dateLabel: { fontSize: 11, fontWeight: '700', marginBottom: 4 },
-    dateValueRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    dateValue: { fontSize: 14, fontWeight: '600' },
 })

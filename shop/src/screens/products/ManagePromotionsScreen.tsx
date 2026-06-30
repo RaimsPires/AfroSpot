@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert,
+    RefreshControl,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -12,71 +15,50 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
+import { promoService } from '@services/promotionService';
+import DateFormatter from '@utils/dateFormatter';
 
-// --- Mock Data ---
-const INITIAL_PROMOS = [
-    {
-        id: '1',
-        title: 'Weekend Flash Sale',
-        discountType: 'percentage',
-        discountValue: 20,
-        code: 'WEEKEND20',
-        target: 'All Services',
-        startDate: 'Oct 24, 2023',
-        endDate: 'Oct 31, 2023',
-        status: 'Active',
-        usageCount: 14,
-    },
-    {
-        id: '2',
-        title: 'New Customer Welcome',
-        discountType: 'fixed',
-        discountValue: 10,
-        code: 'WELCOME10',
-        target: 'All Products',
-        startDate: 'Sep 01, 2023',
-        endDate: 'Dec 31, 2023',
-        status: 'Active',
-        usageCount: 89,
-    },
-    {
-        id: '3',
-        title: 'Summer Clearance',
-        discountType: 'percentage',
-        discountValue: 50,
-        code: 'SUMMER50',
-        target: 'Specific Items',
-        startDate: 'Jul 01, 2023',
-        endDate: 'Aug 31, 2023',
-        status: 'Expired',
-        usageCount: 124,
-    },
-    {
-        id: '4',
-        title: 'Holiday Special',
-        discountType: 'percentage',
-        discountValue: 15,
-        code: 'HOLIDAY15',
-        target: 'All Services',
-        startDate: 'Dec 20, 2023',
-        endDate: 'Jan 05, 2024',
-        status: 'Paused',
-        usageCount: 0,
-    },
-];
-
-const FILTER_TABS = ['Active', 'Paused', 'Expired'];
+const FILTER_TABS = ['Active', 'Expired'];
 
 const ManagePromotionsScreen = ({ navigation }: any) => {
     const { colors, isDark } = useTheme();
 
-    const [promos, setPromos] = useState(INITIAL_PROMOS);
+    const [promos, setPromos] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false); // 🚀 Added refreshing state
     const [activeTab, setActiveTab] = useState('Active');
 
-    // Filtering Logic
-    const filteredPromos = promos.filter((promo) => promo.status === activeTab);
+    // --- API Integration ---
+    // 🚀 Added isRefresh parameter to avoid showing the full-screen loader on pull-to-refresh
+    const fetchPromos = useCallback(async (isRefresh: boolean = false) => {
+        try {
+            if (!isRefresh) setLoading(true);
+            
+            const response = await promoService.getPromos(); 
+            const data = response.results;
+            setPromos(data);
+        } catch (error) {
+            console.error("Failed to fetch promos:", error);
+            Alert.alert("Error", "Could not load promotions.");
+        } finally {
+            if (!isRefresh) setLoading(false);
+        }
+    }, []);
 
-    // Handlers
+    // 🚀 Handle the pull-to-refresh action
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchPromos(true); // Call fetch with isRefresh = true
+        setRefreshing(false);
+    }, [fetchPromos]);
+
+    // Refresh data every time the screen comes into focus (e.g., navigating back)
+    useFocusEffect(
+        useCallback(() => {
+            fetchPromos(false);
+        }, [fetchPromos])
+    );
+
     const handleDelete = (id: string) => {
         Alert.alert(
             'Delete Promotion',
@@ -86,32 +68,31 @@ const ManagePromotionsScreen = ({ navigation }: any) => {
                 {
                     text: 'Delete',
                     style: 'destructive',
-                    onPress: () => setPromos(promos.filter(p => p.id !== id))
-                },
-            ]
-        );
-    };
-
-    const handleToggleStatus = (id: string, currentStatus: string) => {
-        if (currentStatus === 'Expired') return; // Cannot toggle expired promos
-
-        const newStatus = currentStatus === 'Active' ? 'Paused' : 'Active';
-        const actionText = currentStatus === 'Active' ? 'Pause' : 'Activate';
-
-        Alert.alert(
-            `${actionText} Promotion`,
-            `Are you sure you want to ${actionText.toLowerCase()} this promotion?`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: actionText,
-                    onPress: () => {
-                        setPromos(promos.map(p => p.id === id ? { ...p, status: newStatus } : p));
+                    onPress: async () => {
+                        try {
+                            await promoService.deletePromo(id);
+                            setPromos(promos.filter(p => p.id !== id));
+                        } catch {
+                            Alert.alert("Error", "Failed to delete promotion.");
+                        }
                     }
                 },
             ]
         );
     };
+
+    // --- Helpers ---
+    const formatTarget = (targetStr: string) => {
+        if (!targetStr) return 'All Items';
+        return targetStr.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    };
+
+    const getStatus = (promo: any) => {
+        if (DateFormatter.isExpired(promo.end_date)) return 'expired';  
+        return 'active';
+    };
+
+    const filteredPromos = promos.filter((promo) => getStatus(promo) === activeTab.toLowerCase());
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -131,7 +112,7 @@ const ManagePromotionsScreen = ({ navigation }: any) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
                     {FILTER_TABS.map((tab) => {
                         const isActive = activeTab === tab;
-                        const count = promos.filter(p => p.status === tab).length;
+                        const count = promos.filter(p => getStatus(p) === tab.toLowerCase()).length;
 
                         return (
                             <TouchableOpacity
@@ -155,105 +136,96 @@ const ManagePromotionsScreen = ({ navigation }: any) => {
             </View>
 
             {/* 3. Promos List */}
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
-                {filteredPromos.length === 0 ? (
-                    <View style={styles.emptyState}>
-                        <View style={[styles.emptyIconBg, { backgroundColor: colors.surface }]}>
-                            <AppIcon library="Feather" name="tag" size={32} color={colors.textSecondary} />
-                        </View>
-                        <Text style={[styles.emptyTitle, { color: colors.text }]}>No {activeTab} Promos</Text>
-                        <Text style={[styles.emptyDesc, { color: colors.textSecondary }]}>
-                            You don't have any {activeTab.toLowerCase()} promotions at the moment.
-                        </Text>
-                    </View>
-                ) : (
-                    filteredPromos.map((promo) => (
-                        <View key={promo.id} style={[styles.promoCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-
-                            {/* Card Top: Coupon Details */}
-                            <View style={styles.cardTopRow}>
-                                {/* Left: Discount Value */}
-                                <View style={[styles.discountCol, { borderRightColor: colors.border }]}>
-                                    <Text style={[styles.discountValue, { color: colors.primary }]}>
-                                        {promo.discountType === 'percentage' ? `${promo.discountValue}%` : `$${promo.discountValue}`}
-                                    </Text>
-                                    <Text style={[styles.discountLabel, { color: colors.textSecondary }]}>OFF</Text>
-                                </View>
-
-                                {/* Right: Info */}
-                                <View style={styles.infoCol}>
-                                    <View style={styles.titleRow}>
-                                        <Text style={[styles.promoTitle, { color: colors.text }]} numberOfLines={1}>{promo.title}</Text>
-                                        {promo.code ? (
-                                            <View style={[styles.codeBadge, { backgroundColor: colors.primary + '15' }]}>
-                                                <Text style={[styles.codeText, { color: colors.primary }]}>{promo.code}</Text>
-                                            </View>
-                                        ) : null}
-                                    </View>
-
-                                    <Text style={[styles.promoTarget, { color: colors.textSecondary }]}>Applies to: {promo.target}</Text>
-
-                                    <View style={styles.dateRow}>
-                                        <AppIcon library="Feather" name="calendar" size={12} color={colors.textSecondary} />
-                                        <Text style={[styles.dateText, { color: colors.textSecondary }]}>{promo.startDate} - {promo.endDate}</Text>
-                                    </View>
-                                </View>
-
-                                {/* Scallop decorations for coupon effect */}
-                                <View style={[styles.scallopTop, { backgroundColor: colors.background, borderColor: colors.border }]} />
-                                <View style={[styles.scallopBottom, { backgroundColor: colors.background, borderColor: colors.border }]} />
+            {loading ? (
+                <View style={styles.loaderContainer}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            ) : (
+                <ScrollView 
+                    showsVerticalScrollIndicator={false} 
+                    contentContainerStyle={styles.listContent}
+                    // 🚀 Added RefreshControl here
+                    refreshControl={
+                        <RefreshControl 
+                            refreshing={refreshing} 
+                            onRefresh={onRefresh} 
+                            tintColor={colors.primary} // iOS spinner color
+                            colors={[colors.primary]} // Android spinner color
+                        />
+                    }
+                >
+                    {filteredPromos.length === 0 ? (
+                        <View style={styles.emptyState}>
+                            <View style={[styles.emptyIconBg, { backgroundColor: colors.surface }]}>
+                                <AppIcon library="Feather" name="tag" size={32} color={colors.textSecondary} />
                             </View>
+                            <Text style={[styles.emptyTitle, { color: colors.text }]}>No {activeTab} Promos</Text>
+                            <Text style={[styles.emptyDesc, { color: colors.textSecondary }]}>
+                                You don't have any {activeTab.toLowerCase()} promotions at the moment.
+                            </Text>
+                        </View>
+                    ) : (
+                        filteredPromos.map((promo) => (
+                            <View key={promo.id} style={[styles.promoCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                {/* ... (Your existing card UI remains exactly the same) ... */}
+                                <View style={styles.cardTopRow}>
+                                    <View style={[styles.discountCol, { borderRightColor: colors.border }]}>
+                                        <Text style={[styles.discountValue, { color: colors.primary }]}>
+                                            {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `$${promo.discount_value}`}
+                                        </Text>
+                                        <Text style={[styles.discountLabel, { color: colors.textSecondary }]}>OFF</Text>
+                                    </View>
 
-                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-                            {/* Card Bottom: Metrics & Actions */}
-                            <View style={styles.cardBottomRow}>
-                                <View style={styles.metricsCol}>
-                                    <AppIcon library="Feather" name="users" size={14} color={colors.textSecondary} />
-                                    <Text style={[styles.metricsText, { color: colors.textSecondary }]}>Used {promo.usageCount} times</Text>
+                                    <View style={styles.infoCol}>
+                                        <View style={styles.titleRow}>
+                                            <Text style={[styles.promoTitle, { color: colors.text }]} numberOfLines={1}>{promo.title}</Text>
+                                            {promo.code ? (
+                                                <View style={[styles.codeBadge, { backgroundColor: colors.primary + '15' }]}>
+                                                    <Text style={[styles.codeText, { color: colors.primary }]}>{promo.code}</Text>
+                                                </View>
+                                            ) : null}
+                                        </View>
+                                        <Text style={[styles.promoTarget, { color: colors.textSecondary }]}>Applies to: {formatTarget(promo.target)}</Text>
+                                        <View style={styles.dateRow}>
+                                            <AppIcon library="Feather" name="calendar" size={12} color={colors.textSecondary} />
+                                            <Text style={[styles.dateText, { color: colors.textSecondary }]}>
+                                                {DateFormatter.toDisplay(promo.start_date)} - {DateFormatter.toDisplay(promo.end_date)}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={[styles.scallopTop, { backgroundColor: colors.background, borderColor: colors.border }]} />
+                                    <View style={[styles.scallopBottom, { backgroundColor: colors.background, borderColor: colors.border }]} />
                                 </View>
-
-                                <View style={styles.actionsCol}>
-                                    <TouchableOpacity
-                                        style={[styles.actionBtn, { borderColor: colors.border }]}
-                                        onPress={() => navigation.navigate('CreatePromo', { promo })}
-                                    >
-                                        <AppIcon library="Feather" name="edit-2" size={14} color={colors.text} />
-                                        <Text style={[styles.actionBtnText, { color: colors.text }]}>Edit</Text>
-                                    </TouchableOpacity>
-
-                                    {promo.status !== 'Expired' && (
+                                <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                                <View style={styles.cardBottomRow}>
+                                    <View style={styles.metricsCol}>
+                                        <AppIcon library="Feather" name="users" size={14} color={colors.textSecondary} />
+                                        <Text style={[styles.metricsText, { color: colors.textSecondary }]}>Used {promo.usage_count || 0} times</Text>
+                                    </View>
+                                    <View style={styles.actionsCol}>
                                         <TouchableOpacity
                                             style={[styles.actionBtn, { borderColor: colors.border }]}
-                                            onPress={() => handleToggleStatus(promo.id, promo.status)}
+                                            onPress={() => navigation.navigate('CreatePromo', { id:promo.id} )}
                                         >
-                                            <AppIcon
-                                                library="Feather"
-                                                name={promo.status === 'Active' ? 'pause' : 'play'}
-                                                size={14}
-                                                color={colors.text}
-                                            />
-                                            <Text style={[styles.actionBtnText, { color: colors.text }]}>
-                                                {promo.status === 'Active' ? 'Pause' : 'Activate'}
-                                            </Text>
+                                            <AppIcon library="Feather" name="edit-2" size={14} color={colors.text} />
+                                            <Text style={[styles.actionBtnText, { color: colors.text }]}>Edit</Text>
                                         </TouchableOpacity>
-                                    )}
-
-                                    <TouchableOpacity
-                                        style={[styles.deleteBtn, { backgroundColor: colors.destructiveSurface }]}
-                                        onPress={() => handleDelete(promo.id)}
-                                    >
-                                        <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
-                                    </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.deleteBtn, { backgroundColor: colors.destructiveSurface }]}
+                                            onPress={() => handleDelete(promo.id)}
+                                        >
+                                            <AppIcon library="Feather" name="trash-2" size={16} color={colors.destructive} />
+                                            <Text style={[styles.actionBtnText, { color: colors.destructive }]}>Delete</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
+                        ))
+                    )}
+                </ScrollView>
+            )}
 
-                        </View>
-                    ))
-                )}
-            </ScrollView>
-
-            {/* 4. Floating Action Button to Create New Promo */}
+            {/* 4. Floating Action Button */}
             <TouchableOpacity
                 style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
                 onPress={() => navigation.navigate('CreatePromo')}
@@ -269,6 +241,7 @@ const ManagePromotionsScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 
     // Header
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 },
@@ -314,7 +287,7 @@ const styles = StyleSheet.create({
     actionsCol: { flexDirection: 'row', alignItems: 'center', gap: 10 },
     actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
     actionBtnText: { fontSize: 12, fontWeight: '700' },
-    deleteBtn: { width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+    deleteBtn: { flexDirection: 'row',  height: 32, paddingHorizontal:5, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
 
     // Empty State
     emptyState: { alignItems: 'center', justifyContent: 'center', marginTop: 60 },

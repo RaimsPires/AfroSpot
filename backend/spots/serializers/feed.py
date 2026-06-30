@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from spots.models.feed import FeedItem, FeedComment ,FeedLike
 from users.serializers import UserCommentSerializer
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 
 class FeedCommentSerializer(serializers.ModelSerializer):
     user = UserCommentSerializer(read_only=True)    
@@ -62,7 +64,9 @@ class FeedItemSerializer(serializers.ModelSerializer):
             'is_boosted', 'boost_reach', 'created_at'
         ]
         read_only_fields = ['id', 'spot', 'total_views', 'created_at']
-
+        
+    
+    @extend_schema_field(OpenApiTypes.INT)
     def get_boost_reach(self, obj):
         # Find the most recent active boost to display its reach
         active_boost = obj.boosts.filter(status='active').first()
