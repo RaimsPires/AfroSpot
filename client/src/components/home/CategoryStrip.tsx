@@ -5,7 +5,7 @@ import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { AllCategoriesBottomSheet } from './AllCategoriesBottomSheet';
 import { CategoryItem } from './CategoryItem';
-import { ALL_CATEGORIES, FEATURED_CATEGORIES } from './categoryMockData';
+import { ALL_CATEGORIES } from './categoryMockData';
 import SectionHeader from './SectionHeader';
 
 const CategoryStrip = () => {
@@ -24,11 +24,14 @@ const CategoryStrip = () => {
                 onRightPress={() => setShowAllCategories(true)}
             />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                {FEATURED_CATEGORIES.map((category, index) => (
+                {ALL_CATEGORIES
+                .sort(() => 0.5 - Math.random()) 
+                .slice(0, 5)
+                .map((category, index) => (
                     <CategoryItem
                         key={index}
                         {...category}
-                        onPress={() => handleCategoryPress(category.label)}
+                        onPress={() => handleCategoryPress(category.value)}
                     />
                 ))}
             </ScrollView>

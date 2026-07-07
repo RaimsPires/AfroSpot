@@ -1,25 +1,17 @@
-import { CategoryItemProps } from './CategoryItem';
+import { CategoryItemProps, CategoryValue } from "@type/category";
 
-export const FEATURED_CATEGORIES: CategoryItemProps[] = [
-    { icon: 'restaurant', label: 'Restaurants', library: 'Ionicons', active: true },
-    { icon: 'scissors', label: 'Beauty', library: 'Feather' },
-    { icon: 'trending-up', label: 'Fashion', library: 'Ionicons' },
-    { icon: 'storefront', label: 'Markets', library: 'Ionicons' },
-    { icon: 'calendar-number', label: 'Events', library: 'Ionicons' },
-    // { icon: 'fitness', label: 'Fitness', library: 'Ionicons' },
-];
 
 export const ALL_CATEGORIES: CategoryItemProps[] = [
-    { icon: 'restaurant', label: 'Restaurants', library: 'Ionicons' },
-    { icon: 'scissors', label: 'Beauty', library: 'Feather' },
-    { icon: 'trending-up', label: 'Fashion', library: 'Ionicons' },
-    { icon: 'storefront', label: 'Markets', library: 'Ionicons' },
-    { icon: 'calendar-number', label: 'Events', library: 'Ionicons' },
-    { icon: 'fitness', label: 'Fitness', library: 'Ionicons' },
-    { icon: 'home', label: 'Services', library: 'Ionicons' },
-    { icon: 'cart', label: 'Shopping', library: 'Ionicons' },
-    { icon: 'camera', label: 'Photography', library: 'Ionicons' },
-    { icon: 'book', label: 'Education', library: 'Ionicons' },
-    { icon: 'medical', label: 'Healthcare', library: 'Ionicons' },
-    { icon: 'musical-notes', label: 'Entertainment', library: 'Ionicons' },
+    { icon: 'restaurant', label: 'Restaurants', library: 'Ionicons', value: CategoryValue.RESTAURANTS },
+    { icon: 'scissors', label: 'Beauty', library: 'Feather', value: CategoryValue.BEAUTY },
+    { icon: 'trending-up', label: 'Fashion', library: 'Ionicons', value: CategoryValue.FASHION },
+    { icon: 'storefront', label: 'Markets', library: 'Ionicons', value: CategoryValue.MARKETS },
+    { icon: 'calendar-number', label: 'Events', library: 'Ionicons', value: CategoryValue.EVENTS },
+    { icon: 'fitness', label: 'Fitness', library: 'Ionicons', value: CategoryValue.FITNESS },
+    { icon: 'home', label: 'Services', library: 'Ionicons', value: CategoryValue.SERVICES },
+    { icon: 'cart', label: 'Shopping', library: 'Ionicons', value: CategoryValue.SHOPPING },
+    { icon: 'camera', label: 'Photography', library: 'Ionicons', value: CategoryValue.PHOTOGRAPHY },
+    { icon: 'book', label: 'Education', library: 'Ionicons', value: CategoryValue.EDUCATION },
+    { icon: 'medical', label: 'Healthcare', library: 'Ionicons', value: CategoryValue.HEALTHCARE },
+    { icon: 'musical-notes', label: 'Entertainment', library: 'Ionicons', value: CategoryValue.ENTERTAINMENT },
 ];

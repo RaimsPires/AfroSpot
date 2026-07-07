@@ -23,5 +23,6 @@ urlpatterns = [
         ServiceImageDetailView.as_view(), 
         name='service-image-detail'
     ),
+    path('nearby-business/', NearbyBusinessView.as_view(), name='nearby-business'),
     path('', include(router.urls)),
 ]

@@ -4,7 +4,6 @@ import {
     StyleSheet,
 } from 'react-native';
 
-import CategoryStrip from '@components/home/CategoryStrip';
 import DiscoveryFeedSection from '@components/home/DiscoveryFeedSection';
 import FeaturedCarousel from '@components/home/FeaturedCarousel';
 import HomeSearchBar from '@components/home/HomeSearchBar';
@@ -23,7 +22,7 @@ const HomeScreen = () => {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollPadding}>
                 <HomeSearchBar />
-                <CategoryStrip />
+                {/* <CategoryStrip /> */}
                 <FeaturedCarousel />
                 <DiscoveryFeedSection />
                 <NearbySection />

@@ -1,16 +1,10 @@
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
-import { IconLibrary } from '@types/ui';
+import { CategoryItemProps } from '@type/category';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export type CategoryItemProps = {
-    icon: string;
-    label: string;
-    active?: boolean;
-    library?: IconLibrary;
-    onPress?: () => void;
-};
+
 
 export const CategoryItem = ({
     icon,

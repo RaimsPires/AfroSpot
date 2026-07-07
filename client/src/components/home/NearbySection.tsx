@@ -1,43 +1,26 @@
 import React from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppIcon } from '@components/ui';
 import { useTheme } from '@contexts/ThemeContext';
 import type { AppStackNavigationProp } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
+// Import your hook and types here (adjust paths as needed)
+import { img_landscape } from '@assets/index';
+import { useNearbyBusinesses } from '@hooks/useNearbyBusinesses';
 import SectionHeader from './SectionHeader';
 
-const NEARBY_ITEMS = [
-    {
-        id: 'safari-lounge',
-        title: 'Safari Lounge',
-        subtitle: 'Restaurant • Bar',
-        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-        distance: '0.4 mi • 15 min',
-        rating: '★ 4.8',
-    },
-    {
-        id: 'mama-africa-kitchen',
-        title: 'Mama Africa Kitchen',
-        subtitle: 'Restaurant • Dining',
-        image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?q=80&w=1000',
-        distance: '0.8 mi • 20 min',
-        rating: '★ 4.9',
-    },
-];
-
 type NearbyItemProps = {
-    id: string;
+    id: number; // Changed string to number to match backend DB ID
     title: string;
     subtitle: string;
-    image: string;
+    image: string | null;
     distance: string;
-    rating: string;
     onPress: () => void;
 };
 
-const NearbyItem = ({ title, subtitle, image, distance, rating, onPress }: NearbyItemProps) => {
+const NearbyItem = ({ title, subtitle, image, distance, onPress }: NearbyItemProps) => {
     const { colors } = useTheme();
 
     return (
@@ -46,16 +29,18 @@ const NearbyItem = ({ title, subtitle, image, distance, rating, onPress }: Nearb
             onPress={onPress}
             style={[styles.nearbyCard, { backgroundColor: colors.background, borderColor: colors.border }]}
         >
-            <Image source={{ uri: image }} style={styles.nearbyImg} />
+            <Image 
+                source={image ? { uri: image } : img_landscape} 
+                style={styles.nearbyImg} 
+            />
             <View style={styles.favBtn}>
                 <AppIcon library="Feather" name="heart" size={14} color="#FF5252" />
             </View>
             <View style={styles.nearbyContent}>
-                <Text style={[styles.nearbyTitle, { color: colors.text }]}>{title}</Text>
-                <Text style={[styles.nearbySub, { color: colors.textSecondary }]}>{subtitle}</Text>
+                <Text numberOfLines={1} style={[styles.nearbyTitle, { color: colors.text }]}>{title}</Text>
+                <Text numberOfLines={1} style={[styles.nearbySub, { color: colors.textSecondary }]}>{subtitle}</Text>
                 <View style={styles.distRow}>
                     <Text style={[styles.distText, { color: colors.textSecondary }]}>{distance}</Text>
-                    <Text style={[styles.ratingText, { color: colors.text }]}>{rating}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -64,6 +49,11 @@ const NearbyItem = ({ title, subtitle, image, distance, rating, onPress }: Nearb
 
 const NearbySection = () => {
     const navigation = useNavigation<AppStackNavigationProp<'Home'>>();
+    const { colors } = useTheme();
+
+    // 1. Hook up the API data. Replace with real dynamic coords from Geolocation when ready!
+    const mockUserLocation = { latitude: 6.5244, longitude: 3.3792 };
+    const { spots, loading } = useNearbyBusinesses(mockUserLocation, 15);
 
     return (
         <>
@@ -72,37 +62,67 @@ const NearbySection = () => {
                 rightText="Map View"
                 onRightPress={() => navigation.navigate('InteractiveMap', { initialCategory: 'Restaurants' })}
             />
-            <FlatList
-                horizontal
-                data={NEARBY_ITEMS}
-                keyExtractor={(item) => item.id}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <NearbyItem
-                        {...item}
-                        onPress={() =>
-                            navigation.navigate('BusinessDetail', {
-                                businessId: item.id,
-                                businessName: item.title,
-                                source: 'nearby-section',
-                            })
-                        }
-                    />
-                )}
-            />
+            
+            {loading ? (
+                <View style={styles.centerContainer}>
+                    <ActivityIndicator size="small" color={colors.primary} />
+                </View>
+            ) : spots.count === 0 ? (
+                <View style={styles.centerContainer}>
+                    <Text style={{ color: colors.textSecondary }}>No business spots found nearby.</Text>
+                </View>
+            ) : (
+                <FlatList
+                    horizontal
+                    data={spots.results}
+                    keyExtractor={(item) => item.id.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                        <NearbyItem
+                            id={item.id}
+                            title={item.name}
+                            subtitle={item.description || 'No description available'}
+                            image={item.banner_image}
+                            distance={"20 km away"}
+                            // distance={`${item.distance_km.toFixed(1)} km away`}
+                            onPress={() =>
+                                navigation.navigate('BusinessDetail', {
+                                    businessId: item.id.toString(), // Convert number back to string if navigation expects it
+                                    businessName: item.name,
+                                    source: 'nearby-section',
+                                })
+                            }
+                        />
+                    )}
+                />
+            )}
         </>
     );
 };
 
 const styles = StyleSheet.create({
-    nearbyCard: { width: 220, marginLeft: 16, borderRadius: 20, borderWidth: 1, padding: 8 },
-    nearbyImg: { height: 120, borderRadius: 16, marginBottom: 8 },
+    nearbyCard: { 
+        width: 220, 
+        marginLeft: 16, 
+        borderRadius: 20, 
+        borderWidth: 1, 
+        padding: 8,
+        // Overflow hidden ensures the image borderRadius isn't hidden by the card's border
+        overflow: 'hidden' 
+    },
+    nearbyImg: { 
+        width: '100%',      // Stretches to fill the card width
+        height: 120,        // Fixed height for consistency
+        borderRadius: 16, 
+        marginBottom: 8, 
+        backgroundColor: '#eee', // Placeholder color while loading
+    },
     nearbyContent: { paddingHorizontal: 4 },
     nearbyTitle: { fontWeight: '800', fontSize: 15 },
     nearbySub: { fontSize: 12, marginVertical: 2 },
     distRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
     distText: { fontSize: 12 },
-    ratingText: { fontSize: 12, fontWeight: '700' },
+    centerContainer: { height: 180, justifyContent: 'center', alignItems: 'center', width: '100%' },
     favBtn: {
         position: 'absolute',
         top: 16,
@@ -113,6 +133,7 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
+        zIndex: 10,
     },
 });
 

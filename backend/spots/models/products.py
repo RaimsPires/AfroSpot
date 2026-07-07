@@ -4,6 +4,25 @@ from utils.models import BaseModel
 from utils.upload import ImageUploadHandler
 
 class Product(PurchasableItem):
+    class CategoryChoices(models.TextChoices):
+        RESTAURANTS = 'restaurants', 'Restaurants'
+        BEAUTY = 'beauty', 'Beauty'
+        FASHION = 'fashion', 'Fashion'
+        MARKETS = 'markets', 'Markets'
+        EVENTS = 'events', 'Events'
+        FITNESS = 'fitness', 'Fitness'
+        SERVICES = 'services', 'Services'
+        SHOPPING = 'shopping', 'Shopping'
+        PHOTOGRAPHY = 'photography', 'Photography'
+        EDUCATION = 'education', 'Education'
+        HEALTHCARE = 'healthcare', 'Healthcare'
+        ENTERTAINMENT = 'entertainment', 'Entertainment'
+
+    category = models.CharField(
+        max_length=50,
+        choices=CategoryChoices.choices,
+        default=CategoryChoices.SERVICES
+    )
     stock_quantity = models.PositiveIntegerField(default=0)
     sku = models.CharField(max_length=50, unique=True)
     requires_shipping = models.BooleanField(default=True)
